@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Sign In — Stackly · Mobile Accessories</title>
+<meta name="description" content="Sign in to Stackly. Buyer and Seller accounts open different dashboards for your accessories business." />
+<meta name="robots" content="noindex, follow" />
+<link rel="icon" type="image/webp" href="../images/logo-icon-theme.webp" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+<link rel="stylesheet" href="../CSS/auth.css" />
+<script>document.documentElement.className = document.documentElement.className.replace('no-js', 'js');</script>
+<style id="au-boot">
+  html, body { margin: 0; background: #0B0D12; color: #F3F0EA; overflow-x: clip; }
+</style>
+</head>
+<body>
+
+<main class="auth-shell" id="authShell">
+
+  <section class="auth-media">
+    <img class="auth-media__shot" src="../images/page-login.webp" alt="" fetchpriority="high" />
+    <span class="auth-media__veil"></span>
+    <span class="auth-media__grid" aria-hidden="true"></span>
+
+    <a href="../index.html" class="auth-home">
+      <i class="fa-solid fa-house" aria-hidden="true"></i>
+      <span class="auth-home-label">Back to Home</span>
+    </a>
+
+    <div class="ac-chip ac-chip--a">
+      <i class="fa-solid fa-truck-fast" aria-hidden="true"></i>
+      <span>Free shipping over $49</span>
+    </div>
+    <div class="ac-chip ac-chip--b">
+      <i class="fa-solid fa-star" aria-hidden="true"></i>
+      <span>4.9 average from 2,400 buyers</span>
+    </div>
+    <div class="ac-chip ac-chip--c">
+      <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+      <span>12-month warranty, no forms</span>
+    </div>
+
+    <div class="auth-media__quote">
+      <p class="ac-quote">Every case, cable and charger we sell was <em>tested in-house</em>.</p>
+      <p class="ac-quote-sub">Sign in to track orders or run your storefront.</p>
+    </div>
+  </section>
+
+  <section class="auth-form">
+
+    <a href="../index.html" class="auth-logo" aria-label="Stackly home">
+      <img src="../images/logo-full-theme.webp" alt="Stackly" width="600" height="185" />
+    </a>
+
+    <header class="auth-head">
+      <p class="auth-kicker">Welcome back</p>
+      <h1 class="auth-title">Sign in to <em>Stackly</em></h1>
+      <p class="auth-sub">Your desk is one tap away — pick a role to continue.</p>
+    </header>
+
+    <form class="auth-frm" id="loginForm" novalidate>
+
+      <div class="fld" data-field="email">
+        <label for="loginEmail">Email address</label>
+        <div class="fld-ctl">
+          <i class="fa-solid fa-envelope fld-ico" aria-hidden="true"></i>
+          <input id="loginEmail" name="email" type="email" placeholder="you@example.com" autocomplete="email" aria-invalid="false" aria-describedby="loginEmailErr" />
+        </div>
+        <p class="fld-err" id="loginEmailErr" data-err></p>
+      </div>
+
+      <div class="fld" data-field="password">
+        <label for="loginPassword">Password</label>
+        <div class="fld-ctl">
+          <i class="fa-solid fa-lock fld-ico" aria-hidden="true"></i>
+          <input id="loginPassword" name="password" type="password" placeholder="At least 8 characters" autocomplete="current-password" aria-invalid="false" aria-describedby="loginPasswordErr" />
+          <button type="button" class="fld-eye" data-eye aria-label="Show password">
+            <i class="fa-solid fa-eye" aria-hidden="true"></i>
+          </button>
+        </div>
+        <p class="fld-err" id="loginPasswordErr" data-err></p>
+      </div>
+
+      <div class="fld" data-field="role">
+        <label for="loginRole">Role</label>
+        <div class="fld-ctl">
+          <i class="fa-solid fa-id-badge fld-ico" aria-hidden="true"></i>
+          <select id="loginRole" name="role" aria-invalid="false" aria-describedby="loginRoleErr">
+            <option value="">Select your role</option>
+            <option value="buyer">Buyer — shop, track and review orders</option>
+            <option value="seller">Seller — list stock and manage orders</option>
+          </select>
+          <i class="fa-solid fa-chevron-down fld-caret" aria-hidden="true"></i>
+        </div>
+        <p class="fld-err" id="loginRoleErr" data-err></p>
+      </div>
+
+      <div class="fld-row">
+        <label class="fld-check">
+          <input type="checkbox" id="loginRemember" name="remember" />
+          <span class="fld-checkbox" aria-hidden="true"><i class="fa-solid fa-check"></i></span>
+          <span class="fld-check-label">Remember my email</span>
+        </label>
+        <a href="404.html" class="fld-link" data-forgot>Forgot password?</a>
+      </div>
+
+      <button type="submit" class="abtn abtn--solid">
+        <i class="fa-solid fa-arrow-right-to-bracket" aria-hidden="true"></i>
+        <span class="btn-label">Login</span>
+      </button>
+
+      <div class="alt-divider"><span>or</span></div>
+
+      <button type="button" class="abtn abtn--ghost" data-social>
+        <i class="fa-brands fa-google" aria-hidden="true"></i>
+        <span class="btn-label">Continue with Google</span>
+      </button>
+
+    </form>
+
+    <p class="auth-switch">
+      No account yet? <a href="signin.html">Create one</a>
+    </p>
+
+  </section>
+
+</main>
+
+<div class="auth-toast" id="authToast" role="status" aria-live="polite"></div>
+
+<script src="../JS/auth.js"></script>
+</body>
+</html>

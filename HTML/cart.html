@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cart · Stackly — Mobile Accessories Store</title>
+  <meta name="description" content="Review your bag, change quantities, apply a code and place the order. Free tracked delivery over $49." />
+  <link rel="icon" type="image/webp" href="../images/logo-icon-theme.webp" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="../CSS/home.css" />
+  <link rel="stylesheet" href="../CSS/cart.css" />
+  <script>document.documentElement.className = document.documentElement.className.replace('no-js', 'js');</script>
+</head>
+<body class="is-loading">
+
+<!-- ============ SCROLL PROGRESS ============ -->
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- ============ PRELOADER ============ -->
+<div class="preloader" id="preloader">
+  <div class="pre-glow"></div>
+  <div class="pre-inner">
+      <div class="pre-logo">
+        <img class="pre-logo-img" src="../images/logo-full-theme.webp" alt="Stackly" width="600" height="185" />
+      </div>
+    <p class="pre-tag" id="preTag">Counting your bag</p>
+
+    <div class="pre-bar"><span class="pre-bar-fill" id="preBar"></span></div>
+    <div class="pre-meta">
+      <span id="preCount">0</span><span>%</span>
+      <span class="pre-dots"><i></i><i></i><i></i></span>
+      <span id="preStep">Booting store</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ S1 · HEADER / NAVBAR (identical shell) ============ -->
+<header class="site-head" id="header">
+  <div class="head-glow" style="background-image:url('../images/nav-surface.webp')"></div>
+
+  <div class="announce">
+    <div class="shell announce-inner">
+      <div class="announce-track" id="announceTrack">
+        <a class="announce-item" href="404.html">
+          <img src="../images/chip-1.webp" width="300" height="300" alt="Studio headphones" />
+          <span>Launch week — <b>25% off</b> audio gear</span>
+          <i class="fa-solid fa-arrow-right-long"></i>
+        </a>
+        <a class="announce-item" href="404.html">
+          <img src="../images/service-repair.webp" width="720" height="520" alt="Doorstep repair service" />
+          <span>Free <b>doorstep</b> battery replacement</span>
+          <i class="fa-solid fa-arrow-right-long"></i>
+        </a>
+        <a class="announce-item" href="404.html">
+          <img src="../images/chip-2.webp" width="300" height="300" alt="Smart watch" />
+          <span>Trade in your watch — <b>up to $60 off</b></span>
+          <i class="fa-solid fa-arrow-right-long"></i>
+        </a>
+      </div>
+      <div class="announce-side">
+        <span><i class="fa-solid fa-truck-fast"></i> Free shipping over $49</span>
+      </div>
+    </div>
+  </div>
+
+  <nav class="nav shell" id="nav">
+    <a class="brand" href="../index.html" aria-label="Stackly home">
+      <img class="brand-logo" src="../images/logo-full-theme.webp" alt="Stackly" width="600" height="185" decoding="async" />
+    </a>
+
+    <ul class="nav-links" id="navLinks">
+      <span class="nav-pill" id="navPill" aria-hidden="true"></span>
+      <li><a class="nav-link" href="../index.html">Home</a></li>
+      <li><a class="nav-link" href="shop.html">Shop</a></li>
+      <li><a class="nav-link" href="service.html">Service</a></li>
+      <li><a class="nav-link" href="about.html">About</a></li>
+      <li><a class="nav-link" href="contact.html">Contact</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <a class="cart-btn is-here" href="cart.html" id="cartBtn" aria-label="Open cart" aria-current="page">
+        <span class="cart-btn-ico"><i class="fa-solid fa-bag-shopping"></i></span>
+        <span class="cart-btn-label">Cart</span>
+        <span class="cart-count" id="cartCount">0</span>
+        <span class="cart-btn-sheen"></span>
+      </a>
+       <a class="btn btn--bright btn--sm" href="login.html">
+         <span>Sign In</span>
+       </a>
+      <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<!-- ============ MOBILE FULLSCREEN MENU ============ -->
+<div class="mmenu" id="mmenu">
+  <div class="mmenu-wipe" id="mmenuWipe">
+    <div class="mmenu-bg" style="background-image:url('../images/nav-surface.webp')"></div>
+    <div class="mmenu-inner">
+      <div class="mmenu-head">
+        <span class="mmenu-brand"><img src="../images/logo-full-theme.webp" alt="Stackly" width="600" height="185" /></span>
+        <button class="mmenu-close" id="mmenuClose" aria-label="Close menu"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <ul class="mmenu-links">
+        <li><a href="../index.html"><em>01</em><span>Home</span><i class="fa-solid fa-arrow-right-long"></i></a></li>
+        <li><a href="shop.html"><em>02</em><span>Shop</span><i class="fa-solid fa-arrow-right-long"></i></a></li>
+        <li><a href="service.html"><em>03</em><span>Service</span><i class="fa-solid fa-arrow-right-long"></i></a></li>
+        <li><a href="about.html"><em>04</em><span>About</span><i class="fa-solid fa-arrow-right-long"></i></a></li>
+        <li><a href="contact.html"><em>05</em><span>Contact</span><i class="fa-solid fa-arrow-right-long"></i></a></li>
+      </ul>
+      <div class="mmenu-foot">
+        <a class="btn btn--solid btn--full" href="login.html"><span>Sign In</span></a>
+        <p class="mmenu-note"><i class="fa-solid fa-truck-fast"></i> Free shipping over $49 · 30-day returns</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main>
+<!-- ===================================================================
+     S2 · HERO — THE BAY
+     Three packed boxes drop onto the floor of a dim storeroom, the
+     free-delivery meter fills, and the readouts count themselves up.
+     =================================================================== -->
+<section class="ca-bay" id="caBay">
+  <div class="ca-bay__bg" aria-hidden="true">
+    <img class="ca-bay__shot" src="../images/promo-main.webp" alt="" id="caShot" />
+    <span class="ca-bay__scrim"></span>
+    <span class="ca-bay__grid"></span>
+  </div>
+
+  <div class="shell ca-bay__in">
+    <div class="ca-bay__row">
+      <div class="ca-bay__copy">
+        <span class="ca-chip" data-ca-h><i class="fa-solid fa-box-archive"></i> Packed and waiting</span>
+
+        <h1 class="ca-bay__t" data-ca-h>
+          <span class="ca-mask"><span>Your bag,</span></span>
+          <span class="ca-mask"><span>counted <em>twice.</em></span></span>
+        </h1>
+
+        <p class="ca-bay__sub" data-ca-h>
+          Everything you clicked is sitting on the belt below — quantity, price and
+          delivery in one place. Prices in USD, tax estimated before you pay.
+        </p>
+
+        <div class="ca-bay__cta" data-ca-h>
+          <a class="btn btn--bright btn--magnet" href="404.html" id="caJump">
+            <span id="caJumpT">Jump to the total</span><i class="fa-solid fa-receipt"></i>
+          </a>
+          <a class="btn btn--glass" href="404.html">
+            <span class="play-ring"><i class="fa-solid fa-bag-shopping"></i></span>
+            <span>Keep shopping</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="ca-bay__side" data-ca-h>
+        <div class="ca-meter" id="caMeter">
+          <span class="ca-meter__top">
+            <b id="caShipCount">0 items in the bag</b>
+            <em id="caShipMsg">$49.00 more for free delivery</em>
+          </span>
+          <span class="ca-meter__bar"><i id="caShipFill"></i></span>
+          <span class="ca-meter__foot">
+            <i class="fa-solid fa-truck-fast" aria-hidden="true"></i>
+            Free tracked delivery over $49 · no signature, no nonsense.
+          </span>
+        </div>
+
+        <dl class="ca-bay__read">
+          <div><dt>In the bag</dt><dd id="caHeroCount">0</dd></div>
+          <div><dt>Bag value</dt><dd id="caHeroValue">$0.00</dd></div>
+          <div><dt>Reserved</dt><dd>20 min</dd></div>
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     S3 · THE BELT + S4 · THE TALLY
+     Rows feed in along a moving tape, the total tag flips over on every
+     change, and the summary sticks to the eye line while you scroll.
+     =================================================================== -->
+<section class="ca-belt" id="caBelt">
+  <div class="shell">
+    <div class="ca-belt__head">
+      <div>
+        <span class="eyebrow" data-ca-r="clip"><i class="fa-solid fa-grip-lines"></i> On the belt</span>
+        <h2 class="sec-title" data-ca-r="clip">Everything you<br /><span class="accent">picked up</span></h2>
+      </div>
+      <p class="sec-note" data-ca-r="clip">
+        Each price was locked the moment you added the line, so nothing moves under
+        your hands. Three of the same line unlocks 5% off it automatically.
+      </p>
+    </div>
+
+    <div class="ca-belt__grid" id="caGrid">
+      <div class="ca-belt__main">
+        <div class="ca-belt__rail" aria-hidden="true"><i id="caRail"></i></div>
+        <ol class="ca-list" id="caList"></ol>
+        <p class="ca-live" id="caLive" role="status" aria-live="polite"></p>
+
+        <div class="ca-belt__tools">
+          <button class="ca-tool" type="button" id="caClear">
+            <i class="fa-solid fa-trash-can" aria-hidden="true"></i><span>Empty the bag</span>
+          </button>
+          <a class="ca-tool ca-tool--link" href="shop.html">
+            <i class="fa-solid fa-plus" aria-hidden="true"></i><span>Add something else</span>
+          </a>
+        </div>
+      </div>
+
+      <aside class="ca-tally" id="caTally" aria-labelledby="caTallyT">
+        <header class="ca-tally__head">
+          <h2 class="ca-tally__t" id="caTallyT">Summary</h2>
+          <span class="ca-tally__n" id="caTallyN">0 items</span>
+        </header>
+
+        <dl class="ca-tally__rows">
+          <div><dt>Subtotal</dt><dd id="caSub">$0.00</dd></div>
+
+          <div class="is-off" id="caBulkRow">
+            <dt>Bulk saving <em>3+ of a line</em></dt>
+            <dd id="caBulk">−$0.00</dd>
+          </div>
+
+          <div class="is-off" id="caPromoRow">
+            <dt>Promo code <em id="caPromoName"></em>
+              <button class="ca-drop" type="button" id="caPromoDrop" aria-label="Remove the promo code">
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+              </button>
+            </dt>
+            <dd id="caPromo">−$0.00</dd>
+          </div>
+
+          <div class="ca-tally__ship">
+            <dt>Delivery</dt>
+            <dd class="ca-ship">
+              <label class="ca-ship__pick">
+                <input type="radio" name="caShip" value="std" checked />
+                <span class="ca-ship__txt"><b>Standard</b><em>2–4 working days</em></span>
+                <span class="ca-ship__pr" id="caShipStd">Free</span>
+              </label>
+              <label class="ca-ship__pick">
+                <input type="radio" name="caShip" value="exp" />
+                <span class="ca-ship__txt"><b>Express</b><em>Next working day</em></span>
+                <span class="ca-ship__pr" id="caShipExp">$14.90</span>
+              </label>
+            </dd>
+          </div>
+
+          <div><dt>Estimated tax <em>8.5%</em></dt><dd id="caTax">$0.00</dd></div>
+        </dl>
+
+        <form class="ca-code" id="caCodeForm" novalidate>
+          <label class="ca-code__l" for="caCode">Promo code</label>
+          <div class="ca-code__ctl">
+            <i class="fa-solid fa-ticket" aria-hidden="true"></i>
+            <input id="caCode" name="code" type="text" placeholder="STACKLY10" autocomplete="off"
+                   spellcheck="false" aria-describedby="caCodeMsg" />
+            <button type="submit" id="caCodeGo"><span>Apply</span></button>
+          </div>
+          <p class="ca-code__msg" id="caCodeMsg" role="status" aria-live="polite"></p>
+        </form>
+
+        <div class="ca-tally__total">
+          <span class="ca-tally__tl">Total <em id="caTotalNote">tax included</em></span>
+          <span class="ca-flip" id="caTotal"><b>$0.00</b></span>
+        </div>
+
+        <button class="btn btn--solid btn--full ca-place" type="button" id="caPlace">
+          <span>Place order</span><i class="fa-solid fa-lock" aria-hidden="true"></i>
+        </button>
+
+        <p class="ca-tally__seal-note">
+          <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+          Encrypted checkout. We never store a card number on this page.
+        </p>
+
+        <ul class="ca-tally__notes">
+          <li><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> 30 days to change your mind, unopened.</li>
+          <li><i class="fa-solid fa-battery-three-quarters" aria-hidden="true"></i> 2-year warranty on everything we sell.</li>
+          <li><i class="fa-solid fa-clock" aria-hidden="true"></i> Order before 18:30 and it leaves the bench today.</li>
+        </ul>
+
+        <span class="ca-tape" id="caSeal" aria-hidden="true"></span>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     S5 · EMPTY BAG
+     Shown only when there is nothing on the belt.
+     =================================================================== -->
+<section class="ca-empty" id="caEmpty" hidden>
+  <div class="shell ca-empty__in">
+    <figure class="ca-empty__pic">
+      <img src="../images/cart-empty.webp" alt="An empty basket waiting to be filled" loading="lazy" />
+      <span class="ca-empty__ring" aria-hidden="true"></span>
+    </figure>
+
+    <div class="ca-empty__tx">
+      <span class="eyebrow" data-ca-r="clip"><i class="fa-solid fa-box-open"></i> Nothing on the belt</span>
+      <h2 class="sec-title" id="caEmptyT" tabindex="-1" data-ca-r="clip">It is empty.<br /><span class="accent">That is a choice.</span></h2>
+      <p class="sec-note" data-ca-r="clip">
+        Either you have excellent self-control, or you closed the tab on purpose.
+        Either way the way back is one tap away — and the shop remembers nothing, so
+        there is nothing to feel guilty about.
+      </p>
+      <div class="ca-empty__cta" data-ca-r="clip">
+        <a class="btn btn--solid btn--magnet" href="shop.html">
+          <span>Browse the shop</span><i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i>
+        </a>
+        <button class="btn btn--ghost" type="button" id="caUsuals">
+          <span>Add three usuals</span><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="shell ca-empty__cats">
+    <a class="ca-cat" href="shop.html">
+      <span class="ca-cat__pic"><img src="../images/cat-cases.webp" alt="Rugged phone cases on a shelf" loading="lazy" /></span>
+      <b>Cases &amp; covers</b><em>From $24</em>
+    </a>
+    <a class="ca-cat" href="shop.html">
+      <span class="ca-cat__pic"><img src="../images/cat-chargers.webp" alt="Chargers and cables" loading="lazy" /></span>
+      <b>Chargers</b><em>From $19</em>
+    </a>
+    <a class="ca-cat" href="shop.html">
+      <span class="ca-cat__pic"><img src="../images/cat-earbuds.webp" alt="Earbuds and cases" loading="lazy" /></span>
+      <b>Audio &amp; earbuds</b><em>From $69</em>
+    </a>
+    <a class="ca-cat" href="shop.html">
+      <span class="ca-cat__pic"><img src="../images/cat-powerbanks.webp" alt="Power banks on a bench" loading="lazy" /></span>
+      <b>Power banks</b><em>From $49</em>
+    </a>
+  </div>
+
+  <div class="shell ca-empty__seen">
+    <h3 class="ca-empty__h" data-ca-r="clip">Most added this week</h3>
+    <div class="ca-empty__grid">
+      <article class="ca-mini" data-ca-r="clip">
+        <span class="ca-mini__pic"><img src="../images/product-4.webp" alt="GripMag car mount" loading="lazy" /></span>
+        <b>GripMag Car Mount</b><em>$27.00</em>
+        <button type="button" class="add-to-cart" data-id="gripmag" data-name="GripMag Car Mount" data-price="27" data-img="../images/product-4.webp">
+          <span>Add</span><i class="fa-solid fa-cart-plus" aria-hidden="true"></i>
+        </button>
+      </article>
+      <article class="ca-mini" data-ca-r="clip">
+        <span class="ca-mini__pic"><img src="../images/product-3.webp" alt="Pulse Mini speaker" loading="lazy" /></span>
+        <b>Pulse Mini</b><em>$69.00</em>
+        <button type="button" class="add-to-cart" data-id="pulse-mini" data-name="Pulse Mini" data-price="69" data-img="../images/product-3.webp">
+          <span>Add</span><i class="fa-solid fa-cart-plus" aria-hidden="true"></i>
+        </button>
+      </article>
+      <article class="ca-mini" data-ca-r="clip">
+        <span class="ca-mini__pic"><img src="../images/arrival-3.webp" alt="CoreCell 20K power bank" loading="lazy" /></span>
+        <b>CoreCell 20K</b><em>$72.00</em>
+        <button type="button" class="add-to-cart" data-id="corecell" data-name="CoreCell 20K Power Bank" data-price="72" data-img="../images/arrival-3.webp">
+          <span>Add</span><i class="fa-solid fa-cart-plus" aria-hidden="true"></i>
+        </button>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     S6 · ORDER CONFIRMED
+     The summary card is sealed with tape, then the whole panel prints
+     itself out of the top of the screen.
+     =================================================================== -->
+<section class="ca-done" id="caDone" hidden>
+  <div class="shell ca-done__in">
+    <div class="ca-done__card" id="caDoneCard">
+      <span class="ca-done__tape" aria-hidden="true"><i></i></span>
+
+      <span class="ca-chip" data-ca-d><i class="fa-solid fa-receipt"></i> Order received</span>
+
+      <h2 class="ca-done__t" id="caDoneT" tabindex="-1" data-ca-d>
+        Order <em id="caOrderNo">STK-000000</em><br />is on the bench.
+      </h2>
+
+      <p class="ca-done__sub" data-ca-d id="caDoneMsg">
+        Payment cleared, packing slip printed, and the parcel is already on the shelf
+        waiting for its courier.
+      </p>
+
+      <dl class="ca-done__grid" data-ca-d>
+        <div><dt>Reference</dt><dd id="caOrderRef">STK-000000</dd></div>
+        <div><dt>Lines</dt><dd id="caOrderItems">0</dd></div>
+        <div><dt>Paid</dt><dd id="caOrderTotal">$0.00</dd></div>
+        <div><dt>Arriving</dt><dd id="caOrderEta">—</dd></div>
+      </dl>
+
+      <ul class="ca-done__recap" id="caDoneRecap" data-ca-d></ul>
+
+      <ol class="ca-done__steps" data-ca-d>
+        <li><span>01</span><p><b>We pick and pack.</b> Usually within the hour, by the same hands that tested the gear.</p></li>
+        <li><span>02</span><p><b>You get a tracking link</b> by email the second it leaves unit four.</p></li>
+        <li><span>03</span><p><b>A human answers</b> if anything looks wrong — just reply to the confirmation.</p></li>
+      </ol>
+
+      <div class="ca-done__cta" data-ca-d>
+        <a class="btn btn--solid" href="service.html"><span>Track the order</span><i class="fa-solid fa-location-dot" aria-hidden="true"></i></a>
+        <a class="btn btn--ghost" href="shop.html"><span>Keep shopping</span><i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i></a>
+        <button class="btn btn--ghost" type="button" id="caPrint"><span>Print receipt</span><i class="fa-solid fa-print" aria-hidden="true"></i></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     S7 · COMPLETE THE SET
+     Four add-ons people bolt onto the same order. Tap one and it flies
+     into the cart button in the header.
+     =================================================================== -->
+<section class="ca-more" id="caMore">
+  <div class="shell">
+    <div class="ca-more__head">
+      <div>
+        <span class="eyebrow" data-ca-r="clip"><i class="fa-solid fa-layer-group"></i> While it is open</span>
+        <h2 class="sec-title" data-ca-r="clip">The usual<br /><span class="accent">add-ons</span></h2>
+      </div>
+      <p class="sec-note" data-ca-r="clip">
+        Four things people add to the same order. Tap one and it flies straight into
+        the bag — the total flips as it lands.
+      </p>
+    </div>
+
+    <div class="ca-more__grid">
+      <article class="ca-add" data-ca-r="clip">
+        <span class="ca-add__pic">
+          <img src="../images/product-4.webp" alt="Bolt 140W braided cable" loading="lazy" />
+          <span class="ca-add__in" aria-hidden="true"><i class="fa-solid fa-check"></i> In your bag</span>
+        </span>
+        <span class="ca-add__cat">Cables</span>
+        <h3 class="ca-add__name">Bolt 140W Braided</h3>
+        <p class="ca-add__note">2 m of it, and it will outlive two phones.</p>
+        <span class="ca-add__buy">
+          <span class="ca-add__price">$19.00</span>
+          <button type="button" class="add-to-cart add-to-cart--lit" data-id="bolt-140" data-name="Bolt 140W Braided" data-price="19" data-img="../images/product-4.webp">
+            <span>Add</span><i class="fa-solid fa-cart-plus" aria-hidden="true"></i>
+          </button>
+        </span>
+      </article>
+
+      <article class="ca-add" data-ca-r="clip">
+        <span class="ca-add__pic">
+          <img src="../images/gallery-2.webp" alt="Ceramic Armour phone case" loading="lazy" />
+          <span class="ca-add__in" aria-hidden="true"><i class="fa-solid fa-check"></i> In your bag</span>
+        </span>
+        <span class="ca-add__cat">Cases</span>
+        <h3 class="ca-add__name">Ceramic Armour</h3>
+        <p class="ca-add__note">1.2 mm of ceramic back. Survives the drop wall twice.</p>
+        <span class="ca-add__buy">
+          <span class="ca-add__price">$34.00</span>
+          <button type="button" class="add-to-cart add-to-cart--lit" data-id="ceramic" data-name="Ceramic Armour" data-price="34" data-img="../images/gallery-2.webp">
+            <span>Add</span><i class="fa-solid fa-cart-plus" aria-hidden="true"></i>
+          </button>
+        </span>
+      </article>
+
+      <article class="ca-add" data-ca-r="clip">
+        <span class="ca-add__pic">
+          <img src="../images/product-2.webp" alt="SolarFold 20K folding power bank" loading="lazy" />
+          <span class="ca-add__in" aria-hidden="true"><i class="fa-solid fa-check"></i> In your bag</span>
+        </span>
+        <span class="ca-add__cat">Power</span>
+        <h3 class="ca-add__name">SolarFold 20K</h3>
+        <p class="ca-add__note">Folds flat, charges a phone three times over.</p>
+        <span class="ca-add__buy">
+          <span class="ca-add__price">$49.00</span>
+          <button type="button" class="add-to-cart add-to-cart--lit" data-id="solarfold" data-name="SolarFold 20K" data-price="49" data-img="../images/product-2.webp">
+            <span>Add</span><i class="fa-solid fa-cart-plus" aria-hidden="true"></i>
+          </button>
+        </span>
+      </article>
+
+      <article class="ca-add" data-ca-r="clip">
+        <span class="ca-add__pic">
+          <img src="../images/gallery-1.webp" alt="Halo ANC earbuds" loading="lazy" />
+          <span class="ca-add__in" aria-hidden="true"><i class="fa-solid fa-check"></i> In your bag</span>
+        </span>
+        <span class="ca-add__cat">Audio</span>
+        <h3 class="ca-add__name">Halo ANC Earbuds</h3>
+        <p class="ca-add__note">Hybrid noise cancelling, 38 hours with the case.</p>
+        <span class="ca-add__buy">
+          <span class="ca-add__price">$89.00</span>
+          <button type="button" class="add-to-cart add-to-cart--lit" data-id="halo-anc" data-name="Halo ANC Earbuds" data-price="89" data-img="../images/gallery-1.webp">
+            <span>Add</span><i class="fa-solid fa-cart-plus" aria-hidden="true"></i>
+          </button>
+        </span>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     S8 · HOW IT TRAVELS
+     Reassurance band: what happens after you press Place order.
+     =================================================================== -->
+<section class="ca-safe" id="caSafe">
+  <div class="shell">
+    <div class="ca-safe__head">
+      <span class="eyebrow" data-ca-r="clip"><i class="fa-solid fa-shield-halved"></i> After you pay</span>
+      <h2 class="sec-title" data-ca-r="clip">How it <span class="accent">travels</span></h2>
+      <p class="sec-note" data-ca-r="clip">
+        The boring part, written down. Nothing here needs a phone call to a call centre.
+      </p>
+    </div>
+
+    <div class="ca-safe__grid">
+      <article class="ca-safe__c" data-ca-r="clip">
+        <span class="ca-safe__pic"><img src="../images/service-delivery.webp" alt="A courier handing over a parcel" loading="lazy" /></span>
+        <i class="fa-solid fa-truck-fast ca-safe__ico" aria-hidden="true"></i>
+        <h3>Tracked, not guessed</h3>
+        <p>A real courier, a real tracking link, and a delivery window in your own time zone. No signature required under $200.</p>
+      </article>
+
+      <article class="ca-safe__c" data-ca-r="clip">
+        <span class="ca-safe__pic"><img src="../images/trust-surface.webp" alt="The Stackly guarantee seal" loading="lazy" /></span>
+        <i class="fa-solid fa-certificate ca-safe__ico" aria-hidden="true"></i>
+        <h3>Two years, in writing</h3>
+        <p>Every line carries a 2-year warranty. If it fails, the bench repairs it with genuine parts before anyone suggests a replacement.</p>
+      </article>
+
+      <article class="ca-safe__c" data-ca-r="clip">
+        <span class="ca-safe__pic"><img src="../images/cat-cases.webp" alt="Phone in a rugged case" loading="lazy" /></span>
+        <i class="fa-solid fa-rotate-left ca-safe__ico" aria-hidden="true"></i>
+        <h3>30 days, unopened</h3>
+        <p>Changed your mind? Send it back within 30 days in its original packaging and the money returns to the original payment method.</p>
+      </article>
+
+      <article class="ca-safe__c" data-ca-r="clip">
+        <span class="ca-safe__pic"><img src="../images/promo-main.webp" alt="A parcel being packed at the counter" loading="lazy" /></span>
+        <i class="fa-solid fa-box-open ca-safe__ico" aria-hidden="true"></i>
+        <h3>Packed like it matters</h3>
+        <p>Recycled board, paper tape, zero plastic. If it arrives bent, we replace it on the next order without an argument.</p>
+      </article>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ============ S9 · FOOTER (identical shell) ============ -->
+<footer class="foot" id="footer">
+  <div class="foot-news" data-parallax style="background-image:url('../images/newsletter-surface.webp')">
+    <div class="fn-veil"></div>
+    <div class="shell fn-inner">
+      <div class="fn-copy">
+        <h2 data-reveal="rise">Get the drop <span class="accent">first</span></h2>
+        <p data-reveal="rise">New arrivals, restocks and one genuinely useful email a week. No noise.</p>
+      </div>
+     <form class="fn-form" id="newsForm" data-reveal="rise" novalidate>
+       <span class="fn-ico"><i class="fa-solid fa-envelope"></i></span>
+       <input type="email" id="newsEmail" name="email" placeholder="you@example.com" aria-label="Email address" aria-describedby="newsMsg" autocomplete="email" />
+       <button class="btn btn--solid" type="submit"><span>Subscribe</span><i class="fa-solid fa-paper-plane"></i></button>
+       <p class="fn-msg" id="newsMsg" role="status" aria-live="polite"></p>
+     </form>
+    </div>
+  </div>
+
+  <div class="foot-main">
+    <div class="shell foot-grid">
+      <div class="fg-brand">
+        <a class="brand brand--foot" href="../index.html" aria-label="Stackly home">
+          <img class="brand-logo" src="../images/logo-full-theme.webp" alt="Stackly" width="600" height="185" decoding="async" />
+        </a>
+        <p>Gear that moves with you. Curated mobile accessories, tested in our own lab and shipped from our own bench.</p>
+        <div class="fg-social">
+          <a href="404.html" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="404.html" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
+          <a href="404.html" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+          <a href="404.html" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+        </div>
+       </div>
+
+       <div class="fg-col" data-aos="fade-up" data-aos-delay="0" data-aos-duration="650">
+         <h4>Company</h4>
+         <ul>
+           <li><a href="../index.html">Home</a></li>
+           <li><a href="shop.html">Shop</a></li>
+           <li><a href="service.html">Service</a></li>
+           <li><a href="about.html">About</a></li>
+           <li><a href="contact.html">Contact</a></li>
+         </ul>
+       </div>
+
+       <div class="fg-col fg-col--touch" data-aos="fade-up" data-aos-delay="110" data-aos-duration="650">
+         <h4>Get in touch</h4>
+         <ul class="fg-contact">
+           <li>
+             <i class="fa-solid fa-location-dot"></i>
+             <span><b>Address</b>MMR Complex, Chinna Thirupathi, near Chinna Muniyappan Kovil, Salem, Tamil Nadu 636008</span>
+           </li>
+           <li>
+             <i class="fa-solid fa-envelope"></i>
+             <span><b>Mail ID</b><a href="404.html">info@stackly.com</a></span>
+           </li>
+           <li>
+             <i class="fa-solid fa-mobile-screen"></i>
+             <span><b>Mobile</b><a href="404.html">+91 9764536787</a></span>
+           </li>
+         </ul>
+       </div>
+
+      <div class="fg-col" data-aos="fade-up" data-aos-delay="220" data-aos-duration="650">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="404.html">Track an order</a></li>
+          <li><a href="404.html">Shipping &amp; returns</a></li>
+          <li><a href="404.html">Warranty claims</a></li>
+          <li><a href="404.html">Privacy policy</a></li>
+          <li><a href="404.html">Terms of service</a></li>
+        </ul>
+        <div class="fg-pay">
+          <i class="fa-brands fa-cc-visa"></i>
+          <i class="fa-brands fa-cc-mastercard"></i>
+          <i class="fa-brands fa-cc-paypal"></i>
+          <i class="fa-brands fa-cc-apple-pay"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="shell foot-marquee">
+      <div class="fm-track">
+        <span>Stackly</span><i class="fa-solid fa-mobile-screen-button"></i>
+        <span>GEAR THAT MOVES WITH YOU</span><i class="fa-solid fa-bolt"></i>
+        <span>Stackly</span><i class="fa-solid fa-mobile-screen-button"></i>
+        <span>GEAR THAT MOVES WITH YOU</span><i class="fa-solid fa-bolt"></i>
+      </div>
+    </div>
+
+    <div class="shell foot-bottom">
+      <p>© 2026 Stackly. All rights reserved.</p>
+      <p class="fb-links">
+        <a href="404.html">Privacy</a><span>·</span>
+        <a href="404.html">Terms</a><span>·</span>
+        <a href="404.html">Cookies</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ FLOATING UI ============ -->
+<button class="totop" id="toTop" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
+<div class="toast" id="toast">
+  <span class="toast-ico"><i class="fa-solid fa-circle-check"></i></span>
+  <div><b id="toastTitle">Added to cart</b><em id="toastText">FluxPad Wireless Charger</em></div>
+</div>
+
+<!-- ============ UNDO STRIP ============ -->
+<div class="ca-undo" id="caUndo" role="status" aria-live="polite" hidden>
+  <span class="ca-undo__tx" id="caUndoTx">Removed</span>
+  <button class="ca-undo__go" type="button" id="caUndoGo">Undo<i class="fa-solid fa-arrow-rotate-left" aria-hidden="true"></i></button>
+</div>
+
+<!-- ============================================================
+     ANIMATION RUNTIME
+     home.js carries the shared shell (preloader, header, fullscreen
+     menu, cart badge, newsletter, back-to-top) and inlines GSAP 3.12.5 +
+     ScrollTrigger 3.12.5 + Lenis, so the loader, the hamburger and the
+     smooth scroll behave exactly as they do on the home page.
+     cart.js adds the Cart page's own choreography: the boxes settling
+     in the bay, rows feeding along the belt, the total tag flipping,
+     fly-to-cart add-ons and the order confirmation.
+     Do not load a second GSAP copy: duplicate instances break
+     ScrollTrigger.
+     ============================================================ -->
+<script src="../JS/home.js" data-animation-runtime="gsap@3.12.5 scrolltrigger@3.12.5 lenis@1.x" data-gsap-source="bundled-inline"></script>
+<script src="../JS/cart.js"></script>
+</body>
+</html>

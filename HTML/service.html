@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Service — Stackly</title>
+<meta name="description" content="The Stackly Service Centre: bench repairs, genuine parts, calibration, warranty claims and free doorstep pickup and drop-off." />
+<link rel="icon" type="image/webp" href="../images/logo-icon-theme.webp" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<style id="boot-paint">
+  /* the whole preloader is inlined so the very first paint IS the loader —
+     nothing dark/blank before it, and no blur/mask layers that can fail
+     to composite on some GPUs. */
+  html,body{background:#0B0D12;color:#F3F0EA;margin:0}
+  .preloader{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;overflow:hidden;background:#0B0D12;transition:opacity .55s ease,visibility .55s}
+  .pre-glow{position:absolute;inset:0;
+    background:
+      radial-gradient(68% 60% at 50% 26%,rgba(91,61,245,.34),transparent 66%),
+      radial-gradient(60% 55% at 50% 112%,rgba(255,90,54,.26),transparent 72%),
+      radial-gradient(circle at 1px 1px,rgba(243,240,234,.10) 1px,transparent 0);
+    background-size:auto,auto,26px 26px}
+  .pre-inner{position:relative;z-index:2;text-align:center;transition:opacity .5s ease,transform .55s cubic-bezier(.22,1,.36,1)}
+  .pre-logo{display:flex;align-items:center;justify-content:center;animation:logoPop 1.1s cubic-bezier(.34,1.56,.64,1) both}
+  .pre-logo-img{display:block;width:auto;height:clamp(1.9rem,5.2vw,2.6rem);object-fit:contain;filter:drop-shadow(0 2px 18px rgba(91,61,245,.45))}
+  .pre-tag{margin-top:16px;font-size:.74rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(243,240,234,.5);min-height:1.2em}
+  .pre-bar{width:min(320px,74vw);height:5px;margin:30px auto 14px;border-radius:20px;background:rgba(243,240,234,.12);overflow:hidden}
+  .pre-bar-fill{display:block;height:100%;width:0;border-radius:20px;background:linear-gradient(90deg,#5B3DF5,#FF5A36);box-shadow:0 0 18px rgba(255,90,54,.7)}
+  .pre-meta{display:flex;align-items:center;justify-content:center;gap:12px;font-family:"Sora",system-ui,sans-serif;font-size:.78rem;letter-spacing:.1em;color:rgba(243,240,234,.5)}
+  .pre-meta #preCount{color:#F3F0EA;font-weight:700;font-size:1rem}
+  .pre-dots{display:inline-flex;gap:4px}
+  .pre-dots i{width:4px;height:4px;border-radius:50%;background:rgba(243,240,234,.5);animation:blink 1.2s infinite}
+  .pre-dots i:nth-child(2){animation-delay:.2s}
+  .pre-dots i:nth-child(3){animation-delay:.4s}
+  .preloader.done{opacity:0;visibility:hidden;pointer-events:none}
+  .preloader.hide{display:none}
+  @keyframes logoPop{from{opacity:0;transform:scale(.8) translateY(12px)}}
+  @keyframes blink{50%{opacity:.25}}
+</style>
+<!-- all stylesheets load after the loader has painted (nothing blocks first paint) -->
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" media="print" onload="this.media='all'" />
+<link rel="stylesheet" href="../CSS/home.css" media="print" onload="this.media='all'" />
+<link rel="stylesheet" href="../CSS/service.css" media="print" onload="this.media='all'" />
+<noscript>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="../CSS/home.css" />
+  <link rel="stylesheet" href="../CSS/service.css" />
+  <style>
+    [data-reveal],[data-aos],[data-sv-r]{opacity:1 !important;transform:none !important;clip-path:none !important;filter:none !important}
+    .preloader{display:none}
+    body{overflow:auto !important}
+  </style>
+</noscript>
+</head>
+<body>
+<!-- ============ SCROLL PROGRESS ============ -->
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- ============ PRELOADER ============ -->
+<div class="preloader" id="preloader">
+  <div class="pre-glow"></div>
+  <div class="pre-inner">
+      <div class="pre-logo">
+        <img class="pre-logo-img" src="../images/logo-full-theme.webp" alt="Stackly" width="600" height="185" />
+      </div>
+    <p class="pre-tag" id="preTag">Calibrating your gear</p>
+
+    <div class="pre-bar"><span class="pre-bar-fill" id="preBar"></span></div>
+    <div class="pre-meta">
+      <span id="preCount">0</span><span>%</span>
+      <span class="pre-dots"><i></i><i></i><i></i></span>
+      <span id="preStep">Booting store</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ S1 · HEADER / NAVBAR ============ -->
+<header class="site-head" id="header">
+  <div class="head-glow" style="background-image:url('../images/nav-surface.webp')"></div>
+
+  <div class="announce">
+    <div class="shell announce-inner">
+      <div class="announce-track" id="announceTrack">
+        <a class="announce-item" href="404.html">
+          <img src="../images/chip-1.webp" width="300" height="300" alt="Studio headphones" />
+          <span>Launch week — <b>25% off</b> audio gear</span>
+          <i class="fa-solid fa-arrow-right-long"></i>
+        </a>
+        <a class="announce-item" href="404.html">
+          <img src="../images/service-repair.webp" width="720" height="520" alt="Doorstep repair service" />
+          <span>Free <b>doorstep</b> battery replacement</span>
+          <i class="fa-solid fa-arrow-right-long"></i>
+        </a>
+        <a class="announce-item" href="404.html">
+          <img src="../images/chip-2.webp" width="300" height="300" alt="Smart watch" />
+          <span>Trade in your watch — <b>up to $60 off</b></span>
+          <i class="fa-solid fa-arrow-right-long"></i>
+        </a>
+      </div>
+      <div class="announce-side">
+        <span><i class="fa-solid fa-truck-fast"></i> Free shipping over $49</span>
+      </div>
+    </div>
+  </div>
+
+  <nav class="nav shell" id="nav">
+    <a class="brand" href="../index.html" aria-label="Stackly home">
+      <img class="brand-logo" src="../images/logo-full-theme.webp" alt="Stackly" width="600" height="185" decoding="async" />
+    </a>
+
+    <ul class="nav-links" id="navLinks">
+      <span class="nav-pill" id="navPill" aria-hidden="true"></span>
+      <li><a class="nav-link" href="../index.html">Home</a></li>
+      <li><a class="nav-link" href="shop.html">Shop</a></li>
+      <li><a class="nav-link is-active" href="service.html">Service</a></li>
+      <li><a class="nav-link" href="about.html">About</a></li>
+      <li><a class="nav-link" href="contact.html">Contact</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <a class="cart-btn" href="cart.html" id="cartBtn" aria-label="Open cart">
+        <span class="cart-btn-ico"><i class="fa-solid fa-bag-shopping"></i></span>
+        <span class="cart-btn-label">Cart</span>
+        <span class="cart-count" id="cartCount">0</span>
+        <span class="cart-btn-sheen"></span>
+      </a>
+       <a class="btn btn--bright btn--sm" href="login.html">
+         <span>Sign In</span>
+       </a>
+      <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- ============ MOBILE FULLSCREEN MENU ============ -->
+<div class="mmenu" id="mmenu">
+  <div class="mmenu-wipe" id="mmenuWipe">
+    <div class="mmenu-bg" style="background-image:url('../images/nav-surface.webp')"></div>
+    <div class="mmenu-inner">
+      <div class="mmenu-head">
+        <span class="mmenu-brand"><img src="../images/logo-full-theme.webp" alt="Stackly" width="600" height="185" /></span>
+        <button class="mmenu-close" id="mmenuClose" aria-label="Close menu"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <ul class="mmenu-links">
+        <li><a href="../index.html"><em>01</em><span>Home</span><i class="fa-solid fa-arrow-right-long"></i></a></li>
+        <li><a href="shop.html"><em>02</em><span>Shop</span><i class="fa-solid fa-arrow-right-long"></i></a></li>
+        <li><a href="service.html" class="is-active" aria-current="page"><em>03</em><span>Service</span><i class="fa-solid fa-arrow-right-long"></i></a></li>
+        <li><a href="about.html"><em>04</em><span>About</span><i class="fa-solid fa-arrow-right-long"></i></a></li>
+        <li><a href="contact.html"><em>05</em><span>Contact</span><i class="fa-solid fa-arrow-right-long"></i></a></li>
+      </ul>
+      <div class="mmenu-foot">
+        <a class="btn btn--solid btn--full" href="login.html"><span>Sign In</span></a>
+        <p class="mmenu-note"><i class="fa-solid fa-truck-fast"></i> Free shipping over $49 · 30-day returns</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main>
+<!-- =====================================================================
+     1 · THE APERTURE — hero. An angular bench plate with a live radar
+     sweep. The headline scatters in per letter and one word resolves from
+     a scramble, so nothing here uses the shop or home headline grammar.
+     ===================================================================== -->
+<section class="sv-aperture" id="svAperture">
+  <div class="sv-aperture__field" aria-hidden="true"></div>
+  <div class="sv-aperture__wrap shell">
+    <div>
+      <span class="eyebrow eyebrow--light" data-sv-r="tag"><i class="fa-solid fa-screwdriver-wrench"></i> The service centre</span>
+      <h1 class="sv-display" id="svHeadline">
+        <span class="sv-line" data-sv-words>Fixed on the bench,</span>
+        <span class="sv-line" data-sv-words>not in a queue.</span>
+      </h1>
+      <p class="sv-aperture__lede" data-sv-r="tag">Open the back, replace the part, prove it works, and hand it back with the readings that prove it. Twelve benches, six disciplines, one queue you can actually watch.</p>
+      <div class="sv-aperture__cta sv-cta" data-sv-r="tag">
+        <a class="btn btn--bright" href="404.html"><span>Book a bench</span><i class="fa-solid fa-arrow-down"></i></a>
+        <a class="btn btn--glass" href="404.html"><span>See the live queue</span><i class="fa-solid fa-grip-horizontal"></i></a>
+      </div>
+      <ul class="sv-strip" data-sv-r="strip">
+        <li>
+          <span class="sv-win"><img src="../images/chip-1.webp" width="300" height="300" alt="Replacement USB-C driver set laid out on the bench" loading="lazy" /></span>
+          <b>Micro-solder</b><em>board level</em>
+        </li>
+        <li>
+          <span class="sv-win"><img src="../images/chip-2.webp" width="300" height="300" alt="Replacement battery cell with its flex ribbon" loading="lazy" /></span>
+          <b>Cell swap</b><em>same day</em>
+        </li>
+        <li>
+          <span class="sv-win"><img src="../images/preloader-core.webp" width="400" height="400" alt="Calibration jig used to verify a repaired screen" loading="lazy" /></span>
+          <b>Verified</b><em>before dispatch</em>
+        </li>
+      </ul>
+    </div>
+
+    <figure class="sv-aperture__bay" data-sv-r="plate">
+      <div class="sv-plate">
+        <img class="sv-plate__img" src="../images/service-repair.webp" width="720" height="520" alt="A phone open on the repair bench with its display lifted away from the body" />
+        <span class="sv-plate__sweep" aria-hidden="true"></span>
+        <span class="sv-plate__reticle" aria-hidden="true"></span>
+        <span class="sv-plate__scale" aria-hidden="true"><b>04</b><i>of 12 benches</i></span>
+      </div>
+      <figcaption>
+        <span>Bay 04 — display separation</span>
+        <span class="sv-plate__load"><b>62%</b> loaded</span>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- =====================================================================
+     2 · THE INTAKE — a booking console. A numbered rail of disciplines on
+     the left picks the job; the photo on the right cross-fades to match.
+     ===================================================================== -->
+<section class="sv-intake" id="svIntake">
+  <div class="sv-intake__wrap shell">
+    <div class="sv-intake__rail" role="tablist" aria-label="Service disciplines">
+      <span class="sv-intake__railcap" aria-hidden="true">Pick a discipline</span>
+      <button class="sv-slot is-on" role="tab" id="svSlot0" aria-selected="true" aria-controls="svShot" data-sv-shot="0" data-sv-r="railin">
+        <em>01</em>
+        <span class="sv-win"><img src="../images/service-repair.webp" width="720" height="520" alt="" loading="lazy" /></span>
+        <span><b>Screen &amp; glass</b><i>Same day</i></span>
+      </button>
+      <button class="sv-slot" role="tab" id="svSlot1" aria-selected="false" aria-controls="svShot" data-sv-shot="1" data-sv-r="railin">
+        <em>02</em>
+        <span class="sv-win"><img src="../images/service-authenticity.webp" width="720" height="520" alt="" loading="lazy" /></span>
+        <span><b>Diagnostics</b><i>2 hours</i></span>
+      </button>
+      <button class="sv-slot" role="tab" id="svSlot2" aria-selected="false" aria-controls="svShot" data-sv-shot="2" data-sv-r="railin">
+        <em>03</em>
+        <span class="sv-win"><img src="../images/service-delivery.webp" width="720" height="520" alt="" loading="lazy" /></span>
+        <span><b>Battery &amp; charge</b><i>Same day</i></span>
+      </button>
+      <button class="sv-slot" role="tab" id="svSlot3" aria-selected="false" aria-controls="svShot" data-sv-shot="3" data-sv-r="railin">
+        <em>04</em>
+        <span class="sv-win"><img src="../images/support.webp" width="900" height="600" alt="" loading="lazy" /></span>
+        <span><b>Water &amp; corrosion</b><i>48 hours</i></span>
+      </button>
+    </div>
+
+    <div class="sv-intake__desk">
+      <div class="sv-shot" id="svShot" role="tabpanel" aria-live="polite">
+        <img src="../images/service-repair.webp" width="720" height="520" alt="A phone open on the repair bench with its display lifted away from the body" />
+        <img src="../images/service-authenticity.webp" width="720" height="520" alt="Diagnostic software reading a logic board" hidden />
+        <img src="../images/service-delivery.webp" width="720" height="520" alt="A replacement battery being seated into a phone body" hidden />
+        <img src="../images/support.webp" width="900" height="600" alt="A technician inspecting a water damaged logic board" hidden />
+        <span class="sv-shot__badge" id="svShotBadge">Same day</span>
+      </div>
+
+      <form class="sv-book" id="svBook" novalidate>
+        <h2 class="sv-book__h" data-aos="fade-right" data-aos-delay="0">Book a bench</h2>
+        <p class="sv-book__p" data-aos="fade-right" data-aos-delay="70">Tell us what broke and we will hold a bay for you. No account needed.</p>
+        <label class="sv-field" data-aos="fade-right" data-aos-delay="140">
+          <span>What broke</span>
+          <input type="text" id="svWhat" name="what" placeholder="Cracked screen, near the speaker" autocomplete="off" aria-describedby="svWhatErr" />
+          <em class="sv-err" id="svWhatErr" role="alert"></em>
+        </label>
+        <div class="sv-field sv-field--split" data-aos="fade-right" data-aos-delay="210">
+          <label><span>Model</span><input type="text" id="svModel" name="model" placeholder="AeroGlass Grip" autocomplete="off" aria-describedby="svModelErr" /><em class="sv-err" id="svModelErr" role="alert"></em></label>
+          <label><span>When suits</span>
+            <select id="svWhen" name="when" aria-describedby="svWhenErr">
+              <option value="" selected disabled>Pick a day</option>
+              <option>Today</option>
+              <option>Tomorrow</option>
+              <option>This week</option>
+              <option>Just collecting</option>
+            </select>
+            <em class="sv-err" id="svWhenErr" role="alert"></em>
+          </label>
+        </div>
+        <label class="sv-field" data-aos="zoom-in" data-aos-delay="280">
+          <span>Email</span>
+          <input type="email" id="svEmail" name="email" placeholder="you@example.com" autocomplete="email" aria-describedby="svEmailErr" />
+          <em class="sv-err" id="svEmailErr" role="alert"></em>
+        </label>
+        <button class="btn btn--solid" type="submit" data-aos="zoom-in" data-aos-delay="350"><span>Hold a bay</span><i class="fa-solid fa-arrow-right"></i></button>
+        <p class="sv-book__msg" id="svBookMsg" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- =====================================================================
+     3 · THE LONG BENCH — pinned horizontal rail. The section pins and the
+     stations travel sideways under the scrub, which nothing on the home
+     or shop page does.
+     ===================================================================== -->
+<section class="sv-bench" id="svBench">
+  <div class="sv-bench__pin" id="svBenchPin">
+    <header class="sec-head shell">
+      <div>
+        <span class="eyebrow eyebrow--light" data-sv-r="tag"><i class="fa-solid fa-grip-horizontal"></i> Walk the bench</span>
+        <h2 class="sec-title" data-sv-r="typeup">Six stations, left to right</h2>
+      </div>
+      <p class="sec-note sec-note--light" data-sv-r="tag">Drag or scroll. Each station is a real discipline with its own tooling, and the pass rate is printed on the tile.</p>
+    </header>
+    <div class="sv-rail" id="svRail">
+      <div class="sv-rail__track" id="svRailTrack">
+        <article class="sv-stn" data-sv-r="cardin">
+          <span class="sv-stn__no">01</span>
+          <div class="sv-win"><img src="../images/product-1.webp" width="720" height="720" alt="A phone clamped in the drop rig for impact testing" loading="lazy" /></div>
+          <h3>Drop rig</h3>
+          <p>2.1 m onto steel, forty cycles, front and back.</p>
+          <span class="sv-stn__rate"><b>99.2%</b> pass</span>
+        </article>
+        <article class="sv-stn" data-sv-r="cardin">
+          <span class="sv-stn__no">02</span>
+          <div class="sv-win"><img src="../images/product-2.webp" width="720" height="720" alt="A case being tested under a 9H scratch point" loading="lazy" /></div>
+          <h3>Scratch</h3>
+          <p>9H under a three kilogram load, ten thousand strokes.</p>
+          <span class="sv-stn__rate"><b>97.8%</b> pass</span>
+        </article>
+        <article class="sv-stn" data-sv-r="cardin">
+          <span class="sv-stn__no">03</span>
+          <div class="sv-win"><img src="../images/cat-powerbanks.webp" width="620" height="620" alt="A power bank passing charge to a phone on the bench" loading="lazy" /></div>
+          <h3>Charge</h3>
+          <p>140 W passthrough, thermal soak, then the cable tug.</p>
+          <span class="sv-stn__rate"><b>98.4%</b> pass</span>
+        </article>
+        <article class="sv-stn" data-sv-r="cardin">
+          <span class="sv-stn__no">04</span>
+          <div class="sv-win"><img src="../images/product-3.webp" width="720" height="720" alt="A magnet ring face down with its pucks visible" loading="lazy" /></div>
+          <h3>Magnet</h3>
+          <p>Sixteen pucks, pull force logged on every single unit.</p>
+          <span class="sv-stn__rate"><b>96.1%</b> pass</span>
+        </article>
+        <article class="sv-stn" data-sv-r="cardin">
+          <span class="sv-stn__no">05</span>
+          <div class="sv-win"><img src="../images/cat-speakers.webp" width="620" height="620" alt="A charging hub with its port cutout being measured" loading="lazy" /></div>
+          <h3>Port</h3>
+          <p>One millimetre of tolerance on the cutout, checked optically.</p>
+          <span class="sv-stn__rate"><b>99.6%</b> pass</span>
+        </article>
+        <article class="sv-stn" data-sv-r="cardin">
+          <span class="sv-stn__no">06</span>
+          <div class="sv-win"><img src="../images/product-4.webp" width="720" height="720" alt="A case after the open and close cycle test" loading="lazy" /></div>
+          <h3>Cycle</h3>
+          <p>Forty open-close cycles with the hinge under load.</p>
+          <span class="sv-stn__rate"><b>98.9%</b> pass</span>
+        </article>
+        <div class="sv-rail__end" aria-hidden="true"><span>End of bench</span></div>
+      </div>
+      <div class="sv-rail__meter" aria-hidden="true"><i id="svRailMeter"></i></div>
+    </div>
+  </div>
+</section>
+
+<!-- =====================================================================
+     4 · THE LEDGER — a dense claims table. Rows are a real table so the
+     numbers line up; hovering a row pushes its detail open beside it.
+     ===================================================================== -->
+<section class="sv-ledger" id="svLedger">
+  <div class="sv-ledger__wrap shell">
+    <header class="sec-head">
+      <div>
+        <span class="eyebrow" data-sv-r="tag"><i class="fa-solid fa-receipt"></i> Open claims</span>
+        <h2 class="sec-title" data-sv-r="typeup">The ledger, live</h2>
+      </div>
+      <p class="sec-note" data-sv-r="tag">Every claim we are working right now. Hover or focus a row to open it.</p>
+    </header>
+
+    <div class="sv-ledger__body">
+      <table class="sv-table">
+        <caption class="sv-sr">Open service claims and their current bench state</caption>
+        <thead>
+          <tr><th scope="col">Claim</th><th scope="col">Discipline</th><th scope="col">Bay</th><th scope="col">State</th><th scope="col">Due</th></tr>
+        </thead>
+        <tbody>
+          <tr class="sv-row" tabindex="0" data-sv-row>
+            <th scope="row"><span class="sv-row__id">#4821</span></th>
+            <td>Screen &amp; glass</td><td>04</td><td><span class="sv-pill sv-pill--live">On the bench</span></td><td>Today 16:00</td>
+          </tr>
+          <tr class="sv-row" tabindex="0" data-sv-row>
+            <th scope="row"><span class="sv-row__id">#4822</span></th>
+            <td>Battery &amp; charge</td><td>07</td><td><span class="sv-pill sv-pill--wait">Awaiting part</span></td><td>Tomorrow</td>
+          </tr>
+          <tr class="sv-row" tabindex="0" data-sv-row>
+            <th scope="row"><span class="sv-row__id">#4823</span></th>
+            <td>Water &amp; corrosion</td><td>11</td><td><span class="sv-pill sv-pill--live">Ultrasonic</span></td><td>Thu</td>
+          </tr>
+          <tr class="sv-row" tabindex="0" data-sv-row>
+            <th scope="row"><span class="sv-row__id">#4824</span></th>
+            <td>Diagnostics</td><td>02</td><td><span class="sv-pill sv-pill--done">Cleared</span></td><td>Ready</td>
+          </tr>
+          <tr class="sv-row" tabindex="0" data-sv-row>
+            <th scope="row"><span class="sv-row__id">#4825</span></th>
+            <td>Port &amp; flex</td><td>09</td><td><span class="sv-pill sv-pill--wait">Awaiting part</span></td><td>Fri</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <aside class="sv-ledger__detail" id="svLedgerDetail" aria-live="polite">
+        <div class="sv-ledger__shot">
+          <img id="svLedgerImg" src="../images/service-repair.webp" width="720" height="520" alt="A phone open on the repair bench with its display lifted away from the body" loading="lazy" />
+        </div>
+        <div class="sv-ledger__meta">
+          <b id="svLedgerId">#4821</b>
+          <h3 id="svLedgerTitle">Screen &amp; glass</h3>
+          <p id="svLedgerNote">Display separated, adhesive cut, new OCA layer being vacuum pressed. Reads back within the hour.</p>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- =====================================================================
+     5 · THE LOGBOOK — six jobs bound into one book. This is not a grid, a
+     staircase, a rail, a list or a fanned hand of loose cards: every leaf
+     is hinged on the SAME left edge and sits exactly on top of the next,
+     so the whole section is one number. --sv-turn, 0 to 5, is the leaf at
+     the front, and service.js scrubs it under the scroll without ever
+     touching a leaf. A turned leaf lands face-down in the gutter on the
+     left and stays there, which is why the pile beside the book is the
+     section's own progress. Point at the open page and it is stamped off;
+     the spine turns to any page you name.
+     ===================================================================== -->
+<section class="sv-lg" id="svLog">
+  <div class="sv-lg__pin" id="svLogPin">
+    <div class="shell">
+
+      <header class="sec-head">
+        <div>
+          <span class="eyebrow eyebrow--light" data-sv-r="tag"><i class="fa-solid fa-book-open"></i> The logbook</span>
+          <h2 class="sec-title" data-sv-r="typeup">Six jobs off the bench this week</h2>
+        </div>
+        <p class="sec-note sec-note--light" data-sv-r="tag">One page is one claim: the fault that came in, what was fitted, the bay it ran in and the hours it took. Scroll to turn the page on, then point at it to stamp it off.</p>
+      </header>
+
+      <div class="sv-lg__body" id="svLogBody">
+        <nav class="sv-lg__spine" data-sv-r="strip" aria-label="Logbook pages">
+          <p class="sv-lg__read">
+            <b>Page <span id="svLogCount">01</span><i>of 06</i></b>
+            <span class="sv-lg__track" aria-hidden="true"><em></em></span>
+            <small id="svLogTurned">0 of 6 turned</small>
+          </p>
+
+          <div class="sv-lg__rows">
+            <button class="sv-lg__row" type="button" aria-current="true"><em>01</em><span>Cracked digitiser<span class="sv-sr"> &mdash; turn to this page</span></span></button>
+            <button class="sv-lg__row" type="button"><em>02</em><span>Swollen cell<span class="sv-sr"> &mdash; turn to this page</span></span></button>
+            <button class="sv-lg__row" type="button"><em>03</em><span>Liquid damage<span class="sv-sr"> &mdash; turn to this page</span></span></button>
+            <button class="sv-lg__row" type="button"><em>04</em><span>Flex fault<span class="sv-sr"> &mdash; turn to this page</span></span></button>
+            <button class="sv-lg__row" type="button"><em>05</em><span>Dead charge port<span class="sv-sr"> &mdash; turn to this page</span></span></button>
+            <button class="sv-lg__row" type="button"><em>06</em><span>Back glass<span class="sv-sr"> &mdash; turn to this page</span></span></button>
+          </div>
+        </nav>
+
+        <div class="sv-lg__stage">
+          <div class="sv-lg__gutter" aria-hidden="true"></div>
+
+          <ol class="sv-lg__book" id="svLogBook">
+            <li class="sv-lg__slot is-front" data-sv-r="page">
+              <div class="sv-lg__leaf">
+                <button class="sv-lg__face" type="button" aria-pressed="false">
+                  <span class="sv-lg__rec">
+                    <span class="sv-lg__no">01 &middot; Job 4412</span>
+                    <span class="sv-lg__name">Cracked digitiser</span>
+                    <span class="sv-lg__dev">Handset &middot; Bay 04 &middot; 1.5 h</span>
+                    <span class="sv-lg__spec">
+                      <span><em>Came in</em>Glass shattered, frame straight</span>
+                      <span><em>Fitted</em>OEM display, OCA bonded</span>
+                      <span><em>Cover</em>90 days, transferable</span>
+                    </span>
+                  </span>
+                  <span class="sv-lg__shot"><img src="../images/arrival-1.webp" width="620" height="780" alt="A handset photographed face up on the bench mat at intake, screen cracked across the top" loading="lazy" /></span>
+                  <span class="sv-lg__folio" aria-hidden="true">Sheet 01 of 06</span>
+                  <span class="sv-lg__stamp" aria-hidden="true">Signed off</span>
+                </button>
+                <span class="sv-lg__verso" aria-hidden="true"><i>Stackly</i></span>
+              </div>
+            </li>
+
+            <li class="sv-lg__slot" data-sv-r="page">
+              <div class="sv-lg__leaf">
+                <button class="sv-lg__face" type="button" aria-pressed="false">
+                  <span class="sv-lg__rec">
+                    <span class="sv-lg__no">02 &middot; Job 4408</span>
+                    <span class="sv-lg__name">Swollen cell</span>
+                    <span class="sv-lg__dev">Handset &middot; Bay 02 &middot; 0.75 h</span>
+                    <span class="sv-lg__spec">
+                      <span><em>Came in</em>Back glass lifting, screen proud</span>
+                      <span><em>Fitted</em>New cell, adhesive strip</span>
+                      <span><em>Cover</em>12 months on the cell</span>
+                    </span>
+                  </span>
+                  <span class="sv-lg__shot"><img src="../images/product-2.webp" width="720" height="720" alt="A replacement battery cell lying on the bench beside a folded cloth" loading="lazy" /></span>
+                  <span class="sv-lg__folio" aria-hidden="true">Sheet 02 of 06</span>
+                  <span class="sv-lg__stamp" aria-hidden="true">Signed off</span>
+                </button>
+                <span class="sv-lg__verso" aria-hidden="true"><i>Stackly</i></span>
+              </div>
+            </li>
+
+            <li class="sv-lg__slot" data-sv-r="page">
+              <div class="sv-lg__leaf">
+                <button class="sv-lg__face" type="button" aria-pressed="false">
+                  <span class="sv-lg__rec">
+                    <span class="sv-lg__no">03 &middot; Job 4401</span>
+                    <span class="sv-lg__name">Liquid damage</span>
+                    <span class="sv-lg__dev">Handset &middot; Bay 01 &middot; 2.25 h</span>
+                    <span class="sv-lg__spec">
+                      <span><em>Came in</em>Corrosion on the board, no power</span>
+                      <span><em>Fitted</em>Board clean, two caps replaced</span>
+                      <span><em>Cover</em>90 days, corrosion excluded</span>
+                    </span>
+                  </span>
+                  <span class="sv-lg__shot"><img src="../images/arrival-2.webp" width="620" height="780" alt="An opened device with its display lifted and the shield plate exposed" loading="lazy" /></span>
+                  <span class="sv-lg__folio" aria-hidden="true">Sheet 03 of 06</span>
+                  <span class="sv-lg__stamp" aria-hidden="true">Signed off</span>
+                </button>
+                <span class="sv-lg__verso" aria-hidden="true"><i>Stackly</i></span>
+              </div>
+            </li>
+
+            <li class="sv-lg__slot" data-sv-r="page">
+              <div class="sv-lg__leaf">
+                <button class="sv-lg__face" type="button" aria-pressed="false">
+                  <span class="sv-lg__rec">
+                    <span class="sv-lg__no">04 &middot; Job 4396</span>
+                    <span class="sv-lg__name">Flex fault</span>
+                    <span class="sv-lg__dev">Handset &middot; Bay 05 &middot; 1.25 h</span>
+                    <span class="sv-lg__spec">
+                      <span><em>Came in</em>Charge drops under load, no display fault</span>
+                      <span><em>Fitted</em>Charging flex, port cleaned</span>
+                      <span><em>Cover</em>90 days on the flex</span>
+                    </span>
+                  </span>
+                  <span class="sv-lg__shot"><img src="../images/chip-1.webp" width="300" height="300" alt="A replacement flex ribbon coiled beside its connector head" loading="lazy" /></span>
+                  <span class="sv-lg__folio" aria-hidden="true">Sheet 04 of 06</span>
+                  <span class="sv-lg__stamp" aria-hidden="true">Signed off</span>
+                </button>
+                <span class="sv-lg__verso" aria-hidden="true"><i>Stackly</i></span>
+              </div>
+            </li>
+
+            <li class="sv-lg__slot" data-sv-r="page">
+              <div class="sv-lg__leaf">
+                <button class="sv-lg__face" type="button" aria-pressed="false">
+                  <span class="sv-lg__rec">
+                    <span class="sv-lg__no">05 &middot; Job 4390</span>
+                    <span class="sv-lg__name">Dead charge port</span>
+                    <span class="sv-lg__dev">Tablet &middot; Bay 03 &middot; 1 h</span>
+                    <span class="sv-lg__spec">
+                      <span><em>Came in</em>Lint packed solid, cable fell out</span>
+                      <span><em>Fitted</em>Port cleaned, no part needed</span>
+                      <span><em>Cover</em>90 days on the work</span>
+                    </span>
+                  </span>
+                  <span class="sv-lg__shot"><img src="../images/arrival-3.webp" width="620" height="780" alt="A charging port cleaned with a brass bristle brush at the bench" loading="lazy" /></span>
+                  <span class="sv-lg__folio" aria-hidden="true">Sheet 05 of 06</span>
+                  <span class="sv-lg__stamp" aria-hidden="true">Signed off</span>
+                </button>
+                <span class="sv-lg__verso" aria-hidden="true"><i>Stackly</i></span>
+              </div>
+            </li>
+
+            <li class="sv-lg__slot" data-sv-r="page">
+              <div class="sv-lg__leaf">
+                <button class="sv-lg__face" type="button" aria-pressed="false">
+                  <span class="sv-lg__rec">
+                    <span class="sv-lg__no">06 &middot; Job 4384</span>
+                    <span class="sv-lg__name">Back glass</span>
+                    <span class="sv-lg__dev">Handset &middot; Bay 04 &middot; 2 h</span>
+                    <span class="sv-lg__spec">
+                      <span><em>Came in</em>Rear glass spidered, camera intact</span>
+                      <span><em>Fitted</em>New back panel, seals replaced</span>
+                      <span><em>Cover</em>90 days, IP rating restored</span>
+                    </span>
+                  </span>
+                  <span class="sv-lg__shot"><img src="../images/footer-showroom.webp" width="720" height="560" alt="The service counter with a finished device beside its printed test log" loading="lazy" /></span>
+                  <span class="sv-lg__folio" aria-hidden="true">Sheet 06 of 06</span>
+                  <span class="sv-lg__stamp" aria-hidden="true">Signed off</span>
+                </button>
+                <span class="sv-lg__verso" aria-hidden="true"><i>Stackly</i></span>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </div>
+
+      <p class="sv-lg__hint" data-sv-r="strip">
+        <i class="fa-solid fa-hand-pointer"></i>
+        <span class="sv-lg__hint--turn">Scroll to turn the page &middot; point at it to stamp it off</span>
+        <span class="sv-lg__hint--read">Tap a sheet to stamp it off</span>
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- =====================================================================
+     6 · THE SHELF — what we keep in stock, as a grid of equal tiles.
+     Nothing expands and nothing collapses, so the grid stays aligned
+     whatever is hovered: the caption simply rides up over the photo.
+     ===================================================================== -->
+<section class="sv-shelf" id="svShelf">
+  <div class="shell">
+    <header class="sec-head">
+      <div>
+        <span class="eyebrow" data-sv-r="tag"><i class="fa-solid fa-boxes-stacked"></i> On the shelf</span>
+        <h2 class="sec-title" data-sv-r="typeup">Stocked, not ordered in</h2>
+      </div>
+      <p class="sec-note" data-sv-r="tag">Everything we fit is already on the shelf. Bring the part in and we will fit it while you wait, at the counter.</p>
+    </header>
+
+    <div class="sv-tiles">
+      <a class="sv-tile" href="404.html" data-sv-r="tile" data-sv-d="0">
+        <img src="../images/cat-cases.webp" width="620" height="620" alt="Cases arranged by size on the shelf" loading="lazy" />
+        <span class="sv-tile__tag">01</span>
+        <span class="sv-tile__cap"><b>Cases and shells</b><i>14 sizes · fitted free in year one</i></span>
+      </a>
+      <a class="sv-tile" href="404.html" data-sv-r="tile" data-sv-d="70">
+        <img src="../images/cat-earbuds.webp" width="620" height="620" alt="Earbuds with their replacement tips laid out" loading="lazy" />
+        <span class="sv-tile__tag">02</span>
+        <span class="sv-tile__cap"><b>Earbuds and tips</b><i>6 fits · ten minute swap</i></span>
+      </a>
+      <a class="sv-tile" href="404.html" data-sv-r="tile" data-sv-d="140">
+        <img src="../images/cat-chargers.webp" width="620" height="620" alt="Charging cables and power bricks on a bench mat" loading="lazy" />
+        <span class="sv-tile__tag">03</span>
+        <span class="sv-tile__cap"><b>Cables and bricks</b><i>9 ratings · free cable testing</i></span>
+      </a>
+      <a class="sv-tile" href="404.html" data-sv-r="tile" data-sv-d="210">
+        <img src="../images/cat-watch.webp" width="620" height="620" alt="Watch straps in a row on the bench" loading="lazy" />
+        <span class="sv-tile__tag">04</span>
+        <span class="sv-tile__cap"><b>Straps and bands</b><i>22 mm · both pin systems</i></span>
+      </a>
+      <a class="sv-tile" href="404.html" data-sv-r="tile" data-sv-d="280">
+        <img src="../images/cat-powerbanks.webp" width="620" height="620" alt="Power banks on the shelf" loading="lazy" />
+        <span class="sv-tile__tag">05</span>
+        <span class="sv-tile__cap"><b>Power banks</b><i>20 to 140 W · passthrough tested</i></span>
+      </a>
+      <a class="sv-tile" href="404.html" data-sv-r="tile" data-sv-d="350">
+        <img src="../images/cat-speakers.webp" width="620" height="620" alt="Speakers and charging docks on the shelf" loading="lazy" />
+        <span class="sv-tile__tag">06</span>
+        <span class="sv-tile__cap"><b>Speakers and docks</b><i>4 ranges · port cutout measured</i></span>
+      </a>
+      <a class="sv-tile" href="404.html" data-sv-r="tile" data-sv-d="420">
+        <img src="../images/chip-2.webp" width="300" height="300" alt="Genuine battery cells in four chemistries" loading="lazy" />
+        <span class="sv-tile__tag">07</span>
+        <span class="sv-tile__cap"><b>Genuine cells</b><i>4 chemistries · health report</i></span>
+      </a>
+      <a class="sv-tile" href="404.html" data-sv-r="tile" data-sv-d="490">
+        <img src="../images/deal-main.webp" width="1000" height="1000" alt="A complete bench repair kit laid out on a mat" loading="lazy" />
+        <span class="sv-tile__tag">08</span>
+        <span class="sv-tile__cap"><b>Bench kits</b><i>3 tiers · two year cover</i></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- =====================================================================
+     7 · THE ORBIT — six add-ons sit on a ring around one hub. This is the
+     only radial layout on the site: the cards are placed at fixed points on
+     a circle, the whole list is turned by a scrubbed --sv-spin, and the node
+     nearest the front becomes the active one. service.js picks the active
+     node by measuring which sits lowest, so the maths lives in one place.
+     Hover or focus pulls a node forward and the hub reads it out. Below
+     900px the circle collapses to a ruled line, because a ring of six on a
+     phone is just a small column.
+     ===================================================================== -->
+<section class="sv-orbit" id="svOrbit">
+  <div class="shell">
+    <header class="sec-head">
+      <div>
+        <span class="eyebrow eyebrow--light" data-sv-r="tag"><i class="fa-solid fa-circle-nodes"></i> The orbit</span>
+        <h2 class="sec-title" data-sv-r="typeup">What else happens around your device</h2>
+      </div>
+      <p class="sec-note sec-note--light" data-sv-r="tag">Six add-ons run in the same visit as the repair. Turn the ring and the hub reads whichever one is at the front.</p>
+    </header>
+
+    <div class="sv-orbit__stage" id="svOrbitStage" data-sv-r="plate">
+      <div class="sv-orbit__ring" id="svOrbitRing">
+        <span class="sv-orbit__track" aria-hidden="true"></span>
+
+        <ul class="sv-orbit__nodes">
+          <li class="sv-orb" data-sv-r="pop">
+            <button class="sv-orb__btn" type="button" aria-pressed="false">
+              <span class="sv-orb__no">01</span>
+              <b class="sv-orb__lbl">Data wipe</b>
+              <span class="sv-orb__card">
+                <span class="sv-orb__kicker">Add on 01 · same visit</span>
+                <span class="sv-orb__note">Everything is backed up or wiped before a single screw goes in. You get the backup on a drive or over the counter.</span>
+                <span class="sv-orb__price">From £12</span>
+              </span>
+            </button>
+          </li>
+
+          <li class="sv-orb" data-sv-r="pop">
+            <button class="sv-orb__btn" type="button" aria-pressed="false">
+              <span class="sv-orb__no">02</span>
+              <b class="sv-orb__lbl">Case &amp; grip</b>
+              <span class="sv-orb__card">
+                <span class="sv-orb__kicker">Add on 02 · fitted here</span>
+                <span class="sv-orb__note">Bought at the counter, fitted at the bench and checked for button travel before it goes back in the box.</span>
+                <span class="sv-orb__price">From £8</span>
+              </span>
+            </button>
+          </li>
+
+          <li class="sv-orb" data-sv-r="pop">
+            <button class="sv-orb__btn" type="button" aria-pressed="false">
+              <span class="sv-orb__no">03</span>
+              <b class="sv-orb__lbl">Glass bonded</b>
+              <span class="sv-orb__card">
+                <span class="sv-orb__kicker">Add on 03 · while it is open</span>
+                <span class="sv-orb__note">A tempered sheet laid with liquid OCA in the same vacuum press as the display. Cheaper now than a second visit.</span>
+                <span class="sv-orb__price">From £19</span>
+              </span>
+            </button>
+          </li>
+
+          <li class="sv-orb" data-sv-r="pop">
+            <button class="sv-orb__btn" type="button" aria-pressed="false">
+              <span class="sv-orb__no">04</span>
+              <b class="sv-orb__lbl">Charger matched</b>
+              <span class="sv-orb__card">
+                <span class="sv-orb__kicker">Add on 04 · tested together</span>
+                <span class="sv-orb__note">The cable and the brick are load tested against your device on the same rig that caught the original fault.</span>
+                <span class="sv-orb__price">From £15</span>
+              </span>
+            </button>
+          </li>
+
+          <li class="sv-orb" data-sv-r="pop">
+            <button class="sv-orb__btn" type="button" aria-pressed="false">
+              <span class="sv-orb__no">05</span>
+              <b class="sv-orb__lbl">Battery report</b>
+              <span class="sv-orb__card">
+                <span class="sv-orb__kicker">Add on 05 · printed</span>
+                <span class="sv-orb__note">Design capacity against full charge capacity, cycle count and heat history, on a sheet you can keep.</span>
+                <span class="sv-orb__price">From £9</span>
+              </span>
+            </button>
+          </li>
+
+          <li class="sv-orb" data-sv-r="pop">
+            <button class="sv-orb__btn" type="button" aria-pressed="false">
+              <span class="sv-orb__no">06</span>
+              <b class="sv-orb__lbl">Setup &amp; handover</b>
+              <span class="sv-orb__card">
+                <span class="sv-orb__kicker">Add on 06 · at the counter</span>
+                <span class="sv-orb__note">Accounts, pairing, backups and the shortcuts you actually use, set up with you rather than on paper.</span>
+                <span class="sv-orb__price">From £20</span>
+              </span>
+            </button>
+          </li>
+        </ul>
+
+        <div class="sv-orbit__hub" id="svOrbitHub" aria-hidden="true">
+          <span class="sv-orbit__win"><img src="../images/deal-main.webp" width="1000" height="1000" alt="" loading="lazy" /></span>
+          <span class="sv-orbit__kicker" id="svOrbitKicker">Add on 01 · same visit</span>
+          <b class="sv-orbit__title" id="svOrbitTitle">Data wipe</b>
+          <p class="sv-orbit__note" id="svOrbitNote">Everything is backed up or wiped before a single screw goes in. You get the backup on a drive or over the counter.</p>
+          <span class="sv-orbit__price" id="svOrbitPrice">From £12</span>
+        </div>
+      </div>
+
+      <p class="sv-orbit__hint" id="svOrbitHint"><span class="sv-orbit__tick" aria-hidden="true"></span><span id="svOrbitHintText">Node 01 at the front &middot; turn the ring by scrolling</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- =====================================================================
+     8 · THE QUEUE — a kanban of the day. Four columns, cards offset from
+     each other, and a live counter that never stops ticking.
+     ===================================================================== -->
+<section class="sv-queue" id="svQueue">
+  <div class="sv-queue__wrap shell">
+    <header class="sec-head">
+      <div>
+        <span class="eyebrow" data-sv-r="tag"><i class="fa-solid fa-satellite-dish"></i> Live board</span>
+        <h2 class="sec-title" data-sv-r="typeup">Where everything is, right now</h2>
+      </div>
+      <p class="sec-note sv-queue__live" data-sv-r="tag"><i aria-hidden="true"></i><b id="svQueueClock">0</b> units on the floor · updated <span id="svQueueAgo">just now</span></p>
+    </header>
+
+    <div class="sv-kanban" id="svKanban">
+      <div class="sv-col" data-sv-r="cardin">
+        <h3><i class="fa-solid fa-inbox"></i> Intake <b data-sv-count="18">0</b></h3>
+        <div class="sv-col__stack">
+          <article class="sv-job" tabindex="0">
+            <div class="sv-win"><img src="../images/blog-1.webp" width="720" height="480" alt="A parcel arriving at the service counter" loading="lazy" /></div>
+            <b>#4901</b><span>Screen &amp; glass</span><em>10:20</em>
+          </article>
+          <article class="sv-job" tabindex="0">
+            <div class="sv-win"><img src="../images/blog-2.webp" width="720" height="480" alt="A phone logged into the intake system" loading="lazy" /></div>
+            <b>#4902</b><span>Diagnostics</span><em>10:35</em>
+          </article>
+          <article class="sv-job" tabindex="0">
+            <div class="sv-win"><img src="../images/blog-3.webp" width="720" height="480" alt="A charging cable being tested at intake" loading="lazy" /></div>
+            <b>#4903</b><span>Port &amp; flex</span><em>11:02</em>
+          </article>
+        </div>
+      </div>
+
+      <div class="sv-col" data-sv-r="cardin">
+        <h3><i class="fa-solid fa-screwdriver"></i> On the bench <b data-sv-count="24">0</b></h3>
+        <div class="sv-col__stack">
+          <article class="sv-job" tabindex="0">
+            <div class="sv-win"><img src="../images/promo-main.webp" width="840" height="480" alt="A display being separated with a thin blade" loading="lazy" /></div>
+            <b>#4898</b><span>Screen &amp; glass</span><em>Bay 04</em>
+          </article>
+          <article class="sv-job" tabindex="0">
+            <div class="sv-win"><img src="../images/page-dashboard.webp" width="1200" height="760" alt="A service dashboard showing bay occupancy" loading="lazy" /></div>
+            <b>#4899</b><span>Battery &amp; charge</span><em>Bay 07</em>
+          </article>
+          <article class="sv-job" tabindex="0">
+            <div class="sv-win"><img src="../images/hero-phone.webp" width="720" height="860" alt="A phone face up on the bench waiting for its port to be re-soldered" loading="lazy" /></div>
+            <b>#4897</b><span>Port &amp; flex</span><em>Bay 11</em>
+          </article>
+        </div>
+      </div>
+
+      <div class="sv-col" data-sv-r="cardin">
+        <h3><i class="fa-solid fa-hourglass-half"></i> Soaking <b data-sv-count="11">0</b></h3>
+        <div class="sv-col__stack">
+          <article class="sv-job" tabindex="0">
+            <div class="sv-win"><img src="../images/nav-surface.webp" width="1400" height="900" alt="A repaired unit under a warm soak lamp" loading="lazy" /></div>
+            <b>#4895</b><span>Water &amp; corrosion</span><em>6h left</em>
+          </article>
+          <article class="sv-job" tabindex="0">
+            <div class="sv-win"><img src="../images/stats-surface.webp" width="1400" height="560" alt="Soak test temperature chart" loading="lazy" /></div>
+            <b>#4896</b><span>Battery &amp; charge</span><em>3h left</em>
+          </article>
+          <article class="sv-job" tabindex="0">
+            <div class="sv-win"><img src="../images/gallery-1.webp" width="720" height="540" alt="Illuminated cooling fans running over a board in the soak rig" loading="lazy" /></div>
+            <b>#4894</b><span>Port &amp; flex</span><em>1h left</em>
+          </article>
+        </div>
+      </div>
+
+      <div class="sv-col" data-sv-r="cardin">
+        <h3><i class="fa-solid fa-box-open"></i> Ready <b data-sv-count="31">0</b></h3>
+        <div class="sv-col__stack">
+          <article class="sv-job" tabindex="0">
+            <div class="sv-win"><img src="../images/cart-empty.webp" width="620" height="620" alt="A finished unit packed and labelled for collection" loading="lazy" /></div>
+            <b>#4890</b><span>Diagnostics</span><em>Ready</em>
+          </article>
+          <article class="sv-job" tabindex="0">
+            <div class="sv-win"><img src="../images/hero-float-1.webp" width="520" height="520" alt="A charging stand finished and boxed" loading="lazy" /></div>
+            <b>#4891</b><span>Port &amp; flex</span><em>Ready</em>
+          </article>
+          <article class="sv-job" tabindex="0">
+            <div class="sv-win"><img src="../images/hero-float-2.webp" width="520" height="680" alt="A repaired phone standing on the counter" loading="lazy" /></div>
+            <b>#4892</b><span>Screen &amp; glass</span><em>Ready</em>
+          </article>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =====================================================================
+     9 · THE TICKET — an estimate laid out as a printed receipt with
+     perforated edges. Steppers change the total and swap the photo.
+     ===================================================================== -->
+<section class="sv-ticket" id="svTicket">
+  <div class="sv-ticket__wrap shell">
+    <div class="sv-ticket__side">
+      <span class="eyebrow eyebrow--light" data-sv-r="tag"><i class="fa-solid fa-receipt"></i> Estimate</span>
+      <h2 class="sec-title" data-sv-r="typeup">Price it before you book</h2>
+      <p class="sec-note sec-note--light" data-sv-r="tag">Move the quantities and the ticket reprints itself. Nothing is charged until you approve the grade.</p>
+      <div class="sv-ticket__shot" data-sv-r="strip">
+        <img id="svTicketImg" src="../images/service-delivery.webp" width="720" height="520" alt="A replacement battery being seated into a phone body" loading="lazy" />
+        <span class="sv-ticket__cap" id="svTicketCap">Cell swap, same day</span>
+      </div>
+    </div>
+
+    <div class="sv-receipt" data-sv-r="printin">
+      <div class="sv-receipt__perf sv-receipt__perf--top" aria-hidden="true"></div>
+      <div class="sv-receipt__body">
+        <header class="sv-receipt__head">
+          <img src="../images/logo-icon-theme.webp" width="137" height="185" alt="" />
+          <div><b>Stackly Service</b><i>Estimate, not a charge</i></div>
+        </header>
+
+        <ul class="sv-lines" id="svLines">
+          <li data-sv-line data-sv-unit="34" data-sv-key="screen">
+            <span class="sv-lines__t"><b>Screen &amp; glass</b><i>Same day, 90 day cover</i></span>
+            <span class="sv-stepper">
+              <button type="button" data-sv-step="-1" aria-label="Fewer screen repairs">−</button>
+              <output data-sv-qty="1">1</output>
+              <button type="button" data-sv-step="1" aria-label="More screen repairs">+</button>
+            </span>
+            <span class="sv-lines__p" data-sv-lineprice>—</span>
+          </li>
+          <li data-sv-line data-sv-unit="22" data-sv-key="battery">
+            <span class="sv-lines__t"><b>Battery &amp; charge</b><i>Cell swap, health report</i></span>
+            <span class="sv-stepper">
+              <button type="button" data-sv-step="-1" aria-label="Fewer battery swaps">−</button>
+              <output data-sv-qty="1">1</output>
+              <button type="button" data-sv-step="1" aria-label="More battery swaps">+</button>
+            </span>
+            <span class="sv-lines__p" data-sv-lineprice>—</span>
+          </li>
+          <li data-sv-line data-sv-unit="48" data-sv-key="water">
+            <span class="sv-lines__t"><b>Water &amp; corrosion</b><i>Ultrasonic, 48 hours</i></span>
+            <span class="sv-stepper">
+              <button type="button" data-sv-step="-1" aria-label="Fewer corrosion treatments">−</button>
+              <output data-sv-qty="0">0</output>
+              <button type="button" data-sv-step="1" aria-label="More corrosion treatments">+</button>
+            </span>
+            <span class="sv-lines__p" data-sv-lineprice>—</span>
+          </li>
+          <li data-sv-line data-sv-unit="29" data-sv-key="port">
+            <span class="sv-lines__t"><b>Port &amp; flex</b><i>Solder, 3 hour bench</i></span>
+            <span class="sv-stepper">
+              <button type="button" data-sv-step="-1" aria-label="Fewer port repairs">−</button>
+              <output data-sv-qty="0">0</output>
+              <button type="button" data-sv-step="1" aria-label="More port repairs">+</button>
+            </span>
+            <span class="sv-lines__p" data-sv-lineprice>—</span>
+          </li>
+        </ul>
+
+        <div class="sv-receipt__perf sv-receipt__perf--mid" aria-hidden="true"></div>
+        <div class="sv-receipt__total">
+          <span>Estimated total</span>
+          <b data-sv-total>$0</b>
+        </div>
+        <p class="sv-receipt__fine">Parts are genuine and carry the 24 month seal. We confirm the grade by photo before any work starts.</p>
+      </div>
+      <div class="sv-receipt__perf sv-receipt__perf--bot" aria-hidden="true"></div>
+    </div>
+  </div>
+</section>
+
+<!-- =====================================================================
+     10 · THE DESK — a sticky index on the left and one plain answer list
+     on the right. Every row is the same height and the same three columns,
+     so the list stays perfectly aligned at every width instead of relying
+     on hand-placed brick offsets.
+     ===================================================================== -->
+<section class="sv-desk" id="svDesk">
+  <div class="sv-desk__wrap shell">
+    <aside class="sv-desk__aside">
+      <div>
+        <span class="eyebrow" data-sv-r="tag"><i class="fa-solid fa-headset"></i> The desk</span>
+        <h2 class="sec-title" data-sv-r="typeup">Answered before you ask</h2>
+      </div>
+      <p class="sec-note" data-sv-r="tag">A technician picks up, not a chatbot, and they can see the photo you sent at intake.</p>
+      <a class="btn btn--solid" href="404.html"><span>Book a bench</span><i class="fa-solid fa-arrow-right"></i></a>
+      <div class="sv-desk__hours">
+        <span>Mon to Fri <b>08:00 to 20:00</b></span>
+        <span>Saturday <b>09:00 to 17:00</b></span>
+        <span>Sunday <b>Counter only</b></span>
+        <span>Median reply <b>under 4 min</b></span>
+      </div>
+    </aside>
+
+    <div class="sv-desk__list">
+      <article class="sv-qa" data-sv-r="strip" data-sv-d="0">
+        <span class="sv-qa__n">01</span>
+        <div class="sv-qa__t">
+          <b>Will it void my warranty?</b>
+          <p>No. Fitting a genuine part through us keeps the original cover intact, and the fitting is on record.</p>
+        </div>
+        <div class="sv-qa__win"><img src="../images/support.webp" width="900" height="600" alt="A support agent reviewing a repair estimate on a tablet" loading="lazy" /></div>
+      </article>
+
+      <article class="sv-qa" data-sv-r="strip" data-sv-d="70">
+        <span class="sv-qa__n">02</span>
+        <div class="sv-qa__t">
+          <b>How long is the queue?</b>
+          <p>Eighteen units on the floor today, four of them same day. The board further up this page is the live count.</p>
+        </div>
+        <div class="sv-qa__win"><img src="../images/trust-surface.webp" width="1600" height="520" alt="A row of devices waiting on the shelf for collection" loading="lazy" /></div>
+      </article>
+
+      <article class="sv-qa" data-sv-r="strip" data-sv-d="140">
+        <span class="sv-qa__n">03</span>
+        <div class="sv-qa__t">
+          <b>Do you collect?</b>
+          <p>Free inside the city in four hour windows. You get the label by text, and a tracking photo at collection.</p>
+        </div>
+        <div class="sv-qa__win"><img src="../images/service-delivery.webp" width="720" height="520" alt="A courier collecting a repaired device from the counter" loading="lazy" /></div>
+      </article>
+
+      <article class="sv-qa" data-sv-r="strip" data-sv-d="210">
+        <span class="sv-qa__n">04</span>
+        <div class="sv-qa__t">
+          <b>Can I just buy the part?</b>
+          <p>Yes, and we will fit it while you wait at the counter. If it is the wrong part we will tell you before you pay.</p>
+        </div>
+        <div class="sv-qa__win"><img src="../images/page-shop.webp" width="1400" height="820" alt="The parts counter beside the service bay" loading="lazy" /></div>
+      </article>
+
+      <article class="sv-qa" data-sv-r="strip" data-sv-d="280">
+        <span class="sv-qa__n">05</span>
+        <div class="sv-qa__t">
+          <b>What if it is beyond repair?</b>
+          <p>We grade it C, photograph it, and refund the estimate in full. You keep the device, we keep the record.</p>
+        </div>
+        <div class="sv-qa__win"><img src="../images/newsletter-surface.webp" width="1400" height="760" alt="A bench logbook open on the counter" loading="lazy" /></div>
+      </article>
+
+      <article class="sv-qa" data-sv-r="strip" data-sv-d="350">
+        <span class="sv-qa__n">06</span>
+        <div class="sv-qa__t">
+          <b>Do I get the photos?</b>
+          <p>Every job gets a before and an after shot on the ticket, kept for two years and downloadable from your claim.</p>
+        </div>
+        <div class="sv-qa__win"><img src="../images/product-detail.webp" width="900" height="1150" alt="A device photographed in close detail for the repair record" loading="lazy" /></div>
+      </article>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ============ FOOTER (identical shell) ============ -->
+<footer class="foot" id="footer">
+  <div class="foot-news" data-parallax style="background-image:url('../images/newsletter-surface.webp')">
+    <div class="fn-veil"></div>
+    <div class="shell fn-inner">
+      <div class="fn-copy">
+        <h2 data-reveal="rise">Get the drop <span class="accent">first</span></h2>
+        <p data-reveal="rise">New arrivals, restocks and one genuinely useful email a week. No noise.</p>
+      </div>
+     <form class="fn-form" id="newsForm" data-reveal="rise" novalidate>
+       <span class="fn-ico"><i class="fa-solid fa-envelope"></i></span>
+       <input type="email" id="newsEmail" name="email" placeholder="you@example.com" aria-label="Email address" aria-describedby="newsMsg" autocomplete="email" />
+       <button class="btn btn--solid" type="submit"><span>Subscribe</span><i class="fa-solid fa-paper-plane"></i></button>
+       <p class="fn-msg" id="newsMsg" role="status" aria-live="polite"></p>
+     </form>
+    </div>
+  </div>
+
+  <div class="foot-main">
+    <div class="shell foot-grid">
+      <div class="fg-brand">
+        <a class="brand brand--foot" href="../index.html" aria-label="Stackly home">
+          <img class="brand-logo" src="../images/logo-full-theme.webp" alt="Stackly" width="600" height="185" decoding="async" />
+        </a>
+        <p>Gear that moves with you. Curated mobile accessories, tested in our own lab and shipped from our own bench.</p>
+        <div class="fg-social">
+          <a href="404.html" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="404.html" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
+          <a href="404.html" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+          <a href="404.html" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+        </div>
+       </div>
+
+       <div class="fg-col" data-aos="fade-up" data-aos-delay="0" data-aos-duration="650">
+         <h4>Company</h4>
+         <ul>
+           <li><a href="../index.html">Home</a></li>
+           <li><a href="shop.html">Shop</a></li>
+           <li><a href="service.html">Service</a></li>
+           <li><a href="about.html">About</a></li>
+           <li><a href="contact.html">Contact</a></li>
+         </ul>
+       </div>
+
+       <div class="fg-col fg-col--touch" data-aos="fade-up" data-aos-delay="110" data-aos-duration="650">
+         <h4>Get in touch</h4>
+         <ul class="fg-contact">
+           <li>
+             <i class="fa-solid fa-location-dot"></i>
+             <span><b>Address</b>MMR Complex, Chinna Thirupathi, near Chinna Muniyappan Kovil, Salem, Tamil Nadu 636008</span>
+           </li>
+           <li>
+             <i class="fa-solid fa-envelope"></i>
+             <span><b>Mail ID</b><a href="404.html">info@stackly.com</a></span>
+           </li>
+           <li>
+             <i class="fa-solid fa-mobile-screen"></i>
+             <span><b>Mobile</b><a href="404.html">+91 9764536787</a></span>
+           </li>
+         </ul>
+       </div>
+
+      <div class="fg-col" data-aos="fade-up" data-aos-delay="220" data-aos-duration="650">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="404.html">Track an order</a></li>
+          <li><a href="404.html">Shipping &amp; returns</a></li>
+          <li><a href="404.html">Warranty claims</a></li>
+          <li><a href="404.html">Privacy policy</a></li>
+          <li><a href="404.html">Terms of service</a></li>
+        </ul>
+        <div class="fg-pay">
+          <i class="fa-brands fa-cc-visa"></i>
+          <i class="fa-brands fa-cc-mastercard"></i>
+          <i class="fa-brands fa-cc-paypal"></i>
+          <i class="fa-brands fa-cc-apple-pay"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="shell foot-marquee">
+      <div class="fm-track">
+        <span>Stackly</span><i class="fa-solid fa-mobile-screen-button"></i>
+        <span>GEAR THAT MOVES WITH YOU</span><i class="fa-solid fa-bolt"></i>
+        <span>Stackly</span><i class="fa-solid fa-mobile-screen-button"></i>
+        <span>GEAR THAT MOVES WITH YOU</span><i class="fa-solid fa-bolt"></i>
+      </div>
+    </div>
+
+    <div class="shell foot-bottom">
+      <p>© 2026 Stackly. All rights reserved.</p>
+      <p class="fb-links">
+        <a href="404.html">Privacy</a><span>·</span>
+        <a href="404.html">Terms</a><span>·</span>
+        <a href="404.html">Cookies</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ FLOATING UI ============ -->
+<button class="totop" id="toTop" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
+<div class="toast" id="toast">
+  <span class="toast-ico"><i class="fa-solid fa-circle-check"></i></span>
+  <div><b id="toastTitle">Added to cart</b><em id="toastText">FluxPad Wireless Charger</em></div>
+</div>
+
+<!-- ============================================================
+     ANIMATION RUNTIME
+     home.js carries the shared shell (preloader, header, fullscreen
+     menu, cart badge, newsletter) and inlines GSAP 3.12.5 +
+     ScrollTrigger 3.12.5 + Lenis, so the hamburger and smooth scroll
+     behave exactly as they do on the home page. service.js adds the
+     Service page's own motion and its AOS usage.
+     Do not load a second GSAP copy: duplicate instances break
+     ScrollTrigger.
+     ============================================================ -->
+<script src="../JS/home.js" data-animation-runtime="gsap@3.12.5 scrolltrigger@3.12.5 lenis@1.x" data-gsap-source="bundled-inline"></script>
+<script src="../JS/service.js"></script>
+</body>
+</html>

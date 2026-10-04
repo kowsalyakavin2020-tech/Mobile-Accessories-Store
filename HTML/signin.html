@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Create Account — Stackly · Mobile Accessories</title>
+<meta name="description" content="Create a Stackly account. Join as a Buyer to shop accessories, or as a Seller to list your own." />
+<meta name="robots" content="noindex, follow" />
+<link rel="icon" type="image/webp" href="../images/logo-icon-theme.webp" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+<link rel="stylesheet" href="../CSS/auth.css" />
+<script>document.documentElement.className = document.documentElement.className.replace('no-js', 'js');</script>
+<style id="au-boot">
+  html, body { margin: 0; background: #0B0D12; color: #F3F0EA; overflow-x: clip; }
+</style>
+</head>
+<body>
+
+<main class="auth-shell" id="authShell">
+
+  <section class="auth-media">
+    <img class="auth-media__shot" src="../images/page-shop.webp" alt="" fetchpriority="high" />
+    <span class="auth-media__veil"></span>
+    <span class="auth-media__grid" aria-hidden="true"></span>
+
+    <a href="../index.html" class="auth-home">
+      <i class="fa-solid fa-house" aria-hidden="true"></i>
+      <span class="auth-home-label">Back to Home</span>
+    </a>
+
+    <div class="ac-chip ac-chip--a">
+      <i class="fa-solid fa-headset" aria-hidden="true"></i>
+      <span>Support that answers</span>
+    </div>
+    <div class="ac-chip ac-chip--b">
+      <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>
+      <span>30-day returns, prepaid label</span>
+    </div>
+    <div class="ac-chip ac-chip--c">
+      <i class="fa-solid fa-bolt" aria-hidden="true"></i>
+      <span>Ships the same day before 4pm</span>
+    </div>
+
+    <div class="auth-media__quote">
+      <p class="ac-quote">One account, two desks — <em>buy</em> or <em>sell</em>, never both confused.</p>
+      <p class="ac-quote-sub">Pick your role now; you can add the other later.</p>
+    </div>
+  </section>
+
+  <section class="auth-form">
+
+    <a href="../index.html" class="auth-logo" aria-label="Stackly home">
+      <img src="../images/logo-full-theme.webp" alt="Stackly" width="600" height="185" />
+    </a>
+
+    <header class="auth-head">
+      <p class="auth-kicker">New to Stackly</p>
+      <h1 class="auth-title">Create your <em>account</em></h1>
+      <p class="auth-sub">Set up your desk in under a minute.</p>
+    </header>
+
+    <form class="auth-frm" id="signupForm" novalidate>
+
+      <div class="fld" data-field="name">
+        <label for="signupName">Full name</label>
+        <div class="fld-ctl">
+          <i class="fa-solid fa-user fld-ico" aria-hidden="true"></i>
+          <input id="signupName" name="name" type="text" placeholder="Your full name" autocomplete="name" aria-invalid="false" aria-describedby="signupNameErr" />
+        </div>
+        <p class="fld-err" id="signupNameErr" data-err></p>
+      </div>
+
+      <div class="fld" data-field="email">
+        <label for="signupEmail">Email address</label>
+        <div class="fld-ctl">
+          <i class="fa-solid fa-envelope fld-ico" aria-hidden="true"></i>
+          <input id="signupEmail" name="email" type="email" placeholder="you@example.com" autocomplete="email" aria-invalid="false" aria-describedby="signupEmailErr" />
+        </div>
+        <p class="fld-err" id="signupEmailErr" data-err></p>
+      </div>
+
+      <div class="fld" data-field="password">
+        <label for="signupPassword">Create password</label>
+        <div class="fld-ctl">
+          <i class="fa-solid fa-lock fld-ico" aria-hidden="true"></i>
+          <input id="signupPassword" name="password" type="password" placeholder="Create a strong password" autocomplete="new-password" aria-invalid="false" aria-describedby="signupPasswordErr" />
+          <button type="button" class="fld-eye" data-eye aria-label="Show password">
+            <i class="fa-solid fa-eye" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="strength" data-strength data-level="0">
+          <div class="strength-bar" aria-hidden="true">
+            <span class="str-seg"></span><span class="str-seg"></span><span class="str-seg"></span><span class="str-seg"></span><span class="str-seg"></span>
+          </div>
+          <p class="strength-meta">
+            <span class="strength-label" data-strength-label>Password strength</span>
+            <span class="strength-pct" data-strength-pct>0&#47;5</span>
+          </p>
+        </div>
+        <ul class="pw-rules" data-pw-rules>
+          <li data-rule="len">8+ characters</li>
+          <li data-rule="upper">One uppercase letter</li>
+          <li data-rule="lower">One lowercase letter</li>
+          <li data-rule="num">One number</li>
+          <li data-rule="spec">One special character</li>
+        </ul>
+        <p class="fld-err" id="signupPasswordErr" data-err></p>
+      </div>
+
+      <div class="fld" data-field="confirm">
+        <label for="signupConfirm">Confirm password</label>
+        <div class="fld-ctl">
+          <i class="fa-solid fa-lock fld-ico" aria-hidden="true"></i>
+          <input id="signupConfirm" name="confirm" type="password" placeholder="Re-enter your password" autocomplete="new-password" aria-invalid="false" aria-describedby="signupConfirmErr" />
+          <button type="button" class="fld-eye" data-eye aria-label="Show password">
+            <i class="fa-solid fa-eye" aria-hidden="true"></i>
+          </button>
+        </div>
+        <p class="fld-err" id="signupConfirmErr" data-err></p>
+      </div>
+
+      <div class="fld" data-field="role">
+        <label id="roleLabel">I am joining as</label>
+        <div class="role-grid" role="radiogroup" aria-labelledby="roleLabel">
+          <label class="role-card" data-role-card>
+            <input type="radio" name="role" value="buyer" aria-invalid="false" aria-describedby="signupRoleErr" />
+            <span class="role-card__top"><i class="fa-solid fa-bag-shopping" aria-hidden="true"></i> Buyer</span>
+            <span class="role-card__note">Order accessories, track deliveries, save favourites.</span>
+          </label>
+          <label class="role-card" data-role-card>
+            <input type="radio" name="role" value="seller" aria-invalid="false" aria-describedby="signupRoleErr" />
+            <span class="role-card__top"><i class="fa-solid fa-store" aria-hidden="true"></i> Seller</span>
+            <span class="role-card__note">List stock, ship orders, watch your numbers.</span>
+          </label>
+        </div>
+        <p class="fld-err" id="signupRoleErr" data-err></p>
+      </div>
+
+      <div class="fld" data-field="terms">
+        <label class="fld-check">
+          <input type="checkbox" id="signupTerms" name="terms" />
+          <span class="fld-checkbox" aria-hidden="true"><i class="fa-solid fa-check"></i></span>
+          <span class="fld-check-label">I accept the <a href="404.html" class="fld-inline-link">Terms</a> and <a href="404.html" class="fld-inline-link">Privacy Policy</a></span>
+        </label>
+        <p class="fld-err" data-err></p>
+      </div>
+
+      <button type="submit" class="abtn abtn--solid">
+        <i class="fa-solid fa-user-plus" aria-hidden="true"></i>
+        <span class="btn-label">Create account</span>
+      </button>
+
+      <div class="alt-divider"><span>or</span></div>
+
+      <button type="button" class="abtn abtn--ghost" data-social>
+        <i class="fa-brands fa-google" aria-hidden="true"></i>
+        <span class="btn-label">Continue with Google</span>
+      </button>
+
+    </form>
+
+    <p class="auth-switch">
+      Already have an account? <a href="login.html">Sign in</a>
+    </p>
+
+  </section>
+
+</main>
+
+<div class="auth-toast" id="authToast" role="status" aria-live="polite"></div>
+
+<script src="../JS/auth.js"></script>
+</body>
+</html>

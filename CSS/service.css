@@ -1,0 +1,1218 @@
+/* =====================================================================
+   STACKLY · SERVICE
+   ---------------------------------------------------------------------
+   The shell (preloader, header, fullscreen menu, footer, buttons,
+   newsletter) is inherited verbatim from home.css and driven by
+   home.js, so the hamburger and the mobile menu behave exactly as they
+   do on the home page. Nothing here restyles the shell.
+
+   Everything below the shell is this page's own layout language, but it
+   stays strictly inside the house design system:
+
+     · PALETTE — four colours only (ink, bone, violet, coral) plus the
+       alpha and text tints home.css and shop.css already ship. No fifth
+       hue is introduced on this page.
+     · SHAPES  — the house radii (--r-s / --r-m / --r-l / --r-xl) and the
+       house border/shadow treatment. Cards are --r-l with images inset
+       to calc(--r-m - 6px), exactly like the shop cards.
+     · PARTS   — .eyebrow, .sec-head, .sec-title, .sec-note and .btn are
+       reused from home.css rather than reinvented, so the tags, headings
+       and buttons on this page are literally the same components the
+       home and shop pages use.
+      · MOTION — ten different mechanisms, one per section:
+          1 angular plate + conic radar sweep
+          2 numbered booking rail + cross-fading shot
+          3 pinned horizontal rail
+          4 real data table + sticky detail panel
+          5 a bound book, six leaves turned one at a time by scroll
+          6 equal-tile shelf, caption slides up on hover
+          7 radial ring turned by scroll, hub reads the front node
+          8 four column kanban, square and equal height
+          9 perforated receipt with live arithmetic
+         10 sticky index + answer list
+    ===================================================================== */
+
+:root {
+  /* ---- palette: the four house colours and nothing else ---- */
+  --sv-hair: var(--line);
+  --sv-hair-l: var(--line-l);
+  --sv-panel: #FFFFFF;
+  --sv-panel-dim: rgba(243, 240, 234, .05);
+
+  /* ---- text tokens: identical values to shop.css ----
+     home's --ink-50 / --bone-45 are alpha washes sized for hairlines and
+     decorative fades. Used as small-text colours they land at 2.0-4.1:1,
+     so the same four AA-tuned solids the shop page already ships are
+     redeclared here rather than a second set being invented. */
+  --ink-muted: #63625D;    /* 5.4:1 on bone, 6.1:1 on white */
+  --violet-ink: #4E33E0;  /* 6.4:1 on bone, 5.2:1 on violet-soft */
+  --coral-ink: #B93A16;    /* 5.7:1 on white */
+  --bone-legible: rgba(243, 240, 234, .58); /* 6.2:1 on ink */
+}
+
+/* home.css inks .sec-note with the 3.5:1 --ink-50 wash. On this page those
+   section intros are real body copy, so the on-light variant is re-inked to
+   the legible value; the dark sections get the legible bone instead. */
+.sec-note:not(.sec-note--light) { color: var(--ink-muted); }
+.sec-note--light { color: var(--bone-legible); }
+
+main { overflow-x: clip; }
+
+.sv-sr {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* reveal primitives: hidden until service.js releases them. the noscript
+   block in the head force-shows them all. */
+[data-sv-r] { opacity: 0; }
+[data-sv-r="tag"]    { transform: translateY(22px); }
+[data-sv-r="typeup"] { transform: translateY(34px); clip-path: inset(0 0 22% 0); }
+[data-sv-r="strip"]  { transform: translateY(26px); }
+[data-sv-r="plate"]  { transform: translate3d(38px, 0, 0) scale(.95); }
+[data-sv-r="railin"] { transform: translateX(-26px); }
+[data-sv-r="cardin"] { transform: translateY(40px) rotateX(-9deg); }
+[data-sv-r="stepin"] { transform: translateY(34px) scale(.96); }
+[data-sv-r="tile"]   { transform: scale(.94); }
+[data-sv-r="pop"]    { transform: scale(.55); }
+[data-sv-r="page"]   { transform: translateY(24px) rotateX(-24deg) scale(.94); }
+[data-sv-r="printin"]{ transform: translateY(46px) rotateX(-6deg); }
+
+[data-sv-r].sv-in {
+  opacity: 1; transform: none; clip-path: inset(0 0 0 0);
+  transition: opacity .8s var(--ease-2), transform 1s var(--ease),
+              clip-path 1.1s var(--ease);
+}
+
+/* the page's own small layout helpers (cards, chips, rails) */
+.sv-cta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.sv-win { overflow: hidden; background: var(--ink-2); }
+.sv-win img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+/* =====================================================================
+   1 · THE APERTURE
+   Copy left, an angular instrument plate right with a live radar sweep.
+   The headline scatters in per word and one word resolves from a
+   scramble, so the hero grammar is its own.
+   ===================================================================== */
+.sv-aperture {
+  position: relative; overflow: hidden;
+  background: var(--ink); color: var(--bone);
+  padding-block: clamp(150px, 16vh, 210px) clamp(60px, 7.5vw, 104px);
+}
+.sv-aperture__field {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(rgba(243, 240, 234, .045) 1px, transparent 1px) 0 0 / 100% 74px,
+    linear-gradient(90deg, rgba(243, 240, 234, .045) 1px, transparent 1px) 0 0 / 74px 100%;
+  -webkit-mask-image: radial-gradient(120% 90% at 72% 42%, #000 12%, transparent 74%);
+          mask-image: radial-gradient(120% 90% at 72% 42%, #000 12%, transparent 74%);
+}
+.sv-aperture__wrap {
+  position: relative; display: grid; gap: clamp(34px, 5vw, 74px);
+  grid-template-columns: minmax(0, 1.04fr) minmax(0, .96fr);
+  align-items: center;
+}
+.sv-display {
+  font-family: var(--f-d); font-weight: 800; letter-spacing: -.045em;
+  line-height: .92; margin: 24px 0 0;
+  font-size: clamp(2.5rem, 6.1vw, 5rem); color: var(--bone);
+}
+.sv-display .sv-line { display: block; }
+.sv-display .sv-word { display: inline-block; will-change: transform, opacity; }
+.sv-display .sv-word--sig { color: var(--coral); }
+.sv-aperture__lede {
+  font-size: clamp(.98rem, 1.08vw, 1.08rem); line-height: 1.62;
+  color: var(--bone-legible); max-width: 46ch; margin: 22px 0 0;
+}
+.sv-aperture__cta { margin-top: 32px; }
+
+.sv-strip {
+  list-style: none; margin: 44px 0 0; padding: 0;
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px; max-width: 540px;
+}
+.sv-strip li { position: relative; padding-top: 14px; border-top: 1px solid var(--sv-hair-l); }
+.sv-strip .sv-win { border-radius: var(--r-m); aspect-ratio: 1; }
+.sv-strip .sv-win img {
+  filter: grayscale(1) contrast(1.08); opacity: .6;
+  transition: filter .55s var(--ease-2), opacity .55s var(--ease-2),
+              transform .55s var(--ease);
+}
+.sv-strip b { display: block; font-family: var(--f-d); font-size: .95rem; font-weight: 600; margin-top: 12px; }
+.sv-strip em {
+  font-style: normal; font-family: var(--f-b); font-size: .76rem; color: var(--bone-legible);
+}
+.sv-strip li:hover .sv-win img { filter: none; opacity: 1; transform: scale(1.06); }
+.sv-strip li:hover { border-top-color: var(--coral); }
+
+/* the instrument plate */
+.sv-aperture__bay { margin: 0; }
+.sv-plate {
+  position: relative; overflow: hidden; background: var(--ink-2);
+  border-radius: var(--r-l); aspect-ratio: 4 / 3.1;
+  border: 1px solid var(--sv-hair-l);
+}
+.sv-plate__img {
+  display: block; width: 100%; height: 100%; object-fit: cover;
+  transform: scale(1.14); will-change: transform;
+  transition: transform 1.1s var(--ease);
+}
+.sv-aperture__bay:hover .sv-plate__img { transform: scale(1.05); }
+.sv-plate__sweep {
+  position: absolute; inset: -20%; pointer-events: none; mix-blend-mode: screen;
+  background: conic-gradient(from 0deg at 50% 50%,
+    rgba(91, 61, 245, .5) 0deg, rgba(91, 61, 245, 0) 34deg, rgba(91, 61, 245, 0) 360deg);
+  animation: svSweep 5.5s linear infinite;
+}
+@keyframes svSweep { to { transform: rotate(360deg); } }
+.sv-plate__reticle { position: absolute; inset: 18px; pointer-events: none; }
+.sv-plate__reticle::before, .sv-plate__reticle::after {
+  content: ""; position: absolute; width: 28px; height: 28px;
+  border: 1.5px solid rgba(243, 240, 234, .7);
+}
+.sv-plate__reticle::before { top: 0; left: 0; border-right: 0; border-bottom: 0; }
+.sv-plate__reticle::after { bottom: 0; right: 0; border-left: 0; border-top: 0; }
+.sv-plate__scale {
+  position: absolute; left: 22px; bottom: 20px; display: flex;
+  align-items: baseline; gap: 8px; font-family: var(--f-d);
+}
+.sv-plate__scale b { font-size: 1.5rem; font-weight: 700; color: var(--coral); }
+.sv-plate__scale i {
+  font-style: normal; font-family: var(--f-b); font-size: .68rem;
+  letter-spacing: .18em; text-transform: uppercase; color: var(--bone-legible);
+}
+.sv-aperture__bay figcaption {
+  display: flex; justify-content: space-between; gap: 12px;
+  margin-top: 14px; font-family: var(--f-b); font-size: .78rem; color: var(--bone-legible);
+}
+.sv-plate__load b { color: var(--coral); }
+
+/* =====================================================================
+   2 · THE INTAKE
+   A numbered rail of disciplines drives a cross-fading shot. The rail is
+   a real tablist.
+   ===================================================================== */
+.sv-intake { background: var(--bone); padding-block: clamp(56px, 7vw, 100px); }
+.sv-intake__wrap {
+  display: grid; gap: clamp(28px, 4vw, 60px);
+  grid-template-columns: minmax(0, .74fr) minmax(0, 1.26fr);
+  align-items: start;
+}
+.sv-intake__rail { display: grid; gap: 10px; position: sticky; top: 124px; }
+.sv-intake__railcap {
+  font-family: var(--f-b); font-size: .68rem; letter-spacing: .2em;
+  text-transform: uppercase; color: var(--ink-muted); margin-bottom: 4px;
+}
+.sv-slot {
+  display: grid; grid-template-columns: auto 60px minmax(0, 1fr);
+  align-items: center; gap: 14px; text-align: left; cursor: pointer;
+  padding: 12px 14px; background: var(--sv-panel); color: var(--ink);
+  border: 1px solid var(--sv-hair); border-radius: var(--r-m);
+  font-family: var(--f-b);
+  transition: border-color .4s var(--ease-2), transform .45s var(--ease),
+              box-shadow .45s var(--ease);
+}
+.sv-slot em {
+  font-style: normal; font-family: var(--f-d); font-size: .8rem;
+  font-weight: 700; color: var(--ink-muted); transition: color .35s var(--ease-2);
+}
+.sv-slot .sv-win { border-radius: calc(var(--r-m) - 6px); aspect-ratio: 1; }
+.sv-slot .sv-win img { filter: grayscale(1); transition: filter .45s var(--ease-2), transform .5s var(--ease); }
+.sv-slot b { display: block; font-family: var(--f-d); font-size: 1rem; font-weight: 600; }
+.sv-slot i { font-style: normal; font-size: .74rem; color: var(--ink-muted); }
+.sv-slot:hover { border-color: var(--ink-30); transform: translateX(4px); }
+.sv-slot:hover .sv-win img { filter: grayscale(0); transform: scale(1.07); }
+.sv-slot.is-on {
+  border-color: var(--violet);
+  box-shadow: 0 18px 40px -30px rgba(91, 61, 245, .8), inset 3px 0 0 var(--violet);
+}
+.sv-slot.is-on em { color: var(--violet-ink); }
+.sv-slot.is-on .sv-win img { filter: none; }
+.sv-slot:focus-visible { outline: 2px solid var(--violet); outline-offset: 3px; }
+
+.sv-intake__desk {
+  display: grid; gap: clamp(22px, 2.6vw, 38px);
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
+  align-items: start;
+}
+.sv-shot {
+  position: relative; overflow: hidden; border-radius: var(--r-l);
+  background: var(--ink-2); aspect-ratio: 4 / 3.4;
+}
+.sv-shot img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  will-change: transform, opacity;
+}
+.sv-shot img:not([hidden]) { z-index: 2; }
+.sv-shot__badge {
+  position: absolute; left: 16px; bottom: 16px; z-index: 3;
+  font-family: var(--f-d); font-size: .76rem; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase;
+  padding: 9px 14px; border-radius: 100px;
+  background: var(--violet); color: #fff;
+}
+.sv-book { display: grid; gap: 14px; }
+.sv-book__h { font-size: clamp(1.7rem, 3vw, 2.4rem); margin: 0; }
+.sv-book__p { margin: 0 0 6px; color: var(--ink-muted); font-family: var(--f-b); line-height: 1.6; }
+.sv-field { display: grid; gap: 6px; align-content: start; }
+.sv-field > span, .sv-field--split label > span {
+  font-family: var(--f-b); font-size: .7rem; font-weight: 600;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--ink-muted);
+}
+.sv-field input, .sv-field select {
+  width: 100%; font-family: var(--f-b); font-size: .95rem; color: var(--ink);
+  padding: 14px 16px; border: 1px solid var(--sv-hair);
+  border-radius: var(--r-m); background: var(--sv-panel);
+  transition: border-color .3s var(--ease-2), box-shadow .3s var(--ease-2);
+}
+.sv-field input:focus, .sv-field select:focus {
+  outline: 0; border-color: var(--violet); box-shadow: 0 0 0 4px var(--violet-soft);
+}
+/* the native arrow is drawn hard against the right border, so it is taken
+   away and redrawn well inside the control: the caret sits in the padding
+   the field already reserves, and the whole control is a pointer target,
+   so the cursor is already a hand before it reaches the glyph. */
+.sv-field select {
+  cursor: pointer;
+  padding-right: 48px;
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.6 6 6.4l5-4.8' fill='none' stroke='%234E33E0' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 20px center;
+  background-size: 12px 8px;
+}
+.sv-field select option { background: #fff; color: var(--ink); }
+.sv-field--split { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.sv-field--split label { display: grid; gap: 6px; align-content: start; }
+.sv-book__msg { margin: 0; min-height: 1.3em; font-family: var(--f-b); font-size: .84rem; color: var(--coral-ink); font-weight: 500; }
+.sv-book__msg.is-ok { color: var(--violet-ink); }
+.sv-field input.is-bad, .sv-field select.is-bad {
+  border-color: var(--coral); box-shadow: 0 0 0 4px rgba(255, 90, 54, .12);
+}
+.sv-err { font-style: normal; font-family: var(--f-b); font-size: .74rem; line-height: 1.32; color: var(--coral-ink); }
+.sv-err:empty { display: none; }
+.sv-book > .btn { justify-content: center; }
+
+/* =====================================================================
+   3 · THE LONG BENCH
+   Pinned horizontal rail: the section pins and the stations travel
+   sideways under the scrub.
+   ===================================================================== */
+.sv-bench { position: relative; background: var(--ink); color: var(--bone); }
+.sv-bench__pin {
+  min-height: 100svh; display: flex; flex-direction: column;
+  justify-content: center; gap: clamp(22px, 3vw, 40px);
+  padding-block: clamp(80px, 10vh, 120px); overflow: hidden;
+}
+.sv-rail { position: relative; overflow: hidden; padding-inline: max(var(--pad), 4vw); }
+.sv-rail__track {
+  display: flex; align-items: stretch; gap: clamp(14px, 1.6vw, 24px);
+  width: max-content; will-change: transform;
+}
+.sv-stn {
+  position: relative; width: clamp(232px, 25vw, 310px); flex: none;
+  display: grid; gap: 10px; align-content: start;
+  padding: 18px; border: 1px solid var(--sv-hair-l); border-radius: var(--r-l);
+  background: var(--sv-panel-dim);
+  transition: border-color .4s var(--ease-2), background .4s var(--ease-2),
+              transform .5s var(--ease);
+}
+.sv-stn__no {
+  font-family: var(--f-d); font-size: .74rem; font-weight: 700;
+  letter-spacing: .16em; color: var(--coral);
+}
+.sv-stn .sv-win { border-radius: var(--r-m); aspect-ratio: 1; }
+.sv-stn .sv-win img { transform: scale(1.12); transition: transform .9s var(--ease); }
+.sv-stn h3 { margin: 4px 0 0; font-family: var(--f-d); font-size: 1.16rem; font-weight: 600; color: var(--bone); }
+.sv-stn p { margin: 0; font-family: var(--f-b); font-size: .84rem; line-height: 1.55; color: var(--bone-legible); }
+.sv-stn__rate {
+  display: inline-flex; align-items: baseline; gap: 6px; margin-top: 4px;
+  font-family: var(--f-b); font-size: .72rem; color: var(--bone-legible);
+  padding-top: 10px; border-top: 1px solid var(--sv-hair-l);
+}
+.sv-stn__rate b { font-family: var(--f-d); font-size: 1.02rem; color: var(--coral); }
+.sv-stn:hover { border-color: var(--violet); background: rgba(91, 61, 245, .14); transform: translateY(-6px); }
+.sv-stn:hover .sv-win img { transform: scale(1.03); }
+.sv-rail__end {
+  flex: none; display: grid; place-items: center; width: clamp(120px, 14vw, 190px);
+  font-family: var(--f-d); font-size: .78rem; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--bone-legible);
+  border-left: 1px dashed var(--sv-hair-l);
+}
+.sv-rail__meter {
+  height: 3px; margin: 26px max(var(--pad), 4vw) 0;
+  background: var(--sv-hair-l); border-radius: 100px; overflow: hidden;
+}
+.sv-rail__meter i {
+  display: block; height: 100%; width: 100%; border-radius: 100px;
+  background: linear-gradient(90deg, var(--violet), var(--coral));
+  transform: scaleX(0); transform-origin: 0 50%;
+}
+
+/* =====================================================================
+   4 · THE LEDGER
+   A real table so the numbers genuinely line up, with a sticky detail
+   panel that swaps its photo when a row is opened.
+   ===================================================================== */
+.sv-ledger { background: var(--bone); padding-block: clamp(56px, 7vw, 100px); }
+.sv-ledger__body {
+  display: grid; gap: clamp(20px, 2.6vw, 40px);
+  grid-template-columns: minmax(0, 1.52fr) minmax(0, .8fr); align-items: start;
+}
+.sv-table { width: 100%; border-collapse: collapse; }
+.sv-table thead th {
+  text-align: left; padding: 0 14px 12px; font-family: var(--f-b);
+  font-size: .68rem; font-weight: 600; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--ink-muted);
+  border-bottom: 1px solid var(--sv-hair);
+}
+.sv-table tbody th, .sv-table td {
+  padding: 16px 14px; text-align: left; font-family: var(--f-b);
+  font-size: .9rem; font-weight: 400; color: var(--ink);
+  border-bottom: 1px solid var(--sv-hair);
+  transition: background .3s var(--ease-2);
+}
+.sv-table tbody th { font-weight: 600; }
+.sv-row { cursor: pointer; }
+.sv-row:hover, .sv-row:focus-visible, .sv-row.is-on { background: var(--sv-panel); }
+.sv-row:focus-visible { outline: 2px solid var(--violet); outline-offset: -2px; }
+.sv-row__id { font-family: var(--f-d); font-weight: 700; }
+.sv-pill {
+  display: inline-block; font-family: var(--f-b); font-size: .72rem;
+  font-weight: 600; padding: 5px 11px; border-radius: 100px;
+  border: 1px solid transparent; white-space: nowrap;
+}
+.sv-pill--live { background: var(--violet-soft); color: var(--violet-ink); border-color: rgba(91, 61, 245, .3); }
+.sv-pill--wait { background: var(--coral-soft); color: var(--coral-ink); border-color: rgba(255, 90, 54, .32); }
+.sv-pill--done { background: var(--ink-08); color: var(--ink-muted); border-color: var(--sv-hair); }
+
+.sv-ledger__detail {
+  position: sticky; top: 124px; display: grid; gap: 14px; padding: 16px;
+  background: var(--sv-panel); border: 1px solid var(--sv-hair);
+  border-radius: var(--r-l);
+}
+.sv-ledger__shot { overflow: hidden; border-radius: var(--r-m); aspect-ratio: 4 / 3; background: var(--ink-2); }
+.sv-ledger__shot img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.sv-ledger__meta b { font-family: var(--f-d); font-size: .74rem; letter-spacing: .14em; color: var(--violet-ink); }
+.sv-ledger__meta h3 { margin: 4px 0 0; font-size: 1.3rem; }
+.sv-ledger__meta p { margin: 6px 0 0; font-family: var(--f-b); font-size: .86rem; line-height: 1.58; color: var(--ink-muted); }
+
+/* =====================================================================
+   5 · THE LOGBOOK
+   A bound book, not a fanned hand of loose cards. All six leaves are
+   hinged on the SAME left edge and sit exactly on top of one another, so
+   the whole section is a single number: --sv-turn, 0 to 5, the leaf at
+   the front. service.js scrubs that one value and never touches a leaf.
+
+   Every part of the interaction owns a DIFFERENT css property, which is
+   the only reason they cannot undo one another:
+       .sv-lg__slot   transform      -> the entry, [data-sv-r="page"]
+       .sv-lg__slot   z-index        -> the open sheet, the turning sheet
+       .sv-lg__leaf   rotateY        -> the turn, driven by --sv-turn
+       .sv-lg__leaf   translateX     -> the turned leaves stacking left
+       .sv-lg__face   transform      -> the lift on hover / focus
+       .sv-lg__stamp  scale+rotate+opacity -> the stamp coming down
+
+   A turned leaf falls face-down into the gutter on the left and stays
+   there, so the pile beside the book is the section's own progress and
+   nothing has to count it. The perspective origin sits ON the hinge, which
+   means a leaf is only foreshortened while it is mid-turn: at rest every
+   page is parallel to the screen and the same size as the open one.
+   ===================================================================== */
+
+@property --sv-turn { syntax: '<number>'; inherits: true; initial-value: 0; }
+
+.sv-lg { background: var(--ink); color: var(--bone); }
+.sv-lg__pin {
+  min-height: 100svh; display: flex; flex-direction: column; justify-content: center;
+  gap: clamp(14px, 2vh, 24px); padding-block: clamp(56px, 8vh, 96px);
+}
+/* the heading is inside the pin, so the margin the house sec-head asks
+   for is spent on the book instead */
+.sv-lg__pin .sec-head { margin-bottom: clamp(16px, 2.4vh, 34px); }
+
+.sv-lg__body {
+  --sv-turn: 0;
+  /* --sv-last is the index of the front leaf: five sheets have to be
+     turned to reach the sixth. It is the only number here that has to
+     agree with the markup, and the six leaves are fixed for the life of
+     the page. */
+  --sv-last: 5;
+  --page: clamp(274px, 35svh, 392px);
+  display: grid; gap: clamp(16px, 2.4vw, 38px);
+  grid-template-columns: minmax(128px, 164px) minmax(0, 1fr);
+  align-items: center;
+}
+
+/* ---- the spine: the readout, and the only real control in the section ---- */
+.sv-lg__spine { display: grid; gap: clamp(14px, 1.8vw, 22px); align-content: center; }
+.sv-lg__read { display: grid; gap: 8px; margin: 0; }
+.sv-lg__read b {
+  display: flex; align-items: baseline; gap: 5px; margin: 0;
+  font-family: var(--f-d); font-size: .68rem; font-weight: 600;
+  letter-spacing: .16em; text-transform: uppercase; color: var(--bone-legible);
+}
+.sv-lg__read b span { font-size: 1.24rem; font-weight: 700; letter-spacing: .02em; color: var(--bone); }
+.sv-lg__read b i { font-style: normal; }
+.sv-lg__track { display: block; height: 2px; background: var(--sv-hair-l); }
+.sv-lg__track em {
+  display: block; height: 100%; font-style: normal;
+  background: linear-gradient(90deg, var(--violet), var(--coral));
+  transform-origin: 0 50%; transform: scaleX(calc(var(--sv-turn) / var(--sv-last)));
+}
+.sv-lg__read small { font-family: var(--f-b); font-size: .72rem; color: var(--bone-legible); }
+
+.sv-lg__rows { display: grid; }
+.sv-lg__row {
+  position: relative; display: grid; grid-template-columns: 20px minmax(0, 1fr);
+  gap: 9px; align-items: baseline; width: 100%; text-align: left;
+  padding: 9px 0 9px 11px; color: var(--bone-legible);
+  border-bottom: 1px solid var(--sv-hair-l);
+  font-family: var(--f-b); font-size: .78rem; line-height: 1.32;
+  transition: color .4s var(--ease-2);
+}
+/* the tick that marks the open sheet, drawn down from its own top edge */
+.sv-lg__row::before {
+  content: ""; position: absolute; left: 0; top: 7px; bottom: 7px; width: 2px;
+  background: var(--coral); transform: scaleY(0); transform-origin: 50% 0;
+  transition: transform .5s var(--ease);
+}
+.sv-lg__row em { font-style: normal; font-family: var(--f-d); font-size: .68rem; font-weight: 700; letter-spacing: .06em; }
+.sv-lg__row span { display: block; }
+.sv-lg__row:hover { color: var(--bone); }
+.sv-lg__row:focus-visible { outline: 2px solid var(--violet); outline-offset: 3px; }
+.sv-lg__row[aria-current="true"] { color: var(--bone); }
+.sv-lg__row[aria-current="true"]::before { transform: scaleY(1); }
+.sv-lg__row[aria-current="true"] em { color: var(--coral); }
+
+/* ---- the desk: gutter on the left, the open book on the right ----
+   The two halves are the same width on purpose. A leaf turned past 90
+   lands exactly one page-width to the left of its hinge, so the gutter is
+   sized to catch it rather than to balance the composition. The gutter is
+   marked first in the markup as well as in the grid, because the book is
+   what has to paint on top of it: the leaves are not children of the
+   gutter, they overflow the book into it. */
+.sv-lg__stage { position: relative; display: grid; grid-template-columns: 1fr 1fr; }
+.sv-lg__gutter {
+  grid-column: 1; position: relative; overflow: hidden;
+  border-radius: var(--r-m) 0 0 var(--r-m);
+  background:
+    linear-gradient(90deg, rgba(11, 13, 18, .74), rgba(11, 13, 18, 0) 22%),
+    radial-gradient(78% 96% at 6% 50%, rgba(91, 61, 245, .3), transparent 72%),
+    repeating-linear-gradient(180deg, rgba(243, 240, 234, .045) 0 1px, transparent 1px 27px),
+    var(--ink-2);
+  -webkit-mask-image: linear-gradient(90deg, #000 62%, rgba(0, 0, 0, .3));
+          mask-image: linear-gradient(90deg, #000 62%, rgba(0, 0, 0, .3));
+}
+
+.sv-lg__book {
+  grid-column: 2; position: relative; height: var(--page);
+  margin: 0; padding: 0; list-style: none;
+  /* the vanishing point IS the hinge, so a leaf only foreshortens while
+     it is swinging and every page at rest is the same size on screen */
+  perspective: 1500px; perspective-origin: 0% 50%;
+}
+/* the z-order lives on the slot, never on the leaf. The slot carries the
+   [data-sv-r="page"] entry, and a transformed element is a stacking
+   context — so a z-index on the leaf would be scoped inside its own slot
+   and the six slots would fall back to markup order, which puts sheet six
+   on top of sheet one for as long as the entry lasts. */
+.sv-lg__slot { position: absolute; inset: 0; transform-style: preserve-3d; z-index: calc(10 + var(--i)); }
+/* the open sheet always paints over the leaves still waiting under it, and
+   a sheet mid-turn over the pile it is falling onto. Both have to be
+   classes: z-index cannot be a calc of --sv-turn. */
+.sv-lg__slot.is-front { z-index: 50; }
+.sv-lg__slot.is-turning { z-index: 60; }
+.sv-lg__slot:nth-child(1) { --i: 0; }
+.sv-lg__slot:nth-child(2) { --i: 1; }
+.sv-lg__slot:nth-child(3) { --i: 2; }
+.sv-lg__slot:nth-child(4) { --i: 3; }
+.sv-lg__slot:nth-child(5) { --i: 4; }
+.sv-lg__slot:nth-child(6) { --i: 5; }
+
+.sv-lg__leaf {
+  /* --tf is this leaf's own share of the turn: 0 until scroll reaches its
+     sheet, then it climbs to 1 and stops there. Clamping it is what keeps
+     a finished leaf folded instead of spinning on through five more
+     revolutions of the number. */
+  --tf: min(1, max(0, var(--sv-turn) - var(--i)));
+  position: absolute; inset: 0; transform-origin: left center;
+  /* preserve-3d so the lift on .sv-lg__face has the book's perspective to
+     push against: flattened here, its translateZ would do nothing at all */
+  transform-style: preserve-3d;
+  transform: translateX(calc(var(--tf) * var(--i) * -3px)) rotateY(calc(var(--tf) * 180deg));
+}
+
+/* ---- the back of a turned sheet, which is what the gutter fills with ---- */
+.sv-lg__verso {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  border-radius: var(--r-m) 0 0 var(--r-m);
+  background: linear-gradient(200deg, #2b3040, #171a22 72%);
+  box-shadow: inset 0 0 0 1px var(--sv-hair-l), 0 22px 44px -30px rgba(0, 0, 0, .9);
+  backface-visibility: hidden; transform: rotateY(180deg);
+}
+.sv-lg__verso i {
+  font-style: normal; font-family: var(--f-d); font-size: .66rem; font-weight: 700;
+  letter-spacing: .34em; text-transform: uppercase; color: rgba(243, 240, 234, .16);
+  rotate: -90deg;
+}
+
+/* ---- the open sheet: paper, a record down the left and a photo mat right ---- */
+.sv-lg__face {
+  --lift: 46px; --rise: 0px;
+  position: absolute; inset: 0; z-index: 2;
+  display: grid; grid-template-columns: minmax(0, 1.06fr) minmax(0, .94fr);
+  grid-template-rows: minmax(0, 1fr);
+  gap: clamp(13px, 1.5vw, 20px);
+  padding: clamp(15px, 1.7vw, 23px);
+  text-align: left; color: var(--ink); cursor: pointer;
+  border: 0; border-radius: var(--r-m) 0 0 var(--r-m);
+  background: linear-gradient(200deg, #FCFBF7, #F1EDE4 64%, #E6E1D5);
+  box-shadow: 0 28px 58px -34px rgba(0, 0, 0, .92);
+  overflow: hidden; backface-visibility: hidden;
+  transform: translateZ(0);
+  transition: transform .6s var(--ease), box-shadow .5s var(--ease);
+}
+/* the fore-edge of a bound page is square; only the spine end is rounded */
+.sv-lg__face:is(:hover, :focus-visible) {
+  transform: translateZ(var(--lift)) translateY(calc(-1 * var(--rise)));
+  box-shadow: 0 52px 84px -34px rgba(11, 13, 18, .62);
+}
+.sv-lg__face:focus-visible { outline: 2px solid var(--violet); outline-offset: 4px; }
+
+.sv-lg__rec { position: relative; display: grid; gap: 3px; align-content: start; min-width: 0; }
+/* the coral rule that draws itself across the head of the record */
+.sv-lg__rec::after {
+  content: ""; position: absolute; left: 0; right: 0; top: -9px; height: 2px;
+  background: var(--coral); transform: scaleX(0); transform-origin: 0 50%;
+  transition: transform .55s var(--ease);
+}
+.sv-lg__no { font-family: var(--f-d); font-size: .66rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--coral-ink); }
+.sv-lg__name { font-family: var(--f-d); font-size: clamp(.98rem, 1.45vw, 1.26rem); font-weight: 700; letter-spacing: -.02em; color: var(--ink); }
+.sv-lg__dev { font-family: var(--f-b); font-size: .75rem; color: var(--ink-muted); }
+.sv-lg__spec { display: grid; gap: 4px; margin-top: 9px; padding-top: 10px; border-top: 1px solid var(--line); }
+.sv-lg__spec > span {
+  display: grid; grid-template-columns: 50px minmax(0, 1fr); gap: 9px;
+  font-family: var(--f-b); font-size: .74rem; line-height: 1.42; color: var(--ink);
+}
+.sv-lg__spec em {
+  font-style: normal; font-family: var(--f-d); font-size: .58rem; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--ink-muted);
+  transition: color .4s var(--ease-2);
+}
+.sv-lg__face:is(:hover, :focus-visible) .sv-lg__rec::after { transform: scaleX(1); }
+.sv-lg__face:is(:hover, :focus-visible) .sv-lg__spec em { color: var(--coral-ink); }
+
+/* the photo sits in a dark mat on the paper, and on hover the mat steps
+   BACK into the sheet while the page itself comes forward — the opposite
+   of the zoom every other image on this site does */
+.sv-lg__shot {
+  position: relative; overflow: hidden; border-radius: calc(var(--r-m) - 8px);
+  background: var(--ink-2); min-width: 0;
+  transition: transform .6s var(--ease), box-shadow .5s var(--ease);
+}
+.sv-lg__shot img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.sv-lg__face:is(:hover, :focus-visible) .sv-lg__shot {
+  transform: scale(.955); box-shadow: inset 0 0 0 1px var(--coral);
+}
+
+.sv-lg__folio {
+  position: absolute; left: clamp(15px, 1.7vw, 23px); bottom: clamp(12px, 1.5vw, 18px);
+  font-family: var(--f-d); font-size: .6rem; font-weight: 700;
+  letter-spacing: .2em; text-transform: uppercase; color: var(--ink-muted);
+}
+
+/* ---- the stamp: the whole hover story. It comes down out of a 1.55 scale
+   and a 22 degree tilt, and stays once the sheet has been signed ---- */
+.sv-lg__stamp {
+  position: absolute; right: clamp(15px, 1.7vw, 23px); bottom: clamp(12px, 1.5vw, 18px); z-index: 3;
+  padding: 9px 13px 8px; border: 2px solid rgba(185, 58, 22, .5);
+  background: rgba(252, 251, 247, .3); color: var(--coral-ink);
+  font-family: var(--f-d); font-size: .68rem; font-weight: 800;
+  letter-spacing: .2em; text-transform: uppercase; white-space: nowrap;
+  rotate: -22deg; scale: 1.55; opacity: 0;
+  transition: opacity .16s var(--ease-2), scale .5s var(--ease), rotate .5s var(--ease);
+}
+.sv-lg__face:is(:hover, :focus-visible) .sv-lg__stamp,
+.sv-lg__face.is-stamped .sv-lg__stamp { opacity: 1; scale: 1; rotate: -8deg; }
+.sv-lg__face.is-stamped .sv-lg__rec::after { transform: scaleX(1); }
+.sv-lg__face.is-stamped .sv-lg__shot { box-shadow: inset 0 0 0 1px rgba(185, 58, 22, .42); }
+
+.sv-lg__hint {
+  /* a little more air under the book: the line used to sit right on the
+     bottom edge of the stage */
+  margin: clamp(14px, 2.6vh, 30px) 0 0;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  font-family: var(--f-b); font-size: .78rem; color: var(--bone-legible);
+}
+.sv-lg__hint i { color: var(--coral); }
+.sv-lg__hint--read { display: none; }
+
+/* =====================================================================
+   6 · THE SHELF
+   Eight equal tiles. Nothing expands and nothing collapses: the caption
+   simply rides up over the photo on hover, and the grid stays perfectly
+   aligned whatever is hovered.
+   ===================================================================== */
+.sv-shelf { background: var(--bone); padding-block: clamp(56px, 7vw, 100px); }
+.sv-tiles {
+  display: grid; gap: clamp(14px, 1.6vw, 22px);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.sv-tile {
+  position: relative; overflow: hidden; border-radius: var(--r-l);
+  background: var(--ink-2); aspect-ratio: 1 / 1;
+  border: 1px solid transparent;
+  transition: border-color .4s var(--ease-2), transform .5s var(--ease),
+              box-shadow .5s var(--ease);
+}
+.sv-tile img {
+  display: block; width: 100%; height: 100%; object-fit: cover;
+  clip-path: inset(14% 0 0 0);
+  transition: clip-path .8s var(--ease), transform .8s var(--ease);
+}
+.sv-tile.is-in img { clip-path: inset(0 0 0 0); }
+.sv-tile__cap {
+  position: absolute; inset: auto 0 0 0; z-index: 2;
+  padding: 18px 20px; display: grid; gap: 3px;
+  background: linear-gradient(0deg, rgba(11, 13, 18, .92) 12%, rgba(11, 13, 18, 0) 100%);
+  transform: translateY(38%);
+  opacity: 0;
+  transition: transform .5s var(--ease), opacity .4s var(--ease-2);
+}
+.sv-tile__cap b { font-family: var(--f-d); font-size: 1.02rem; font-weight: 600; color: var(--bone); }
+.sv-tile__cap i { font-style: normal; font-family: var(--f-b); font-size: .76rem; color: var(--bone-legible); }
+.sv-tile:hover { border-color: var(--coral); transform: translateY(-6px); box-shadow: var(--shadow); }
+.sv-tile:hover img, .sv-tile:focus-visible img { transform: scale(1.08); }
+.sv-tile:hover .sv-tile__cap, .sv-tile:focus-visible .sv-tile__cap { transform: translateY(0); opacity: 1; }
+.sv-tile:focus-visible { outline: 2px solid var(--violet); outline-offset: 4px; }
+.sv-tile__tag {
+  position: absolute; top: 14px; left: 14px; z-index: 2;
+  font-family: var(--f-d); font-size: .68rem; font-weight: 700;
+  letter-spacing: .14em; padding: 6px 10px; border-radius: 100px;
+  background: rgba(243, 240, 234, .14); color: var(--bone);
+  backdrop-filter: blur(6px);
+}
+.sv-tile:focus-visible { outline: 2px solid var(--violet); outline-offset: 4px; }
+
+/* =====================================================================
+   7 · THE ORBIT
+   The one radial layout on the site. Each node is pinned to a fixed point
+   on a circle with --x / --y (the unit offsets for its angle), the whole
+   list is turned by --sv-spin, and each node counter-rotates by the same
+   amount so its label stays upright. service.js only writes --sv-spin and
+   reads back which node ended up lowest; no trigonometry is duplicated.
+       .sv-orbit__nodes  rotate  -> turned by scroll
+       .sv-orb           rotate  -> counter-rotation, stays readable
+       .sv-orb           translate -> centred on its point
+       .sv-orb__btn      transform -> the lift
+   The hub repeats the copy of whichever node is showing, so it is
+   aria-hidden and the node cards stay the real, readable content.
+   ===================================================================== */
+.sv-orbit { background: var(--ink); color: var(--bone); padding-block: clamp(56px, 7vw, 100px); }
+.sv-orbit__stage { margin-top: clamp(34px, 4.4vw, 64px); }
+
+.sv-orbit__ring {
+  --orbit-r: clamp(160px, 20vw, 250px);
+  --orb-node: clamp(68px, 6.8vw, 88px);
+  /* the hub has to clear the inward reach of a node at 60 degrees, which is
+     0.866 x radius, so its radius is taken from the ring and never guessed */
+  --hub-r: calc(var(--orbit-r) - var(--orb-node) * .72);
+  position: relative;
+  width: calc((var(--orbit-r) + var(--orb-node) / 2) * 2);
+  height: calc((var(--orbit-r) + var(--orb-node) / 2) * 2);
+  margin-inline: auto;
+}
+/* the drawn circle: a dashed ring, with a solid arc that marks the front */
+.sv-orbit__track {
+  position: absolute; inset: calc(var(--orb-node) / 2); border-radius: 50%;
+  border: 1px dashed var(--sv-hair-l); pointer-events: none;
+}
+.sv-orbit__nodes { position: absolute; inset: 0; margin: 0; padding: 0; list-style: none; rotate: var(--sv-spin, 0deg); }
+.sv-orb {
+  position: absolute;
+  left: calc(50% + var(--orbit-r) * var(--x));
+  top: calc(50% + var(--orbit-r) * var(--y));
+  translate: -50% -50%;
+  rotate: calc(-1 * var(--sv-spin, 0deg));
+}
+/* node 1 starts at the front, so a clean load reads item one */
+.sv-orb:nth-child(1) { --x: 0;     --y: 1; }
+.sv-orb:nth-child(2) { --x: -.866; --y: .5; }
+.sv-orb:nth-child(3) { --x: -.866; --y: -.5; }
+.sv-orb:nth-child(4) { --x: 0;     --y: -1; }
+.sv-orb:nth-child(5) { --x: .866;  --y: -.5; }
+.sv-orb:nth-child(6) { --x: .866;  --y: .5; }
+
+.sv-orb__btn {
+  position: relative;
+  width: var(--orb-node); height: var(--orb-node);
+  display: grid; place-content: center; gap: 2px; text-align: center;
+  padding: 8px; border-radius: 50%; cursor: pointer;
+  border: 1px solid var(--sv-hair-l);
+  background: linear-gradient(180deg, #15171f, #0d0f14);
+  color: var(--bone); font-family: var(--f-b);
+  box-shadow: 0 18px 34px -26px rgba(0, 0, 0, .9);
+  transition: transform .5s var(--ease), border-color .4s var(--ease-2),
+              background .4s var(--ease-2), box-shadow .45s var(--ease);
+}
+.sv-orb__no { font-family: var(--f-d); font-size: .68rem; font-weight: 700; letter-spacing: .1em; color: var(--coral); }
+.sv-orb__lbl { font-family: var(--f-d); font-size: .68rem; font-weight: 600; line-height: 1.2; }
+.sv-orb__btn:focus-visible { outline: 2px solid var(--violet); outline-offset: 4px; }
+
+/* the node the hub is reading: a coral ring, and it sits proud of the circle */
+.sv-orb.is-front .sv-orb__btn,
+.sv-orb.is-hot .sv-orb__btn,
+.sv-orb.is-held .sv-orb__btn {
+  transform: scale(1.14);
+  border-color: var(--coral);
+  background: linear-gradient(180deg, rgba(255, 90, 54, .2), #10121a);
+  box-shadow: 0 22px 44px -22px rgba(255, 90, 54, .5);
+}
+.sv-orb.is-front .sv-orb__btn::after,
+.sv-orb.is-hot .sv-orb__btn::after,
+.sv-orb.is-held .sv-orb__btn::after {
+  content: ""; position: absolute; inset: -9px; border-radius: 50%;
+  border: 1px solid rgba(255, 90, 54, .38);
+}
+
+/* on the ring the card collapses to number + label: the copy stays in the
+   document, just visually hidden, so a screen reader still reads every
+   add-on in full. Only the hub is aria-hidden, because it is a repeat. */
+.sv-orb__card {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* the hub, in the middle of the circle */
+.sv-orbit__hub {
+  position: absolute; left: 50%; top: 50%; translate: -50% -50%;
+  width: calc(var(--hub-r) * 2); height: calc(var(--hub-r) * 2);
+  display: grid; gap: 7px; align-content: center; justify-items: center;
+  text-align: center; border-radius: 50%; padding: clamp(14px, 1.6vw, 24px);
+  border: 1px solid var(--sv-hair-l);
+  background: radial-gradient(circle at 50% 38%, rgba(30, 32, 44, .95), rgba(11, 13, 18, .97) 72%);
+}
+.sv-orbit__win {
+  overflow: hidden; border-radius: 50%; width: 26%; aspect-ratio: 1;
+  background: var(--ink-3); border: 1px solid var(--sv-hair-l);
+}
+.sv-orbit__win img { display: block; width: 100%; height: 100%; object-fit: cover; opacity: .45; transition: opacity .5s var(--ease-2); }
+.sv-orbit__hub.is-live .sv-orbit__win img { opacity: 1; }
+.sv-orbit__kicker { font-family: var(--f-d); font-size: .62rem; font-weight: 600; letter-spacing: .15em; text-transform: uppercase; color: var(--coral); }
+.sv-orbit__title { font-family: var(--f-d); font-size: clamp(1rem, 1.5vw, 1.3rem); font-weight: 700; letter-spacing: -.01em; line-height: 1.15; }
+.sv-orbit__note { margin: 0; font-family: var(--f-b); font-size: .76rem; line-height: 1.5; color: var(--bone-legible); }
+.sv-orbit__price {
+  justify-self: center; font-family: var(--f-d); font-size: .74rem; font-weight: 700;
+  padding: 5px 13px; border-radius: 100px;
+  background: rgba(91, 61, 245, .22); color: var(--bone); border: 1px solid rgba(91, 61, 245, .4);
+}
+/* the hub re-reads itself when the front node changes */
+.sv-orbit__title, .sv-orbit__note, .sv-orbit__price, .sv-orbit__kicker {
+  transition: opacity .3s var(--ease-2);
+}
+
+.sv-orbit__hint {
+  display: flex; align-items: center; justify-content: center; gap: 9px;
+  margin: clamp(18px, 2.2vw, 28px) 0 0;
+  font-family: var(--f-b); font-size: .8rem; color: var(--bone-legible);
+}
+.sv-orbit__tick { width: 22px; height: 1px; background: var(--coral); }
+
+/* =====================================================================
+   8 · THE QUEUE
+   A kanban. The four columns are offset from one another so the board
+   never reads as a plain four-up grid.
+   ===================================================================== */
+.sv-queue { background: var(--bone); padding-block: clamp(56px, 7vw, 100px); }
+.sv-queue__live {
+  display: inline-flex; align-items: center; gap: 9px;
+  font-family: var(--f-b); font-size: .86rem; color: var(--ink-muted);
+}
+.sv-queue__live i {
+  width: 8px; height: 8px; border-radius: 50%; background: var(--violet);
+  animation: svPulse 1.7s var(--ease-2) infinite;
+}
+@keyframes svPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(91, 61, 245, .5); }
+  50% { box-shadow: 0 0 0 8px rgba(91, 61, 245, 0); }
+}
+.sv-queue__live b { font-family: var(--f-d); font-weight: 700; color: var(--ink); }
+
+.sv-kanban {
+  display: grid; gap: clamp(14px, 1.6vw, 24px); margin-top: clamp(30px, 4vw, 52px);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  /* four lanes, one baseline: every column starts on the same line and
+     ends on the same line, whatever mix of jobs is stacked in it */
+  align-items: stretch;
+}
+.sv-col {
+  display: flex; flex-direction: column;
+  padding: 16px; border: 1px solid var(--sv-hair); border-radius: var(--r-l);
+  background: var(--sv-panel);
+  transition: background .4s var(--ease-2), border-color .4s var(--ease-2),
+              box-shadow .45s var(--ease);
+}
+.sv-col:hover { border-color: var(--ink-30); box-shadow: var(--shadow); }
+.sv-col h3 {
+  display: flex; align-items: center; gap: 8px; margin: 0 0 14px;
+  font-family: var(--f-d); font-size: .82rem; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--ink);
+}
+.sv-col h3 i { color: var(--coral); font-size: .8rem; }
+.sv-col h3 b { margin-left: auto; font-family: var(--f-d); font-size: 1.1rem; color: var(--violet-ink); }
+.sv-col__stack { display: grid; gap: 12px; flex: 1 1 auto; align-content: start; }
+.sv-job {
+  display: grid; gap: 6px; padding: 12px; cursor: pointer;
+  border: 1px solid var(--sv-hair); border-radius: var(--r-m);
+  background: var(--sv-panel);
+  transition: transform .45s var(--ease), box-shadow .45s var(--ease),
+              border-color .4s var(--ease-2);
+}
+.sv-job .sv-win { border-radius: calc(var(--r-m) - 6px); aspect-ratio: 16 / 10; }
+.sv-job .sv-win img { transform: scale(1.1); transition: transform .8s var(--ease); }
+.sv-job b { font-family: var(--f-d); font-size: .86rem; font-weight: 700; }
+.sv-job span { font-family: var(--f-b); font-size: .78rem; color: var(--ink-muted); }
+.sv-job em { font-style: normal; font-family: var(--f-b); font-size: .7rem; letter-spacing: .1em; text-transform: uppercase; color: var(--violet-ink); }
+.sv-job:hover { transform: translateY(-5px); border-color: var(--violet); box-shadow: var(--shadow); }
+.sv-job:hover .sv-win img { transform: scale(1.02); }
+.sv-job:focus-visible { outline: 2px solid var(--violet); outline-offset: 2px; }
+.sv-job.is-fresh { border-color: var(--coral); animation: svFresh 1.7s var(--ease-2); }
+@keyframes svFresh {
+  0% { transform: translateY(-10px); box-shadow: 0 0 0 0 rgba(255, 90, 54, .5); }
+  40% { transform: translateY(-10px); box-shadow: 0 0 0 8px rgba(255, 90, 54, 0); }
+  100% { transform: translateY(0); box-shadow: 0 0 0 0 rgba(255, 90, 54, 0); }
+}
+
+/* =====================================================================
+   9 · THE TICKET
+   An estimate printed on a receipt: torn edges, live arithmetic.
+   ===================================================================== */
+.sv-ticket { background: var(--ink); color: var(--bone); padding-block: clamp(56px, 7vw, 100px); }
+.sv-ticket__wrap {
+  display: grid; gap: clamp(28px, 4vw, 64px);
+  grid-template-columns: minmax(0, 1fr) minmax(0, .84fr); align-items: start;
+}
+.sv-ticket__side { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
+.sv-ticket__side .sec-title { margin-top: 0; }
+.sv-ticket__shot {
+  position: relative; overflow: hidden; margin-top: 12px; align-self: stretch;
+  border-radius: var(--r-l); aspect-ratio: 4 / 3; background: var(--ink-2);
+  border: 1px solid var(--sv-hair-l);
+}
+.sv-ticket__shot img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.sv-ticket__cap {
+  position: absolute; left: 16px; bottom: 16px; z-index: 2;
+  font-family: var(--f-d); font-size: .78rem; font-weight: 600;
+  letter-spacing: .06em; padding: 9px 14px; border-radius: 100px;
+  /* ink on coral, not bone on coral: bone clears 6.2:1 on ink but only
+     3.1:1 on coral, which is short of AA at this size */
+  background: var(--coral); color: var(--ink);
+}
+
+.sv-receipt {
+  position: relative; padding: 4px 0; background: var(--bone); color: var(--ink);
+  border-radius: var(--r-m); transform-origin: 50% 0;
+}
+.sv-receipt__body { position: relative; padding: 26px clamp(18px, 2.4vw, 30px); }
+/* the top and bottom edges are torn with punched holes; the middle tear is
+   a dashed cut line instead */
+.sv-receipt__perf { position: relative; height: 14px; }
+.sv-receipt__perf::before, .sv-receipt__perf::after {
+  content: ""; position: absolute; top: 50%; width: 14px; height: 14px;
+  border-radius: 50%; background: var(--ink); transform: translateY(-50%);
+}
+.sv-receipt__perf::before { left: -7px; }
+.sv-receipt__perf::after { right: -7px; }
+.sv-receipt__perf--mid { height: 1px; margin: 4px 0; background: none; }
+.sv-receipt__perf--mid::before, .sv-receipt__perf--mid::after { content: none; }
+.sv-receipt__perf--mid::after {
+  content: ""; position: static; display: block; width: 100%; height: 0;
+  border-top: 1px dashed rgba(11, 13, 18, .28); border-radius: 0;
+  background: none; transform: none;
+}
+.sv-receipt__head {
+  display: flex; align-items: center; gap: 12px; padding-bottom: 16px;
+  border-bottom: 1px dashed var(--ink-12);
+}
+.sv-receipt__head img { display: block; width: 28px; height: 38px; object-fit: contain; }
+.sv-receipt__head b { display: block; font-family: var(--f-d); font-size: 1.06rem; font-weight: 700; }
+.sv-receipt__head i { font-style: normal; font-family: var(--f-b); font-size: .74rem; color: var(--ink-muted); }
+
+.sv-lines { list-style: none; margin: 0; padding: 0; }
+.sv-lines li {
+  display: grid; gap: 10px; align-items: center;
+  grid-template-columns: minmax(0, 1fr) auto 66px;
+  padding: 14px 0; border-bottom: 1px dashed var(--ink-12);
+  transition: background .3s var(--ease-2);
+}
+.sv-lines li:hover { background: var(--violet-soft); }
+.sv-lines__t b { display: block; font-family: var(--f-d); font-size: .96rem; font-weight: 600; }
+.sv-lines__t i { font-style: normal; font-family: var(--f-b); font-size: .72rem; color: var(--ink-muted); }
+.sv-stepper {
+  display: inline-flex; align-items: center; overflow: hidden;
+  border: 1px solid var(--sv-hair); border-radius: 100px; background: var(--sv-panel);
+}
+.sv-stepper button {
+  width: 30px; height: 30px; display: grid; place-items: center; cursor: pointer;
+  border: 0; background: transparent; color: var(--ink); font-size: 1rem; line-height: 1;
+  transition: background .3s var(--ease-2), color .3s var(--ease-2);
+}
+.sv-stepper button:hover { background: var(--violet); color: #fff; }
+.sv-stepper button:focus-visible { outline: 2px solid var(--violet); outline-offset: -2px; }
+.sv-stepper output { min-width: 30px; text-align: center; font-family: var(--f-d); font-size: .92rem; font-weight: 700; }
+.sv-lines__p { text-align: right; font-family: var(--f-d); font-size: .96rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.sv-receipt__total {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+  padding: 18px 0 6px;
+}
+.sv-receipt__total span {
+  font-family: var(--f-b); font-size: .74rem; font-weight: 600;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--ink-muted);
+}
+.sv-receipt__total b {
+  font-family: var(--f-d); font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 800;
+  letter-spacing: -.03em; font-variant-numeric: tabular-nums;
+}
+.sv-receipt__fine { margin: 10px 0 0; font-family: var(--f-b); font-size: .72rem; line-height: 1.55; color: var(--ink-muted); }
+
+/* =====================================================================
+   10 · THE DESK
+   A sticky index on the left and a plain answer list on the right. Every
+   row is the same height, so the column aligns exactly at every width —
+   no masonry, no hand-placed offsets.
+   ===================================================================== */
+.sv-desk { background: var(--bone); padding-block: clamp(56px, 7vw, 100px); }
+.sv-desk__wrap {
+  display: grid; gap: clamp(28px, 4vw, 64px);
+  grid-template-columns: minmax(0, .78fr) minmax(0, 1.22fr);
+  align-items: start;
+}
+.sv-desk__aside { position: sticky; top: 124px; display: grid; gap: 18px; justify-items: start; }
+.sv-desk__hours {
+  display: grid; gap: 8px; padding: 18px; border-radius: var(--r-l);
+  background: var(--sv-panel); border: 1px solid var(--sv-hair);
+}
+.sv-desk__hours span { display: flex; justify-content: space-between; gap: 12px; font-family: var(--f-b); font-size: .86rem; color: var(--ink-muted); }
+.sv-desk__hours b { font-family: var(--f-d); color: var(--ink); }
+
+.sv-desk__list { display: grid; }
+.sv-qa {
+  display: grid; align-items: center; gap: clamp(14px, 1.6vw, 22px);
+  grid-template-columns: 54px minmax(0, 1fr) 108px;
+  padding: 22px 0; border-top: 1px solid var(--sv-hair);
+  position: relative; isolation: isolate;
+  transition: padding-left .5s var(--ease);
+}
+.sv-desk__list .sv-qa:last-child { border-bottom: 1px solid var(--sv-hair); }
+/* the wash wipes in from the leading edge on hover */
+.sv-qa::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; border-radius: var(--r-m);
+  background: var(--violet-soft); transform: scaleX(0); transform-origin: 0 50%;
+  transition: transform .5s var(--ease);
+}
+.sv-qa:hover { padding-left: 14px; }
+.sv-qa:hover::before { transform: scaleX(1); }
+.sv-qa__n {
+  display: grid; place-items: center; width: 54px; height: 54px;
+  border-radius: 50%; border: 1px solid var(--sv-hair);
+  font-family: var(--f-d); font-size: .84rem; font-weight: 700; color: var(--ink-muted);
+  transition: background .45s var(--ease-2), color .45s var(--ease-2),
+              border-color .45s var(--ease-2), transform .5s var(--ease);
+}
+.sv-qa:hover .sv-qa__n { background: var(--violet); color: #fff; border-color: var(--violet); transform: scale(1.06); }
+.sv-qa__t b { display: block; font-family: var(--f-d); font-size: 1.06rem; font-weight: 700; letter-spacing: -.02em; }
+.sv-qa__t p { margin: 6px 0 0; font-family: var(--f-b); font-size: .88rem; line-height: 1.56; color: var(--ink-muted); }
+.sv-qa__win {
+  overflow: hidden; border-radius: var(--r-m); aspect-ratio: 1; background: var(--ink-2);
+  clip-path: inset(0 0 0 100%);
+  transition: clip-path .8s var(--ease);
+}
+.sv-qa.is-in .sv-qa__win { clip-path: inset(0 0 0 0); }
+.sv-qa__win img {
+  display: block; width: 100%; height: 100%; object-fit: cover;
+  transition: transform .8s var(--ease);
+}
+.sv-qa:hover .sv-qa__win img { transform: scale(1.09); }
+
+/* =====================================================================
+   RESPONSIVE
+   ===================================================================== */
+@media (max-width: 1180px) {
+  .sv-aperture__wrap { grid-template-columns: minmax(0, 1fr) minmax(0, .9fr); }
+  .sv-ledger__body { grid-template-columns: minmax(0, 1fr); }
+  .sv-ledger__detail { position: static; }
+  .sv-kanban { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sv-tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .sv-desk__wrap { grid-template-columns: minmax(0, 1fr); }
+  .sv-desk__aside { position: static; }
+  /* the book tightens rather than disappearing: a turned leaf is exactly
+     one page-width wide, so the two halves of the stage shrink together */
+  .sv-lg__body { --page: clamp(268px, 34svh, 360px); }
+}
+
+@media (max-width: 980px) {
+  /* no pin on touch: the rail becomes a real horizontal scroller with
+     snap points, so a finger can flick it without fighting ScrollTrigger */
+  .sv-bench__pin { min-height: auto; }
+  .sv-rail {
+    overflow-x: auto; overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch;
+  }
+  .sv-stn { scroll-snap-align: center; }
+  .sv-rail__meter { display: none; }
+  .sv-aperture__wrap { grid-template-columns: minmax(0, 1fr); }
+  .sv-aperture__bay { max-width: 560px; }
+  .sv-intake__wrap { grid-template-columns: minmax(0, 1fr); }
+  .sv-intake__rail { position: static; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sv-intake__railcap { grid-column: 1 / -1; }
+  .sv-intake__desk { grid-template-columns: minmax(0, 1fr); }
+  .sv-shot { max-width: 520px; }
+  .sv-ticket__wrap { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ---- the logbook gives up being a book before it gets cramped.
+   Six hinged leaves need a pinned viewport to turn in, and pinning inside
+   a touch scroll fights the finger — so under 981px, and again whenever
+   motion is off, the leaves stop being hinged at all. The stack becomes a
+   plain grid of six sheets, every one of them readable at once, the spine
+   and the gutter leave, and the stamp is the only thing that still moves.
+   service.js knows about the same split and builds no scrub at all. ---- */
+@media (max-width: 980px), (prefers-reduced-motion: reduce) {
+  .sv-lg__pin { min-height: 0; padding-block: clamp(56px, 9vw, 88px); }
+  .sv-lg__spine, .sv-lg__gutter { display: none; }
+  .sv-lg__body { grid-template-columns: minmax(0, 1fr); }
+  .sv-lg__stage { display: block; }
+  .sv-lg__book {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(14px, 1.8vw, 20px);
+    height: auto; perspective: none;
+  }
+  .sv-lg__slot { position: relative; inset: auto; transform-style: flat; z-index: auto; }
+  .sv-lg__leaf { position: relative; inset: auto; transform: none; transform-style: flat; }
+  .sv-lg__verso { display: none; }
+  .sv-lg__face {
+    /* no depth to lift into, so the lift becomes a plain nudge and the
+       sheet is the whole hover */
+    --lift: 0px; --rise: 4px;
+    position: static; width: 100%; height: auto;
+    grid-template-columns: minmax(0, 1fr); grid-template-rows: auto;
+    border-radius: var(--r-m);
+  }
+  /* photo first: a two column sheet in a 300px column is a column of
+     chopped words */
+  .sv-lg__shot { order: -1; height: clamp(150px, 44vw, 200px); }
+  .sv-lg__folio { position: static; margin-top: 11px; }
+  .sv-lg__stamp { right: 15px; bottom: 15px; }
+  .sv-lg__hint--turn { display: none; }
+  .sv-lg__hint--read { display: inline; }
+}
+
+/* ---- the orbit gives up being a circle before it gets cramped.
+   A ring of six with a readable hub needs roughly 500px of width, and below
+   1100px the hub would be a 300px circle of five-word notes. Under it the
+   circle becomes a ruled line: the node numbers run down a hairline and the
+   hub leaves, because each row now carries its own copy. ---- */
+@media (max-width: 1100px) {
+  .sv-orbit__ring { width: auto; height: auto; margin-inline: 0; }
+  .sv-orbit__track { display: none; }
+  .sv-orbit__nodes { position: static; rotate: none; display: grid; }
+  .sv-orbit__hub { display: none; }
+  .sv-orb {
+    position: relative; left: auto; top: auto;
+    translate: none !important; rotate: none !important;
+    padding-left: 30px;
+  }
+  .sv-orb::before {
+    content: ""; position: absolute; left: 13px; top: 0; bottom: 0;
+    width: 1px; background: var(--sv-hair-l);
+  }
+  .sv-orb:first-child::before { top: 26px; }
+  .sv-orb:last-child::before { bottom: auto; height: 26px; }
+  .sv-orb__btn {
+    width: auto; height: auto; display: grid; grid-template-columns: auto minmax(0, 1fr);
+    gap: 3px 14px; align-content: start; justify-items: start; text-align: left;
+    padding: 18px 18px 18px 16px; border-radius: var(--r-l);
+  }
+  .sv-orb__btn::after { display: none; }
+  .sv-orb.is-front .sv-orb__btn, .sv-orb.is-hot .sv-orb__btn, .sv-orb.is-held .sv-orb__btn { transform: none; }
+  .sv-orb__no { grid-row: span 2; align-self: start; }
+  .sv-orb__card {
+    position: static; width: auto; height: auto; margin: 0; overflow: visible;
+    clip: auto; white-space: normal; display: grid; gap: 4px; grid-column: 2;
+  }
+  .sv-orb__kicker { display: none; }
+  .sv-orb__note { font-family: var(--f-b); font-size: .82rem; line-height: 1.55; color: var(--bone-legible); }
+  .sv-orb__price { justify-self: start; font-size: .72rem; padding: 4px 11px; }
+  .sv-orbit__hint { display: none; }
+}
+
+@media (max-width: 760px) {
+  .sv-kanban { grid-template-columns: minmax(0, 1fr); }
+  .sv-strip { gap: 8px; }
+  .sv-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sv-qa { grid-template-columns: 46px minmax(0, 1fr); }
+  .sv-qa__n { width: 46px; height: 46px; }
+  .sv-qa__win { grid-column: 1 / -1; aspect-ratio: 16 / 9; }
+}
+
+@media (max-width: 640px) {
+  .sv-intake__rail { grid-template-columns: minmax(0, 1fr); }
+  .sv-slot { grid-template-columns: auto 52px minmax(0, 1fr); gap: 10px; }
+  .sv-slot .sv-win { aspect-ratio: 1; }
+  .sv-field--split { grid-template-columns: minmax(0, 1fr); }
+  .sv-table thead { display: none; }
+  .sv-table tbody th, .sv-table td { padding: 11px 6px; font-size: .8rem; }
+  .sv-table td:nth-child(2), .sv-table td:nth-child(3) { display: none; }
+  .sv-lines li { grid-template-columns: minmax(0, 1fr) auto; }
+  .sv-lines__p { grid-column: 1 / -1; text-align: left; }
+  .sv-receipt__body { padding: 20px 16px; }
+  .sv-tile__cap { padding: 14px 16px; }
+  /* one sheet per row: two columns of a photo, a title and three spec
+     lines stop being readable long before this width */
+  .sv-lg__book { grid-template-columns: minmax(0, 1fr); }
+  /* both hero actions share one row instead of stacking */
+  .sv-aperture__cta { flex-wrap: nowrap; gap: 8px; align-items: stretch; }
+  .sv-aperture__cta .btn {
+    flex: 0 1 auto; min-width: 0; justify-content: center; align-items: center;
+    padding: 14px 11px; font-size: .82rem; gap: 7px;
+  }
+  .sv-aperture__cta .btn span { white-space: nowrap; }
+  .sv-aperture__cta .btn i { font-size: .92em; }
+}
+
+@media (max-width: 420px) {
+  .sv-lg__spec > span { grid-template-columns: minmax(0, 1fr); gap: 1px; }
+  /* drop the decorative arrows so both labels keep fitting on one row */
+  .sv-aperture__cta .btn { padding: 13px 10px; }
+  .sv-aperture__cta .btn i { display: none; }
+}
+
+@media (max-width: 340px) {
+  .sv-aperture__cta { flex-wrap: wrap; }
+  .sv-aperture__cta .btn { flex: 1 1 100%; }
+}
+
+/* ------------------------------------------------------- reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  [data-sv-r] { opacity: 1 !important; transform: none !important; clip-path: none !important; }
+  .sv-plate__sweep, .sv-queue__live i, .sv-job.is-fresh { animation: none !important; }
+  .sv-lg__face, .sv-lg__face .sv-lg__rec::after, .sv-lg__shot, .sv-lg__stamp,
+  .sv-lg__spec em, .sv-lg__row::before, .sv-tile img, .sv-tile__cap,
+  .sv-qa__win, .sv-qa__win img, .sv-plate__img,
+  .sv-orb__btn, .sv-orbit__title, .sv-orbit__note, .sv-orbit__price,
+  .sv-orbit__kicker, .sv-orbit__win img { transition: none !important; }
+  .sv-tile img, .sv-qa__win { clip-path: none; }
+  .sv-tile__cap { transform: none; opacity: 1; }
+  /* no scrubbing and no spinning: both sections still work, they just
+     arrive as a flat grid of six sheets and at their first node. The
+     stamp still means something without the motion — it appears, it just
+     does not come down, and the hover keeps its lift as a nudge. */
+  .sv-orbit__nodes { rotate: none; }
+  .sv-orb { rotate: none; }
+  .sv-rail__track { transform: none !important; }
+  .sv-rail { overflow-x: auto; }
+  .sv-rail__meter { display: none; }
+}

@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Contact — Stackly</title>
+<meta name="description" content="Contact Stackly — talk to the counter, the repair bench or the trade desk. A real person reads every message, usually within two hours on a working day." />
+<link rel="icon" type="image/webp" href="../images/logo-icon-theme.webp" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<style id="boot-paint">
+  /* the whole preloader is inlined so the very first paint IS the loader —
+     nothing dark/blank before it, and no blur/mask layers that can fail
+     to composite on some GPUs. */
+  html,body{background:#0B0D12;color:#F3F0EA;margin:0}
+  .preloader{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;overflow:hidden;background:#0B0D12;transition:opacity .55s ease,visibility .55s}
+  .pre-glow{position:absolute;inset:0;
+    background:
+      radial-gradient(68% 60% at 50% 26%,rgba(91,61,245,.34),transparent 66%),
+      radial-gradient(60% 55% at 50% 112%,rgba(255,90,54,.26),transparent 72%),
+      radial-gradient(circle at 1px 1px,rgba(243,240,234,.10) 1px,transparent 0);
+    background-size:auto,auto,26px 26px}
+  .pre-inner{position:relative;z-index:2;text-align:center;transition:opacity .5s ease,transform .55s cubic-bezier(.22,1,.36,1)}
+  .pre-logo{display:flex;align-items:center;justify-content:center;animation:logoPop 1.1s cubic-bezier(.34,1.56,.64,1) both}
+  .pre-logo-img{display:block;width:auto;height:clamp(1.9rem,5.2vw,2.6rem);object-fit:contain;filter:drop-shadow(0 2px 18px rgba(91,61,245,.45))}
+  .pre-tag{margin-top:16px;font-size:.74rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(243,240,234,.5);min-height:1.2em}
+  .pre-bar{width:min(320px,74vw);height:5px;margin:30px auto 14px;border-radius:20px;background:rgba(243,240,234,.12);overflow:hidden}
+  .pre-bar-fill{display:block;height:100%;width:0;border-radius:20px;background:linear-gradient(90deg,#5B3DF5,#FF5A36);box-shadow:0 0 18px rgba(255,90,54,.7)}
+  .pre-meta{display:flex;align-items:center;justify-content:center;gap:12px;font-family:"Sora",system-ui,sans-serif;font-size:.78rem;letter-spacing:.1em;color:rgba(243,240,234,.5)}
+  .pre-meta #preCount{color:#F3F0EA;font-weight:700;font-size:1rem}
+  .pre-dots{display:inline-flex;gap:4px}
+  .pre-dots i{width:4px;height:4px;border-radius:50%;background:rgba(243,240,234,.5);animation:blink 1.2s infinite}
+  .pre-dots i:nth-child(2){animation-delay:.2s}
+  .pre-dots i:nth-child(3){animation-delay:.4s}
+  .preloader.done{opacity:0;visibility:hidden;pointer-events:none}
+  .preloader.hide{display:none}
+  @keyframes logoPop{from{opacity:0;transform:scale(.8) translateY(12px)}}
+  @keyframes blink{50%{opacity:.25}}
+</style>
+<!-- all stylesheets load after the loader has painted (nothing blocks first paint) -->
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" media="print" onload="this.media='all'" />
+<link rel="stylesheet" href="../CSS/home.css" media="print" onload="this.media='all'" />
+<link rel="stylesheet" href="../CSS/contact.css" media="print" onload="this.media='all'" />
+<noscript>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="../CSS/home.css" />
+  <link rel="stylesheet" href="../CSS/contact.css" />
+  <style>
+    [data-reveal],[data-aos],[data-ct-r],[data-ct-h]{opacity:1 !important;transform:none !important;clip-path:none !important;filter:none !important}
+    .ct-hero__shutter{display:none}
+    .ct-map__edge i{transform:none !important}
+    .preloader{display:none}
+    body{overflow:auto !important}
+  </style>
+</noscript>
+</head>
+<body>
+<!-- ============ SCROLL PROGRESS ============ -->
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- ============ PRELOADER ============ -->
+<div class="preloader" id="preloader">
+  <div class="pre-glow"></div>
+  <div class="pre-inner">
+      <div class="pre-logo">
+        <img class="pre-logo-img" src="../images/logo-full-theme.webp" alt="Stackly" width="600" height="185" />
+      </div>
+    <p class="pre-tag" id="preTag">Calibrating your gear</p>
+
+    <div class="pre-bar"><span class="pre-bar-fill" id="preBar"></span></div>
+    <div class="pre-meta">
+      <span id="preCount">0</span><span>%</span>
+      <span class="pre-dots"><i></i><i></i><i></i></span>
+      <span id="preStep">Booting store</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ S1 · HEADER / NAVBAR ============ -->
+<header class="site-head" id="header">
+  <div class="head-glow" style="background-image:url('../images/nav-surface.webp')"></div>
+
+  <div class="announce">
+    <div class="shell announce-inner">
+      <div class="announce-track" id="announceTrack">
+        <a class="announce-item" href="404.html">
+          <img src="../images/chip-1.webp" width="300" height="300" alt="Studio headphones" />
+          <span>Launch week — <b>25% off</b> audio gear</span>
+          <i class="fa-solid fa-arrow-right-long"></i>
+        </a>
+        <a class="announce-item" href="404.html">
+          <img src="../images/service-repair.webp" width="720" height="520" alt="Doorstep repair service" />
+          <span>Free <b>doorstep</b> battery replacement</span>
+          <i class="fa-solid fa-arrow-right-long"></i>
+        </a>
+        <a class="announce-item" href="404.html">
+          <img src="../images/chip-2.webp" width="300" height="300" alt="Smart watch" />
+          <span>Trade in your watch — <b>up to $60 off</b></span>
+          <i class="fa-solid fa-arrow-right-long"></i>
+        </a>
+      </div>
+      <div class="announce-side">
+        <span><i class="fa-solid fa-truck-fast"></i> Free shipping over $49</span>
+      </div>
+    </div>
+  </div>
+
+  <nav class="nav shell" id="nav">
+    <a class="brand" href="../index.html" aria-label="Stackly home">
+      <img class="brand-logo" src="../images/logo-full-theme.webp" alt="Stackly" width="600" height="185" decoding="async" />
+    </a>
+
+    <ul class="nav-links" id="navLinks">
+      <span class="nav-pill" id="navPill" aria-hidden="true"></span>
+      <li><a class="nav-link" href="../index.html">Home</a></li>
+      <li><a class="nav-link" href="shop.html">Shop</a></li>
+      <li><a class="nav-link" href="service.html">Service</a></li>
+      <li><a class="nav-link" href="about.html">About</a></li>
+      <li><a class="nav-link is-active" href="contact.html">Contact</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <a class="cart-btn" href="cart.html" id="cartBtn" aria-label="Open cart">
+        <span class="cart-btn-ico"><i class="fa-solid fa-bag-shopping"></i></span>
+        <span class="cart-btn-label">Cart</span>
+        <span class="cart-count" id="cartCount">0</span>
+        <span class="cart-btn-sheen"></span>
+      </a>
+       <a class="btn btn--bright btn--sm" href="login.html">
+         <span>Sign In</span>
+       </a>
+      <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<!-- ============ MOBILE FULLSCREEN MENU ============ -->
+<div class="mmenu" id="mmenu">
+  <div class="mmenu-wipe" id="mmenuWipe">
+    <div class="mmenu-bg" style="background-image:url('../images/nav-surface.webp')"></div>
+    <div class="mmenu-inner">
+      <div class="mmenu-head">
+        <span class="mmenu-brand"><img src="../images/logo-full-theme.webp" alt="Stackly" width="600" height="185" /></span>
+        <button class="mmenu-close" id="mmenuClose" aria-label="Close menu"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <ul class="mmenu-links">
+        <li><a href="../index.html"><em>01</em><span>Home</span><i class="fa-solid fa-arrow-right-long"></i></a></li>
+        <li><a href="shop.html"><em>02</em><span>Shop</span><i class="fa-solid fa-arrow-right-long"></i></a></li>
+        <li><a href="service.html"><em>03</em><span>Service</span><i class="fa-solid fa-arrow-right-long"></i></a></li>
+        <li><a href="about.html"><em>04</em><span>About</span><i class="fa-solid fa-arrow-right-long"></i></a></li>
+        <li><a href="contact.html" class="is-active" aria-current="page"><em>05</em><span>Contact</span><i class="fa-solid fa-arrow-right-long"></i></a></li>
+      </ul>
+      <div class="mmenu-foot">
+        <a class="btn btn--solid btn--full" href="login.html"><span>Sign In</span></a>
+        <p class="mmenu-note"><i class="fa-solid fa-truck-fast"></i> Free shipping over $49 · 30-day returns</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main>
+<!-- ===================================================================
+     S2 · HERO — THE SWITCHBOARD
+     A shutter of slats rolls up off the photograph, then four channel
+     cards drop onto the board face by face.
+     =================================================================== -->
+<section class="ct-hero" id="ctHero">
+  <div class="ct-hero__bg" aria-hidden="true">
+    <img class="ct-hero__shot" src="../images/support.webp" alt="" id="ctShot" />
+    <span class="ct-hero__scrim"></span>
+    <span class="ct-hero__shutter" id="ctShutter">
+      <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+    </span>
+  </div>
+
+  <div class="shell ct-hero__grid">
+    <div class="ct-hero__copy">
+      <span class="ct-chip" data-ct-h><i class="fa-solid fa-headset"></i> The desk is staffed today</span>
+
+      <h1 class="ct-hero__t" data-ct-h>
+        <span class="ct-mask"><span>Tell us what</span></span>
+        <span class="ct-mask"><span>your gear</span> <em>is doing.</em></span>
+      </h1>
+
+      <p class="ct-hero__sub" data-ct-h>
+        Describe the fault, the order or the idea. A real person reads every message —
+        usually inside two hours on a working day, and always inside one working day.
+      </p>
+
+      <div class="ct-hero__cta" data-ct-h>
+        <a class="btn btn--bright btn--magnet" href="404.html">
+          <span>Start a message</span><i class="fa-solid fa-feather"></i>
+        </a>
+        <a class="btn btn--glass" href="404.html">
+          <span class="play-ring"><i class="fa-solid fa-location-dot"></i></span>
+          <span>Find the shop</span>
+        </a>
+      </div>
+
+      <dl class="ct-hero__read" data-ct-h>
+        <div><dt>Median first reply</dt><dd>1h 42m</dd></div>
+        <div><dt>Messages answered</dt><dd>9,140</dd></div>
+        <div><dt>No bots, ever</dt><dd>100%</dd></div>
+      </dl>
+    </div>
+
+    <!-- the board: four channel cards, each with its own photograph -->
+    <div class="ct-board" id="ctBoard">
+      <div class="ct-board__head">
+        <span class="ct-board__label"><i class="fa-solid fa-tower-broadcast"></i> Live channel board</span>
+        <span class="ct-board__lamp" aria-hidden="true"><i></i>4 open</span>
+      </div>
+
+      <a class="ct-line" href="404.html">
+        <span class="ct-line__no">01</span>
+        <span class="ct-line__pic"><img src="../images/product-1.webp" alt="" loading="lazy" /><i class="ct-line__wipe"></i></span>
+        <span class="ct-line__tx">
+          <b>The counter</b>
+          <em>Sales, orders, returns</em>
+        </span>
+        <span class="ct-line__val">info@stackly.com<i class="fa-solid fa-arrow-up-right-from-square"></i></span>
+        <span class="ct-line__flap" aria-hidden="true"><i></i></span>
+      </a>
+
+      <a class="ct-line" href="404.html">
+        <span class="ct-line__no">02</span>
+        <span class="ct-line__pic"><img src="../images/service-repair.webp" alt="" loading="lazy" /><i class="ct-line__wipe"></i></span>
+        <span class="ct-line__tx">
+          <b>The repair bench</b>
+          <em>Faults, batteries, ports</em>
+        </span>
+        <span class="ct-line__val">+91 9764536787<i class="fa-solid fa-phone"></i></span>
+        <span class="ct-line__flap" aria-hidden="true"><i></i></span>
+      </a>
+
+      <a class="ct-line" href="404.html">
+        <span class="ct-line__no">03</span>
+        <span class="ct-line__pic"><img src="../images/gallery-1.webp" alt="" loading="lazy" /><i class="ct-line__wipe"></i></span>
+        <span class="ct-line__tx">
+          <b>The lab</b>
+          <em>Wholesale &amp; stockists</em>
+        </span>
+        <span class="ct-line__val">info@stackly.com<i class="fa-solid fa-flask"></i></span>
+        <span class="ct-line__flap" aria-hidden="true"><i></i></span>
+      </a>
+
+      <a class="ct-line" href="404.html">
+        <span class="ct-line__no">04</span>
+        <span class="ct-line__pic"><img src="../images/product-2.webp" alt="" loading="lazy" /><i class="ct-line__wipe"></i></span>
+        <span class="ct-line__tx">
+          <b>The front desk</b>
+          <em>Press &amp; partnerships</em>
+        </span>
+        <span class="ct-line__val">info@stackly.com<i class="fa-solid fa-bullhorn"></i></span>
+        <span class="ct-line__flap" aria-hidden="true"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+</section>
+
+<!-- ===================================================================
+     S3 · THE LADDER — four doors
+     A stepped diagonal of full-width rows; each rung climbs into place
+     from its own diagonal as the section is scrubbed.
+     =================================================================== -->
+<section class="ct-ladder" id="ctLadder">
+  <div class="shell">
+    <div class="ct-ladder__head">
+      <span class="eyebrow" data-ct-r="blinds"><i class="fa-solid fa-door-open"></i> Start here</span>
+      <h2 class="sec-title" data-ct-r="blinds">Pick a door, we will open<br /><span class="accent">the right one</span></h2>
+      <p class="sec-note" data-ct-r="blinds">
+        Tap any door and the message form opens with the topic already set, so your note
+        lands on the right bench instead of bouncing between three inboxes.
+      </p>
+    </div>
+
+    <div class="ct-steps" id="ctSteps">
+      <span class="ct-steps__spine" aria-hidden="true"><i id="ctSpine"></i></span>
+
+      <article class="ct-step" style="--k:0" data-ct-r="lift">
+        <div class="ct-step__hit">
+          <span class="ct-step__media">
+            <img src="../images/service-repair.webp" alt="Technician working on a phone at the repair bench" loading="lazy" />
+            <i class="ct-step__wipe" aria-hidden="true"></i>
+          </span>
+          <span class="ct-step__ico"><i class="fa-solid fa-screwdriver-wrench"></i></span>
+          <span class="ct-step__body">
+            <span class="ct-step__no">Door 01</span>
+            <h3>Something is broken</h3>
+            <p>Battery draining, port loose, screen cracked, sound cutting out. Tell us the
+              model and the symptom and we will quote before we touch anything.</p>
+            <span class="ct-step__ask"><i class="fa-solid fa-quote-left"></i> “My S8 loses 40% overnight.”</span>
+          </span>
+          <a class="ct-step__go" href="404.html" aria-label="Door 01"><i class="fa-solid fa-arrow-right-long"></i></a>
+        </div>
+      </article>
+
+      <article class="ct-step" style="--k:1" data-ct-r="lift">
+        <div class="ct-step__hit">
+          <span class="ct-step__media">
+            <img src="../images/product-4.webp" alt="Magnetic phone holder mounted on a car air vent" loading="lazy" />
+            <i class="ct-step__wipe" aria-hidden="true"></i>
+          </span>
+          <span class="ct-step__ico"><i class="fa-solid fa-box"></i></span>
+          <span class="ct-step__body">
+            <span class="ct-step__no">Door 02</span>
+            <h3>Where is my order</h3>
+            <p>Have the order number from your confirmation email. We can redirect a parcel,
+              extend a dispatch window or start a return in one message.</p>
+            <span class="ct-step__ask"><i class="fa-solid fa-quote-left"></i> “Order STK-48210, still unboxed.”</span>
+          </span>
+          <a class="ct-step__go" href="404.html" aria-label="Door 02"><i class="fa-solid fa-arrow-right-long"></i></a>
+        </div>
+      </article>
+
+      <article class="ct-step" style="--k:2" data-ct-r="lift">
+        <div class="ct-step__hit">
+          <span class="ct-step__media">
+            <img src="../images/gallery-1.webp" alt="Illuminated test rig in the Stackly lab" loading="lazy" />
+            <i class="ct-step__wipe" aria-hidden="true"></i>
+          </span>
+          <span class="ct-step__ico"><i class="fa-solid fa-boxes-stacked"></i></span>
+          <span class="ct-step__body">
+            <span class="ct-step__no">Door 03</span>
+            <h3>I buy in volume</h3>
+            <p>Stockists, gifting and corporate runs. Send quantities and a delivery postcode
+              and the lab will send a compatibility sheet the same day.</p>
+            <span class="ct-step__ask"><i class="fa-solid fa-quote-left"></i> “250 units, ship to 40218.”</span>
+          </span>
+          <a class="ct-step__go" href="404.html" aria-label="Door 03"><i class="fa-solid fa-arrow-right-long"></i></a>
+        </div>
+      </article>
+
+      <article class="ct-step" style="--k:3" data-ct-r="lift">
+        <div class="ct-step__hit">
+          <span class="ct-step__media">
+            <img src="../images/arrival-1.webp" alt="Wireless earbuds resting on a studio backdrop" loading="lazy" />
+            <i class="ct-step__wipe" aria-hidden="true"></i>
+          </span>
+          <span class="ct-step__ico"><i class="fa-solid fa-comment-dots"></i></span>
+          <span class="ct-step__body">
+            <span class="ct-step__no">Door 04</span>
+            <h3>Something else entirely</h3>
+            <p>Press, collaborations, a repair nobody else will touch, or just asking what a
+              cable does. All of it is welcome — nothing gets filtered.</p>
+            <span class="ct-step__ask"><i class="fa-solid fa-quote-left"></i> “Can I use the S9 Pro abroad?”</span>
+          </span>
+          <a class="ct-step__go" href="404.html" aria-label="Door 04"><i class="fa-solid fa-arrow-right-long"></i></a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     S4 · THE TRANSMISSION — the validated message form
+     Inline errors sit directly under the field they belong to.
+     =================================================================== -->
+<section class="ct-form" id="ctForm">
+  <div class="shell">
+    <div class="ct-form__head">
+      <span class="eyebrow eyebrow--light" data-ct-r="edge"><i class="fa-solid fa-tower-broadcast"></i> Message the bench</span>
+      <h2 class="sec-title" data-ct-r="edge">Send it once.<br /><span class="accent">We will not chase you.</span></h2>
+      <p class="sec-note sec-note--light" data-ct-r="edge">
+        Six fields, no account, no captcha. Every message gets a reference number the
+        moment it lands, and a reply from a named person — not a template.
+      </p>
+    </div>
+
+    <div class="ct-form__grid">
+      <!-- ---------- the work order ---------- -->
+      <div class="ct-order" id="ctOrder">
+        <div class="ct-order__strip">
+          <span class="ct-serial">Work order <b id="ctSerial">CT-000000</b></span>
+          <span class="ct-order__stamp" id="ctStamp"><i class="fa-solid fa-feather-pointed"></i> Draft</span>
+          <span class="ct-order__pic">
+            <img src="../images/product-detail.webp" alt="" loading="lazy" />
+          </span>
+        </div>
+
+        <form class="ct-formbox" id="ctFormBox" novalidate>
+          <div class="ct-row">
+            <div class="ct-f" data-f="name">
+              <label for="ctName">Full name</label>
+              <span class="ct-ctl">
+                <i class="fa-solid fa-user" aria-hidden="true"></i>
+                <input type="text" id="ctName" name="name" placeholder="Amara Okonkwo"
+                       autocomplete="name" aria-describedby="ctNameErr" />
+                <i class="ct-tick fa-solid fa-circle-check" aria-hidden="true"></i>
+              </span>
+              <p class="ct-err" id="ctNameErr" role="alert"></p>
+            </div>
+
+            <div class="ct-f" data-f="email">
+              <label for="ctEmail">Email address</label>
+              <span class="ct-ctl">
+                <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+                <input type="email" id="ctEmail" name="email" placeholder="you@example.com"
+                       autocomplete="email" aria-describedby="ctEmailErr" />
+                <i class="ct-tick fa-solid fa-circle-check" aria-hidden="true"></i>
+              </span>
+              <p class="ct-err" id="ctEmailErr" role="alert"></p>
+            </div>
+          </div>
+
+          <div class="ct-row">
+            <div class="ct-f" data-f="phone">
+              <label for="ctPhone">Phone <small>optional</small></label>
+              <span class="ct-ctl">
+                <i class="fa-solid fa-mobile-screen" aria-hidden="true"></i>
+                <input type="tel" id="ctPhone" name="phone" placeholder="+91 9764536787"
+                       autocomplete="tel" aria-describedby="ctPhoneErr" />
+                <i class="ct-tick fa-solid fa-circle-check" aria-hidden="true"></i>
+              </span>
+              <p class="ct-err" id="ctPhoneErr" role="alert"></p>
+            </div>
+
+            <div class="ct-f" data-f="order">
+              <label for="ctOrderNo">Order number <small>optional</small></label>
+              <span class="ct-ctl">
+                <i class="fa-solid fa-receipt" aria-hidden="true"></i>
+                <input type="text" id="ctOrderNo" name="order" placeholder="STK-48210"
+                       aria-describedby="ctOrderErr" />
+                <i class="ct-tick fa-solid fa-circle-check" aria-hidden="true"></i>
+              </span>
+              <p class="ct-err" id="ctOrderErr" role="alert"></p>
+            </div>
+          </div>
+
+          <fieldset class="ct-f ct-f--chips" data-f="topic">
+            <legend>What is this about?</legend>
+            <div class="ct-chips">
+              <label class="ct-pick"><input type="radio" name="topic" value="order" /><span><i class="fa-solid fa-box"></i> Order</span></label>
+              <label class="ct-pick"><input type="radio" name="topic" value="repair" /><span><i class="fa-solid fa-screwdriver-wrench"></i> Repair</span></label>
+              <label class="ct-pick"><input type="radio" name="topic" value="trade" /><span><i class="fa-solid fa-boxes-stacked"></i> Trade</span></label>
+              <label class="ct-pick"><input type="radio" name="topic" value="press" /><span><i class="fa-solid fa-bullhorn"></i> Press</span></label>
+              <label class="ct-pick"><input type="radio" name="topic" value="other" /><span><i class="fa-solid fa-comment-dots"></i> Other</span></label>
+            </div>
+            <p class="ct-err" id="ctTopicErr" role="alert"></p>
+          </fieldset>
+
+          <div class="ct-f" data-f="message">
+            <label for="ctMsg">Your message</label>
+            <span class="ct-ctl ct-ctl--area">
+              <textarea id="ctMsg" name="message" rows="5"
+                        placeholder="What happened, what you expected, and what you have already tried."
+                        aria-describedby="ctMsgErr ctCount"></textarea>
+            </span>
+            <span class="ct-count"><b id="ctCountNow">0</b> / 600</span>
+            <p class="ct-err" id="ctMsgErr" role="alert"></p>
+          </div>
+
+          <div class="ct-f ct-f--check" data-f="consent">
+            <label class="ct-check">
+              <input type="checkbox" id="ctOk" name="consent" aria-describedby="ctOkErr" />
+              <span class="ct-check__box"><i class="fa-solid fa-check" aria-hidden="true"></i></span>
+              <span class="ct-check__tx">Yes, Stackly may email me about this message. No newsletter, no resale of my details.</span>
+            </label>
+            <p class="ct-err" id="ctOkErr" role="alert"></p>
+          </div>
+
+          <div class="ct-formbox__foot">
+            <button class="btn btn--solid btn--magnet" type="submit" id="ctSend">
+              <span>Send message</span><i class="fa-solid fa-paper-plane"></i>
+            </button>
+            <p class="ct-formbox__note"><i class="fa-solid fa-lock"></i> Encrypted in transit, never shared.</p>
+          </div>
+        </form>
+
+        <!-- ---------- the receipt (shown once the form validates) ---------- -->
+        <div class="ct-receipt" id="ctReceipt" hidden>
+          <span class="ct-receipt__stamp" aria-hidden="true"><i class="fa-solid fa-check"></i> Sent</span>
+          <span class="ct-receipt__pic">
+            <img src="../images/service-authenticity.webp" alt="" loading="lazy" />
+          </span>
+          <h3>Message away.</h3>
+          <p>It is on the bench and it has a reference. Keep this — quote it if you need to chase us.</p>
+          <dl class="ct-receipt__list">
+            <div><dt>Reference</dt><dd id="ctRcRef">CT-000000</dd></div>
+            <div><dt>Going to</dt><dd id="ctRcTopic">The counter</dd></div>
+            <div><dt>Reply to</dt><dd id="ctRcMail">you@example.com</dd></div>
+            <div><dt>Typical wait</dt><dd id="ctRcWait">under 2 hours</dd></div>
+          </dl>
+          <button class="btn btn--ghost btn--sm" type="button" id="ctAgain"><span>Write another</span></button>
+        </div>
+      </div>
+
+      <!-- ---------- the signal panel ---------- -->
+      <aside class="ct-signal" id="ctSignal">
+        <figure class="ct-signal__pic">
+          <img src="../images/service-repair.webp" alt="A Stackly technician repairing a phone at the bench" loading="lazy" />
+          <figcaption><i class="fa-solid fa-circle-check"></i> The bench, 09:20 — two techs on the floor.</figcaption>
+        </figure>
+
+        <div class="ct-signal__meter">
+          <div class="ct-signal__bars" aria-hidden="true">
+            <i></i><i></i><i></i><i></i><i></i>
+          </div>
+          <div class="ct-signal__read">
+            <b>Signal <span id="ctSigPct">0</span>%</b>
+            <em id="ctSigNote">Nothing filled in yet</em>
+          </div>
+        </div>
+
+        <ol class="ct-signal__steps">
+          <li><span>01</span><p><b>It lands</b> in the shared inbox with your reference attached.</p></li>
+          <li><span>02</span><p><b>A person reads it</b> — the same person will answer, not a queue.</p></li>
+          <li><span>03</span><p><b>You get a reply</b> by email, with photos if the answer is visual.</p></li>
+        </ol>
+
+        <div class="ct-signal__alt">
+          <p>Rather not type?</p>
+          <a class="ct-signal__link" href="404.html"><i class="fa-solid fa-phone"></i> +91 9764536787</a>
+          <a class="ct-signal__link" href="404.html"><i class="fa-solid fa-envelope"></i> info@stackly.com</a>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     S5 · FIND US — the embedded map
+     The frame draws its own border, the pin drops in and the sheet
+     settles from above.
+     =================================================================== -->
+<section class="ct-map" id="ctMap">
+  <div class="shell">
+    <div class="ct-map__head">
+      <div>
+        <span class="eyebrow" data-ct-r="tiltin"><i class="fa-solid fa-map-location-dot"></i> Where we are</span>
+        <h2 class="sec-title" data-ct-r="tiltin">MMR Complex, Chinna Thirupathi,<br /><span class="accent">Salem, and that is it</span></h2>
+      </div>
+      <p class="sec-note" data-ct-r="tiltin">
+        One shop, one workshop behind it, one loading bay. Ring the bell on the violet
+        door if the shutter is down — someone is usually still inside.
+      </p>
+    </div>
+
+    <div class="ct-map__grid">
+      <div class="ct-map__frame" id="ctMapFrame">
+        <span class="ct-map__edge" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        <iframe src="https://www.google.com/maps?q=MMR%20Complex%2C%20Chinna%20Thirupathi%2C%20near%20Chinna%20Muniyappan%20Kovil%2C%20Salem%2C%20Tamil%20Nadu%20636008&output=embed" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Stackly store location on Google Maps"></iframe>
+      </div>
+
+      <aside class="ct-map__side">
+        <article class="ct-way" data-ct-r="slide" style="--d:.05s">
+          <span class="ct-way__pic"><img src="../images/product-4.webp" alt="Magnetic phone holder clipped to a car air vent" loading="lazy" /></span>
+          <h3>By car</h3>
+          <p>Free loading bay behind the shop, 40m from the door. Come in from the Chinna Muniyappan Kovil side —
+            the lane is narrow.</p>
+        </article>
+        <article class="ct-way" data-ct-r="slide" style="--d:.14s">
+          <span class="ct-way__pic"><img src="../images/service-delivery.webp" alt="Courier handing over a parcel" loading="lazy" /></span>
+          <h3>By rail</h3>
+          <p>Salem Junction is a fifteen-minute ride. Ask for Chinna Thirupathi
+            and stop beside the kovil — we are just past it.</p>
+        </article>
+        <article class="ct-way" data-ct-r="slide" style="--d:.23s">
+          <span class="ct-way__pic"><img src="../images/gallery-2.webp" alt="Coloured light in the test area" loading="lazy" /></span>
+          <h3>On two wheels</h3>
+          <p>Six covered stands right outside. Bring the gear in the bag — we will
+            test it on the spot while you wait.</p>
+        </article>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     S6 · A NOTE FROM THE BENCH
+     The portrait's corner peels back as the section is scrubbed.
+     =================================================================== -->
+<section class="ct-note" id="ctNote">
+  <div class="shell ct-note__grid">
+    <div class="ct-note__picwrap">
+      <figure class="ct-note__sheet" id="ctSheetNote">
+        <span class="ct-note__back" aria-hidden="true"><img src="../images/blog-2.webp" alt="" loading="lazy" /></span>
+        <span class="ct-note__front">
+          <img src="../images/avatar-1.webp" alt="Nadia Reyes, who answers most Stackly messages" loading="lazy" />
+          <i class="ct-note__corner" aria-hidden="true"></i>
+        </span>
+      </figure>
+      <span class="ct-note__clip" aria-hidden="true"></span>
+      <p class="ct-note__cap">Nadia, on the front desk since 2021. She reads roughly forty
+        messages a day and remembers most of them.</p>
+    </div>
+
+    <div class="ct-note__tx">
+      <span class="eyebrow eyebrow--light" data-ct-r="blinds"><i class="fa-solid fa-quote-left"></i> From the desk</span>
+      <h2 class="sec-title" data-ct-r="blinds">No scripts.<br /><span class="accent">No ticket number</span> in the subject line.</h2>
+      <div class="ct-note__body" data-ct-r="blinds">
+        <p>People expect a wall of forms and a reply three days later. You will get six
+          boxes and a person — usually me, usually before your coffee goes cold.</p>
+        <p>If your message needs a photo, I will ask for one rather than guess. If it needs
+          a part, I will tell you the price before we order it. If I do not know, I will
+          say so and find out.</p>
+        <p>Write to us in whatever language you like. We are not precious about it here.</p>
+      </div>
+      <div class="ct-note__sign" data-ct-r="blinds">
+        <b>Nadia Reyes</b>
+        <em>Front desk &amp; trade enquiries</em>
+        <a class="btn btn--glass btn--sm" href="404.html"><span>Write to Nadia</span><i class="fa-solid fa-feather"></i></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     S7 · DESK SHIFT — weekly hours
+     Rows arrive with a stamp thump; the tape spine draws as you read.
+     =================================================================== -->
+<section class="ct-hours" id="ctHours">
+  <div class="shell ct-hours__grid">
+    <div class="ct-hours__head">
+      <span class="eyebrow" data-ct-r="blinds"><i class="fa-solid fa-clock"></i> Desk shift</span>
+      <h2 class="sec-title" data-ct-r="blinds">When someone is<br /><span class="accent">actually here</span></h2>
+      <p class="sec-note" data-ct-r="blinds">
+        Messages sent outside these hours still land — they simply wait for the next shift.
+        Repair drop-off stays open an hour after the desk does.
+      </p>
+      <figure class="ct-hours__pic" data-ct-r="slide">
+        <img src="../images/preloader-core.webp" alt="" loading="lazy" />
+        <figcaption><i class="fa-solid fa-camera"></i> Sunday 11:40, mid bench-check.</figcaption>
+      </figure>
+      <p class="ct-hours__note" data-ct-r="blinds">
+        <i class="fa-solid fa-triangle-exclamation"></i> Closed on public holidays. The last
+        order of the night goes out at 18:30 sharp.
+      </p>
+    </div>
+
+    <ol class="ct-tape" id="ctTape">
+      <li class="ct-day" data-day="1"><span class="ct-day__no">01</span><span class="ct-day__pic"><img src="../images/cat-speakers.webp" alt="" loading="lazy" /></span><span class="ct-day__nm">Monday</span><span class="ct-day__hr">09:00 – 19:00</span><span class="ct-day__bar"><i></i></span><span class="ct-day__now"><i class="fa-solid fa-circle"></i><span>Open now</span></span><span class="ct-day__st">Open</span></li>
+      <li class="ct-day" data-day="2"><span class="ct-day__no">02</span><span class="ct-day__pic"><img src="../images/cat-chargers.webp" alt="" loading="lazy" /></span><span class="ct-day__nm">Tuesday</span><span class="ct-day__hr">09:00 – 19:00</span><span class="ct-day__bar"><i></i></span><span class="ct-day__now"><i class="fa-solid fa-circle"></i><span>Open now</span></span><span class="ct-day__st">Open</span></li>
+      <li class="ct-day" data-day="3"><span class="ct-day__no">03</span><span class="ct-day__pic"><img src="../images/cat-cases.webp" alt="" loading="lazy" /></span><span class="ct-day__nm">Wednesday</span><span class="ct-day__hr">09:00 – 19:00</span><span class="ct-day__bar"><i></i></span><span class="ct-day__now"><i class="fa-solid fa-circle"></i><span>Open now</span></span><span class="ct-day__st">Open</span></li>
+      <li class="ct-day" data-day="4"><span class="ct-day__no">04</span><span class="ct-day__pic"><img src="../images/cat-powerbanks.webp" alt="" loading="lazy" /></span><span class="ct-day__nm">Thursday</span><span class="ct-day__hr">09:00 – 21:00</span><span class="ct-day__bar"><i></i></span><span class="ct-day__now"><i class="fa-solid fa-circle"></i><span>Open now</span></span><span class="ct-day__st">Late</span></li>
+      <li class="ct-day" data-day="5"><span class="ct-day__no">05</span><span class="ct-day__pic"><img src="../images/cat-watch.webp" alt="" loading="lazy" /></span><span class="ct-day__nm">Friday</span><span class="ct-day__hr">09:00 – 19:00</span><span class="ct-day__bar"><i></i></span><span class="ct-day__now"><i class="fa-solid fa-circle"></i><span>Open now</span></span><span class="ct-day__st">Open</span></li>
+      <li class="ct-day" data-day="6"><span class="ct-day__no">06</span><span class="ct-day__pic"><img src="../images/product-3.webp" alt="" loading="lazy" /></span><span class="ct-day__nm">Saturday</span><span class="ct-day__hr">10:00 – 17:00</span><span class="ct-day__bar"><i></i></span><span class="ct-day__now"><i class="fa-solid fa-circle"></i><span>Open now</span></span><span class="ct-day__st">Short</span></li>
+      <li class="ct-day" data-day="0"><span class="ct-day__no">07</span><span class="ct-day__pic"><img src="../images/cat-earbuds.webp" alt="" loading="lazy" /></span><span class="ct-day__nm">Sunday</span><span class="ct-day__hr">12:00 – 16:00</span><span class="ct-day__bar"><i></i></span><span class="ct-day__now"><i class="fa-solid fa-circle"></i><span>Open now</span></span><span class="ct-day__st">Closed</span></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ===================================================================
+     S8 · BEFORE YOU WRITE
+     A sticky frame on the left; the photograph on the right changes as
+     each step passes the reading line.
+     =================================================================== -->
+<section class="ct-pre" id="ctPre">
+  <div class="shell ct-pre__grid">
+    <div class="ct-pre__stage" id="ctStage">
+      <div class="ct-pre__frames" id="ctFrames">
+        <figure class="ct-pre__frame is-on"><img src="../images/service-repair.webp" alt="Diagnostic rig on the repair bench" loading="lazy" /><figcaption>01 — the bench takes a look</figcaption></figure>
+        <figure class="ct-pre__frame"><img src="../images/product-1.webp" alt="Phone resting on a wireless charging pad" loading="lazy" /><figcaption>02 — a model and a symptom</figcaption></figure>
+        <figure class="ct-pre__frame"><img src="../images/service-delivery.webp" alt="Parcel being handed to a courier" loading="lazy" /><figcaption>03 — a number we can look up</figcaption></figure>
+        <figure class="ct-pre__frame"><img src="../images/service-authenticity.webp" alt="Sealed accessories with authenticity seals" loading="lazy" /><figcaption>04 — what you already tried</figcaption></figure>
+      </div>
+      <span class="ct-pre__tape" aria-hidden="true"><i id="ctPreTape"></i></span>
+    </div>
+
+    <ol class="ct-pre__list" id="ctPreList">
+      <li class="ct-pre__item" data-i="0">
+        <span class="ct-pre__no">01</span>
+        <h3>Say what the gear is doing</h3>
+        <p>“Drops charge overnight” beats “charging problem” every time. Symptom first, model second.</p>
+      </li>
+      <li class="ct-pre__item" data-i="1">
+        <span class="ct-pre__no">02</span>
+        <h3>Name the model and the part</h3>
+        <p>S9 Pro, CoreCell 20K, the left bud. If you have the box, the model is on the label.</p>
+      </li>
+      <li class="ct-pre__item" data-i="2">
+        <span class="ct-pre__no">03</span>
+        <h3>Give us an order number if you have one</h3>
+        <p>It is in the confirmation email and starts with STK. It turns a question into a lookup.</p>
+      </li>
+      <li class="ct-pre__item" data-i="3">
+        <span class="ct-pre__no">04</span>
+        <h3>List what you have already tried</h3>
+        <p>New cable, different port, factory reset. It stops both of us repeating the same three steps.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ===================================================================
+     S9 · CONTACT SHEET
+     Twelve frames thrown loose across the table, squared up as you scroll.
+     =================================================================== -->
+<section class="ct-sheet" id="ctSheet">
+  <div class="shell">
+    <div class="ct-sheet__head">
+      <span class="eyebrow" data-ct-r="edge"><i class="fa-solid fa-images"></i> The workbench, contact sheet</span>
+      <h2 class="sec-title" data-ct-r="edge">What the desk looks <span class="accent">like up close</span></h2>
+      <p class="sec-note" data-ct-r="edge">
+        Every photograph below was taken inside the studio — no stock, no renders, no
+        retouching beyond knocking the colour back to what the eye actually sees.
+      </p>
+    </div>
+
+    <div class="ct-cells" id="ctCells">
+      <figure class="ct-cell" style="--j:0"><img src="../images/product-1.webp" alt="Phone on a wireless charging pad" loading="lazy" /><span class="ct-cell__no">01</span><figcaption>Charge bay</figcaption></figure>
+      <figure class="ct-cell" style="--j:1"><img src="../images/service-repair.webp" alt="Technician at the repair bench" loading="lazy" /><span class="ct-cell__no">02</span><figcaption>Bench one</figcaption></figure>
+      <figure class="ct-cell" style="--j:2"><img src="../images/cat-earbuds.webp" alt="Earbuds in an open charging case" loading="lazy" /><span class="ct-cell__no">03</span><figcaption>Audio lab</figcaption></figure>
+      <figure class="ct-cell" style="--j:3"><img src="../images/product-2.webp" alt="Solar charger on a desk" loading="lazy" /><span class="ct-cell__no">04</span><figcaption>Solar shelf</figcaption></figure>
+      <figure class="ct-cell" style="--j:4"><img src="../images/arrival-1.webp" alt="New earbuds on a studio backdrop" loading="lazy" /><span class="ct-cell__no">05</span><figcaption>New in</figcaption></figure>
+      <figure class="ct-cell" style="--j:5"><img src="../images/gallery-1.webp" alt="Illuminated cooling fans in the test rig" loading="lazy" /><span class="ct-cell__no">06</span><figcaption>Drain rig</figcaption></figure>
+      <figure class="ct-cell" style="--j:6"><img src="../images/arrival-3.webp" alt="Power bank with a USB-C cable on marble" loading="lazy" /><span class="ct-cell__no">07</span><figcaption>Power line</figcaption></figure>
+      <figure class="ct-cell" style="--j:7"><img src="../images/product-4.webp" alt="Magnetic phone holder on an air vent" loading="lazy" /><span class="ct-cell__no">08</span><figcaption>Fit bay</figcaption></figure>
+      <figure class="ct-cell" style="--j:8"><img src="../images/arrival-2.webp" alt="Triple camera lens close-up" loading="lazy" /><span class="ct-cell__no">09</span><figcaption>Lens bench</figcaption></figure>
+      <figure class="ct-cell" style="--j:9"><img src="../images/product-3.webp" alt="Two portable speakers" loading="lazy" /><span class="ct-cell__no">10</span><figcaption>Sound room</figcaption></figure>
+      <figure class="ct-cell" style="--j:10"><img src="../images/cat-cases.webp" alt="Phone in a rugged case" loading="lazy" /><span class="ct-cell__no">11</span><figcaption>Drop wall</figcaption></figure>
+      <figure class="ct-cell" style="--j:11"><img src="../images/service-delivery.webp" alt="Courier delivering a parcel" loading="lazy" /><span class="ct-cell__no">12</span><figcaption>Dispatch</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     S10 · FREQUENTLY WIRED
+     A plug-in list: each row opens a panel with the long answer and a photo.
+     =================================================================== -->
+<section class="ct-faq" id="ctFaq">
+  <div class="shell ct-faq__grid">
+    <div class="ct-faq__head">
+      <span class="eyebrow eyebrow--light" data-ct-r="tiltin"><i class="fa-solid fa-plug-circle-bolt"></i> Asked every week</span>
+      <h2 class="sec-title" data-ct-r="tiltin">Wired up to<br /><span class="accent">the obvious stuff</span></h2>
+      <p class="sec-note sec-note--light" data-ct-r="tiltin">
+        Five questions that take up most of our inbox. If yours is not here, the form above
+        is a better bet than guessing.
+      </p>
+      <figure class="ct-faq__pic" data-ct-r="tiltin">
+        <img src="../images/trust-surface.webp" alt="Stackly guarantee seal" loading="lazy" />
+        <figcaption><i class="fa-solid fa-shield-halved"></i> Still sealed, still covered.</figcaption>
+      </figure>
+    </div>
+
+    <div class="ct-plug" id="ctPlug">
+      <div class="ct-q" data-ct-r="stack">
+        <button class="ct-q__head" type="button" aria-expanded="false" aria-controls="ctq1">
+          <span class="ct-q__no">01</span>
+          <span class="ct-q__t">How fast will I actually hear back?</span>
+          <span class="ct-q__pic"><img src="../images/cart-empty.webp" alt="" loading="lazy" /></span>
+          <i class="ct-q__pm fa-solid fa-plus" aria-hidden="true"></i>
+        </button>
+        <div class="ct-q__panel" id="ctq1" role="region">
+          <div class="ct-q__in">
+            <p>On a working day our median first reply is one hour and forty-two minutes, and
+              94% of everything that arrives is answered before four. Outside desk hours you
+              are in the queue for the next morning — nothing is lost, it just waits.</p>
+            <p>If your message is marked urgent, put the word in the first line. We keep a
+              small shortlist of those and clear it before anything else.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="ct-q" data-ct-r="stack">
+        <button class="ct-q__head" type="button" aria-expanded="false" aria-controls="ctq2">
+          <span class="ct-q__no">02</span>
+          <span class="ct-q__t">Can I just turn up with a broken phone?</span>
+          <span class="ct-q__pic"><img src="../images/page-shop.webp" alt="" loading="lazy" /></span>
+          <i class="ct-q__pm fa-solid fa-plus" aria-hidden="true"></i>
+        </button>
+        <div class="ct-q__panel" id="ctq2" role="region">
+          <div class="ct-q__in">
+            <p>Yes. Bring it to unit four and we will run a free twenty-point health check on
+              the spot. Screens and ports are usually done while you wait; anything involving
+              a board or a water mark goes to the bench with a written quote first.</p>
+            <p>Drop-off closes an hour after the desk does on Thursdays, so 20:00 rather than 19:00.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="ct-q" data-ct-r="stack">
+        <button class="ct-q__head" type="button" aria-expanded="false" aria-controls="ctq3">
+          <span class="ct-q__no">03</span>
+          <span class="ct-q__t">Do you ship outside the country?</span>
+          <span class="ct-q__pic"><img src="../images/stats-surface.webp" alt="" loading="lazy" /></span>
+          <i class="ct-q__pm fa-solid fa-plus" aria-hidden="true"></i>
+        </button>
+        <div class="ct-q__panel" id="ctq3" role="region">
+          <div class="ct-q__in">
+            <p>We ship to 41 countries, and free over $49. Charger orders are the exception:
+              we will not send a plug across a border we cannot guarantee, so we say so in
+              the quote instead of finding out after you have paid.</p>
+            <p>Duty and import tax are never included. That one is on the destination, and we
+              will happily point you at the right page.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="ct-q" data-ct-r="stack">
+        <button class="ct-q__head" type="button" aria-expanded="false" aria-controls="ctq4">
+          <span class="ct-q__no">04</span>
+          <span class="ct-q__t">Is my data safe with you?</span>
+          <span class="ct-q__pic"><img src="../images/page-login.webp" alt="" loading="lazy" /></span>
+          <i class="ct-q__pm fa-solid fa-plus" aria-hidden="true"></i>
+        </button>
+        <div class="ct-q__panel" id="ctq4" role="region">
+          <div class="ct-q__in">
+            <p>We ask for the minimum needed to fix or ship the thing, we never sell or share
+              it, and messages older than twenty-four months are deleted automatically. Repair
+              devices are wiped or returned on request, in writing, before the job closes.</p>
+            <p>Full detail lives on the privacy page, written by a person rather than a lawyer.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="ct-q" data-ct-r="stack">
+        <button class="ct-q__head" type="button" aria-expanded="false" aria-controls="ctq5">
+          <span class="ct-q__no">05</span>
+          <span class="ct-q__t">Do you sell to other shops?</span>
+          <span class="ct-q__pic"><img src="../images/promo-main.webp" alt="" loading="lazy" /></span>
+          <i class="ct-q__pm fa-solid fa-plus" aria-hidden="true"></i>
+        </button>
+        <div class="ct-q__panel" id="ctq5" role="region">
+          <div class="ct-q__in">
+            <p>Yes — that is the lab desk. Tell us the quantities and a delivery postcode and
+              you will have a compatibility sheet the same day, with the wholesale list and
+              lead times. There is a minimum on custom bundles, but it is not a surprise one.</p>
+            <p>Existing stockists can ask for the trade login instead of writing every time.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================
+     S11 · THE LAST WORD
+     Four photographs drift at their own rates behind a closing type wipe.
+     =================================================================== -->
+<section class="ct-outro" id="ctOutro">
+  <div class="ct-outro__bg" aria-hidden="true">
+    <span class="ct-outro__img ct-outro__img--a" data-out="0"><img src="../images/hero-main.webp" alt="" loading="lazy" /></span>
+    <span class="ct-outro__img ct-outro__img--b" data-out="1"><img src="../images/hero-float-1.webp" alt="" loading="lazy" /></span>
+    <span class="ct-outro__img ct-outro__img--c" data-out="2"><img src="../images/hero-float-2.webp" alt="" loading="lazy" /></span>
+    <span class="ct-outro__img ct-outro__img--d" data-out="3"><img src="../images/cat-powerbanks.webp" alt="" loading="lazy" /></span>
+  </div>
+
+  <div class="shell ct-outro__in">
+    <span class="ct-chip" data-ct-r="blinds"><i class="fa-solid fa-paper-plane"></i> That is the whole pitch</span>
+    <h2 class="ct-outro__t" id="ctOutroT" data-ct-r="blinds">Write to us like a person</h2>
+    <p data-ct-r="blinds">
+      Six boxes, a reference number and a named human on the other end. If we can help
+      today, we will; if we cannot, we will say who can.
+    </p>
+    <div class="ct-outro__cta" data-ct-r="blinds">
+      <a class="btn btn--bright btn--magnet" href="404.html"><span>Open the form</span><i class="fa-solid fa-feather"></i></a>
+      <a class="btn btn--glass" href="404.html"><span>See where we are</span><i class="fa-solid fa-location-dot"></i></a>
+    </div>
+    <ul class="ct-outro__quick" data-ct-r="blinds">
+      <li><a href="404.html"><i class="fa-solid fa-phone"></i> +91 9764536787</a></li>
+      <li><a href="404.html"><i class="fa-solid fa-envelope"></i> info@stackly.com</a></li>
+      <li><a href="404.html"><i class="fa-solid fa-screwdriver-wrench"></i> Book a repair</a></li>
+    </ul>
+  </div>
+</section>
+</main>
+
+<!-- ============ S12 · FOOTER (identical shell) ============ -->
+<footer class="foot" id="footer">
+  <div class="foot-news" data-parallax style="background-image:url('../images/newsletter-surface.webp')">
+    <div class="fn-veil"></div>
+    <div class="shell fn-inner">
+      <div class="fn-copy">
+        <h2 data-reveal="rise">Get the drop <span class="accent">first</span></h2>
+        <p data-reveal="rise">New arrivals, restocks and one genuinely useful email a week. No noise.</p>
+      </div>
+     <form class="fn-form" id="newsForm" data-reveal="rise" novalidate>
+       <span class="fn-ico"><i class="fa-solid fa-envelope"></i></span>
+       <input type="email" id="newsEmail" name="email" placeholder="you@example.com" aria-label="Email address" aria-describedby="newsMsg" autocomplete="email" />
+       <button class="btn btn--solid" type="submit"><span>Subscribe</span><i class="fa-solid fa-paper-plane"></i></button>
+       <p class="fn-msg" id="newsMsg" role="status" aria-live="polite"></p>
+     </form>
+    </div>
+  </div>
+
+  <div class="foot-main">
+    <div class="shell foot-grid">
+      <div class="fg-brand">
+        <a class="brand brand--foot" href="../index.html" aria-label="Stackly home">
+          <img class="brand-logo" src="../images/logo-full-theme.webp" alt="Stackly" width="600" height="185" decoding="async" />
+        </a>
+        <p>Gear that moves with you. Curated mobile accessories, tested in our own lab and shipped from our own bench.</p>
+        <div class="fg-social">
+          <a href="404.html" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="404.html" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
+          <a href="404.html" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+          <a href="404.html" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+        </div>
+       </div>
+
+       <div class="fg-col" data-aos="fade-up" data-aos-delay="0" data-aos-duration="650">
+         <h4>Company</h4>
+         <ul>
+           <li><a href="../index.html">Home</a></li>
+           <li><a href="shop.html">Shop</a></li>
+           <li><a href="service.html">Service</a></li>
+           <li><a href="about.html">About</a></li>
+           <li><a href="contact.html">Contact</a></li>
+         </ul>
+       </div>
+
+       <div class="fg-col fg-col--touch" data-aos="fade-up" data-aos-delay="110" data-aos-duration="650">
+         <h4>Get in touch</h4>
+         <ul class="fg-contact">
+           <li>
+             <i class="fa-solid fa-location-dot"></i>
+             <span><b>Address</b>MMR Complex, Chinna Thirupathi, near Chinna Muniyappan Kovil, Salem, Tamil Nadu 636008</span>
+           </li>
+           <li>
+             <i class="fa-solid fa-envelope"></i>
+             <span><b>Mail ID</b><a href="404.html">info@stackly.com</a></span>
+           </li>
+           <li>
+             <i class="fa-solid fa-mobile-screen"></i>
+             <span><b>Mobile</b><a href="404.html">+91 9764536787</a></span>
+           </li>
+         </ul>
+       </div>
+
+      <div class="fg-col" data-aos="fade-up" data-aos-delay="220" data-aos-duration="650">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="404.html">Track an order</a></li>
+          <li><a href="404.html">Shipping &amp; returns</a></li>
+          <li><a href="404.html">Warranty claims</a></li>
+          <li><a href="404.html">Privacy policy</a></li>
+          <li><a href="404.html">Terms of service</a></li>
+        </ul>
+        <div class="fg-pay">
+          <i class="fa-brands fa-cc-visa"></i>
+          <i class="fa-brands fa-cc-mastercard"></i>
+          <i class="fa-brands fa-cc-paypal"></i>
+          <i class="fa-brands fa-cc-apple-pay"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="shell foot-marquee">
+      <div class="fm-track">
+        <span>Stackly</span><i class="fa-solid fa-mobile-screen-button"></i>
+        <span>GEAR THAT MOVES WITH YOU</span><i class="fa-solid fa-bolt"></i>
+        <span>Stackly</span><i class="fa-solid fa-mobile-screen-button"></i>
+        <span>GEAR THAT MOVES WITH YOU</span><i class="fa-solid fa-bolt"></i>
+      </div>
+    </div>
+
+    <div class="shell foot-bottom">
+      <p>© 2026 Stackly. All rights reserved.</p>
+      <p class="fb-links">
+        <a href="404.html">Privacy</a><span>·</span>
+        <a href="404.html">Terms</a><span>·</span>
+        <a href="404.html">Cookies</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ FLOATING UI ============ -->
+<button class="totop" id="toTop" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
+<div class="toast" id="toast">
+  <span class="toast-ico"><i class="fa-solid fa-circle-check"></i></span>
+  <div><b id="toastTitle">Added to cart</b><em id="toastText">FluxPad Wireless Charger</em></div>
+</div>
+
+<!-- ============================================================
+     ANIMATION RUNTIME
+     home.js carries the shared shell (preloader, header, fullscreen
+     menu, cart badge, newsletter, back-to-top) and inlines GSAP 3.12.5 +
+     ScrollTrigger 3.12.5 + Lenis, so the loader, the hamburger and the
+     smooth scroll behave exactly as they do on the home page.
+     contact.js adds the Contact page's own choreography and the
+     validated message form.
+     Do not load a second GSAP copy: duplicate instances break
+     ScrollTrigger.
+     ============================================================ -->
+<script src="../JS/home.js" data-animation-runtime="gsap@3.12.5 scrolltrigger@3.12.5 lenis@1.x" data-gsap-source="bundled-inline"></script>
+<script src="../JS/contact.js"></script>
+</body>
+</html>

@@ -1,0 +1,390 @@
+/* =====================================================================
+   404 · "This shelf is empty"
+   A single locked stage. No header, no footer, no preloader, no menu,
+   and no scrolling: everything lives inside the viewport at any size.
+
+   House tokens and .btn come from home.css; everything here is prefixed
+   nf- so nothing leaks into the shared shell.
+   ===================================================================== */
+
+/* ---------- 0 · THE LOCK ----------
+   height:100dvh keeps the stage correct while mobile browser chrome
+   collapses on scroll, so the page physically cannot grow a scrollbar. */
+html, body {
+  height: 100%;
+  max-height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: manipulation;
+}
+body.nf-body {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  background: var(--ink);
+  color: var(--bone);
+  line-height: 1.55;
+  /* no Lenis on this page, so native smooth scrolling would only fight
+     the position:fixed lock above */
+  scroll-behavior: auto;
+}
+.nf-body ::selection { background: var(--violet); color: #fff; }
+
+/* ---------- 1 · STAGE + BACKDROP ---------- */
+.nf-stage {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  /* the whole content column is one grid cell, centred on both axes */
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  padding: clamp(16px, 3.2vh, 34px) var(--pad);
+}
+.nf-bg { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+.nf-bg__shot {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: .2;
+  filter: grayscale(.55) contrast(1.05);
+  transform: scale(1.12);
+}
+.nf-bg__scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(11,13,18,.95), rgba(11,13,18,.86) 48%, rgba(11,13,18,.97)),
+    radial-gradient(64% 58% at 78% 14%, rgba(91,61,245,.3), transparent 68%);
+}
+/* the grid is masked so it fades out before it reaches any edge */
+.nf-bg__grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(243,240,234,.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(243,240,234,.05) 1px, transparent 1px);
+  background-size: 72px 72px;
+  -webkit-mask-image: radial-gradient(70% 60% at 50% 46%, #000, transparent 78%);
+  mask-image: radial-gradient(70% 60% at 50% 46%, #000, transparent 78%);
+}
+.nf-glow { position: absolute; border-radius: 50%; filter: blur(70px); pointer-events: none; }
+.nf-glow--a {
+  top: -16vh; right: -10vw;
+  width: min(58vw, 620px); aspect-ratio: 1;
+  background: radial-gradient(circle, rgba(91,61,245,.34), transparent 70%);
+  animation: nfDrift 13s ease-in-out infinite alternate;
+}
+.nf-glow--b {
+  bottom: -22vh; left: -12vw;
+  width: min(52vw, 540px); aspect-ratio: 1;
+  background: radial-gradient(circle, rgba(255,90,54,.26), transparent 70%);
+  animation: nfDrift 16s ease-in-out .6s infinite alternate-reverse;
+}
+@keyframes nfDrift {
+  from { transform: translate3d(0,0,0) scale(1); }
+  to   { transform: translate3d(-3%,4%,0) scale(1.12); }
+}
+
+/* ---------- 2 · THE CONTENT COLUMN ----------
+   One centred column, sized against vmin/vh so the whole block always
+   fits. max-height + overflow guards catch any font fallback overflow
+   rather than letting the page scroll. */
+.nf-wrap {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 640px;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: clamp(9px, 1.5vh, 17px);
+  overflow: hidden;
+}
+
+/* ---------- 2b · LOGO ----------
+   The mark sits above the error so the stage still says whose it is. It is
+   centred in the same column as everything else and sized off vh, because
+   height is the scarce axis on this page: it shrinks with the viewport
+   instead of pushing the rest of the column out of the locked stage. */
+.nf-logo {
+  flex: none;
+  display: block;
+  line-height: 0;
+  border-radius: 8px;
+  transition: opacity .4s var(--ease);
+}
+.nf-logo img {
+  display: block;
+  width: auto;
+  height: clamp(26px, 5.6vh, 46px);
+  object-fit: contain;
+  margin-inline: auto;
+}
+.nf-logo:hover { opacity: .78; }
+
+/* ---------- 3 · CHIP ---------- */
+.nf-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  flex: none;
+  font-family: var(--f-d);
+  font-size: .72rem;
+  font-weight: 600;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--bone);
+  padding: 8px 15px;
+  border: 1px solid var(--bone-18);
+  border-radius: 100px;
+  background: rgba(243,240,234,.08);
+}
+.nf-chip i { color: var(--coral); font-size: .72rem; }
+
+/* ---------- 4 · THE ICON ----------
+   A compass that sweeps, hunts, and never settles. Three layers of
+   motion: the needle spins, one ring pulses outward, three dots orbit. */
+.nf-dial {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: clamp(76px, 13.5vh, 118px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+}
+.nf-dial__face {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 74%;
+  height: 74%;
+  border-radius: 50%;
+  border: 1.5px solid var(--bone-18);
+  background:
+    radial-gradient(circle at 50% 32%, rgba(91,61,245,.34), transparent 68%),
+    rgba(243,240,234,.06);
+  backdrop-filter: blur(8px);
+}
+.nf-dial__ico {
+  font-size: clamp(1.5rem, 4.2vh, 2.2rem);
+  color: var(--bone);
+  line-height: 1;
+  /* the search sweep: fast, then a slow drift, forever */
+  animation: nfSweep 3.4s cubic-bezier(.65,0,.35,1) infinite;
+}
+@keyframes nfSweep {
+  0%          { transform: rotate(0deg); }
+  38%         { transform: rotate(148deg); }
+  52%         { transform: rotate(112deg); }
+  74%         { transform: rotate(-152deg); }
+  100%        { transform: rotate(-360deg); }
+}
+/* two rings, offset so the pulse never lands in lockstep */
+.nf-dial__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1.5px solid var(--violet);
+}
+.nf-dial__ring--a { animation: nfPulse 2.9s var(--ease) infinite; }
+.nf-dial__ring--b {
+  border-color: var(--coral);
+  opacity: .5;
+  animation: nfPulse 2.9s var(--ease) .55s infinite;
+}
+@keyframes nfPulse {
+  0%   { transform: scale(.82); opacity: .85; }
+  70%  { transform: scale(1.22); opacity: 0; }
+  100% { transform: scale(1.22); opacity: 0; }
+}
+/* three dots on the rim, orbiting at different speeds */
+.nf-dial__dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  margin: -3.5px 0 0 -3.5px;
+  border-radius: 50%;
+  background: var(--coral);
+  animation: nfOrbit 5.2s linear infinite;
+  transform-origin: 50% 50%;
+}
+.nf-dial__dot--2 { background: var(--violet); animation-duration: 6.8s; animation-direction: reverse; }
+.nf-dial__dot--3 { width: 5px; height: 5px; margin: -2.5px 0 0 -2.5px; background: var(--bone-45); animation-duration: 8.4s; }
+@keyframes nfOrbit {
+  from { transform: rotate(0deg)   translateX(clamp(38px, 6.8vh, 59px)) rotate(0deg); }
+  to   { transform: rotate(360deg) translateX(clamp(38px, 6.8vh, 59px)) rotate(-360deg); }
+}
+
+/* ---------- 5 · THE CODE ---------- */
+.nf-code {
+  display: flex;
+  flex: none;
+  gap: clamp(4px, .9vw, 12px);
+  margin: 0;
+  font-family: var(--f-d);
+  font-weight: 800;
+  font-size: clamp(3.1rem, 15.5vh, 7.2rem);
+  line-height: .86;
+  letter-spacing: -.05em;
+  color: var(--bone);
+}
+.nf-code span { display: block; }
+.nf-code span:nth-child(2) {
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--coral);
+}
+/* each glyph lifts out of its own clip, staggered */
+.nf-code span > i {
+  display: block;
+  font-style: normal;
+  transform: translateY(105%);
+  animation: nfGlyph .95s var(--ease) forwards;
+}
+.nf-code span:nth-child(1) > i { animation-delay: .12s; }
+.nf-code span:nth-child(2) > i { animation-delay: .22s; }
+.nf-code span:nth-child(3) > i { animation-delay: .32s; }
+@keyframes nfGlyph {
+  to { transform: translateY(0); }
+}
+.nf-code span { overflow: hidden; padding-block: .04em; }
+
+/* ---------- 6 · HEADING + COPY ---------- */
+.nf-t {
+  flex: none;
+  margin: 0;
+  font-size: clamp(1.22rem, 4.4vh, 2.05rem);
+  line-height: 1.1;
+  letter-spacing: -.03em;
+  font-weight: 700;
+}
+.nf-t em { font-style: normal; color: var(--coral); }
+
+.nf-sub {
+  flex: none;
+  max-width: 40ch;
+  margin: 0;
+  font-size: clamp(.82rem, 1.9vh, .95rem);
+  color: var(--bone-45);
+}
+
+/* ---------- 7 · BUTTONS ---------- */
+.nf-cta {
+  flex: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(10px, 1.6vh, 14px);
+  margin-top: clamp(4px, 1vh, 10px);
+}
+.nf-btn {
+  flex: none;
+  /* slightly tighter than the house .btn so the row survives a short
+     landscape phone without shrinking the type below legibility */
+  padding: clamp(11px, 1.7vh, 14px) clamp(18px, 3vw, 26px);
+  font-size: clamp(.84rem, 1.8vh, .94rem);
+}
+.nf-btn i { order: -1; }   /* icon leads on both buttons */
+/* set by 404.js the moment Go Back is pressed, so a second click cannot
+   walk two pages back */
+.nf-btn.is-busy { opacity: .55; pointer-events: none; }
+.nf-btn.is-busy i { animation: nfSpin .7s linear infinite; }
+@keyframes nfSpin { to { transform: rotate(360deg); } }
+.nf-btn--back:hover i { transform: translateX(-5px); }
+.nf-body .btn:hover i { transform: translateX(5px); }
+.nf-body .nf-btn--back:hover i,
+.nf-body .nf-btn--back:focus-visible i { transform: translateX(-5px); }
+
+/* ---------- 8 · FOOTNOTE (inside the viewport, not a site footer) ---------- */
+.nf-foot {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin: clamp(4px, 1vh, 10px) 0 0;
+  font-size: .72rem;
+  letter-spacing: .04em;
+  color: var(--bone-18);
+}
+.nf-foot i { font-size: .68rem; color: var(--violet); }
+
+/* ---------- 9 · ENTRANCE ---------- */
+[data-nf="in"] { opacity: 0; }
+.nf-body.js-ready [data-nf="in"] {
+  animation: nfIn .8s var(--ease) forwards;
+  animation-delay: var(--d, .05s);
+}
+.nf-logo[data-nf="in"] { animation-delay: .02s; }
+.nf-dial[data-nf="in"] { animation-delay: .1s; }
+.nf-code[data-nf="in"] { animation-delay: .18s; }
+.nf-t[data-nf="in"]   { animation-delay: .42s; }
+.nf-sub[data-nf="in"] { animation-delay: .52s; }
+.nf-cta[data-nf="in"] { animation-delay: .62s; }
+.nf-foot[data-nf="in"] { animation-delay: .72s; }
+@keyframes nfIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- 10 · FOCUS + HOVER ---------- */
+.nf-body :focus-visible {
+  outline: 2px solid var(--bone);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* ---------- 11 · RESPONSIVE ----------
+   Height is the scarce axis here, so the tight rules key off vh. */
+@media (max-height: 620px) {
+  .nf-wrap { gap: clamp(6px, 1.2vh, 12px); }
+  .nf-sub { display: none; }          /* the copy is the first thing to go */
+  .nf-dial { width: clamp(62px, 11vh, 84px); }
+}
+@media (max-height: 470px) {
+  .nf-chip { display: none; }
+  .nf-foot { display: none; }
+  .nf-code { font-size: clamp(2.3rem, 13vh, 3.4rem); }
+  .nf-dial { display: none; }
+}
+@media (max-width: 420px) {
+  .nf-cta { flex-direction: column; align-items: stretch; width: min(100%, 300px); }
+  .nf-btn { justify-content: center; }
+}
+/* landscape phones: the dial and the code sit side by side so the
+   vertical budget stays small */
+@media (max-height: 520px) and (min-width: 620px) {
+  .nf-code { font-size: clamp(2.6rem, 17vh, 4rem); }
+  .nf-sub { display: block; max-width: 46ch; }
+}
+
+/* ---------- 12 · REDUCED MOTION ----------
+   Everything keeps its final state; nothing loops, nothing moves. */
+@media (prefers-reduced-motion: reduce) {
+  .nf-dial__ico, .nf-dial__ring, .nf-dial__ring--a, .nf-dial__ring--b,
+  .nf-dial__dot, .nf-dial__dot--1, .nf-dial__dot--2, .nf-dial__dot--3,
+  .nf-glow, .nf-glow--a, .nf-glow--b,
+  .nf-code span > i, .nf-body.js-ready [data-nf="in"],
+  .nf-btn.is-busy i {
+    animation: none !important;
+  }
+  .nf-dial__ring { opacity: .4; }
+  .nf-code span > i { transform: none; }
+  [data-nf="in"] { opacity: 1; }
+  .nf-body .btn:hover { transform: none; }
+}
+
+/* ---------- 13 · PRINT ---------- */
+@media print {
+  .nf-bg, .nf-dial, .nf-foot { display: none; }
+  .nf-stage { height: auto; }
+}

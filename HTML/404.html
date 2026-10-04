@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Page not found · Stackly</title>
+<meta name="description" content="That Stackly page is not on the shelf. Step back, or head home and pick up from there." />
+<meta name="robots" content="noindex, follow" />
+<link rel="icon" type="image/webp" href="../images/logo-icon-theme.webp" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+<link rel="stylesheet" href="../CSS/home.css" />
+<link rel="stylesheet" href="../CSS/404.css" />
+<script>document.documentElement.className = document.documentElement.className.replace('no-js', 'js');</script>
+
+<!-- No preloader, no header, no footer, no menu on this page: it is a
+     single locked stage that must fit inside the viewport at any size. -->
+<style id="nf-boot">
+  /* inlined so the very first paint is already the dark stage, never a
+     white or transparent flash before the stylesheets land */
+  html, body { background: #0B0D12; color: #F3F0EA; margin: 0; height: 100%; overflow: hidden; }
+</style>
+</head>
+
+<body class="nf-body">
+
+<main class="nf-stage" id="nfStage">
+
+  <!-- ============ BACKDROP (decorative only) ============ -->
+  <div class="nf-bg" aria-hidden="true">
+    <img class="nf-bg__shot" src="../images/cart-empty.webp" alt="" />
+    <span class="nf-bg__scrim"></span>
+    <span class="nf-bg__grid"></span>
+    <span class="nf-glow nf-glow--a"></span>
+    <span class="nf-glow nf-glow--b"></span>
+  </div>
+
+  <!-- ============ THE ONE THING ON THE PAGE ============ -->
+  <div class="nf-wrap" id="nfWrap">
+
+    <a class="nf-logo" href="../index.html" aria-label="Stackly home" data-nf="in">
+      <img src="../images/logo-full-theme.webp" alt="Stackly" width="600" height="185" />
+    </a>
+
+    <span class="nf-chip" data-nf="in">
+      <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+      Error 404
+    </span>
+
+    <!-- the icon: a compass that never settles, because that is the joke -->
+    <div class="nf-dial" data-nf="in" aria-hidden="true">
+      <span class="nf-dial__ring nf-dial__ring--a"></span>
+      <span class="nf-dial__ring nf-dial__ring--b"></span>
+      <span class="nf-dial__face">
+        <i class="fa-solid fa-compass nf-dial__ico" aria-hidden="true"></i>
+      </span>
+      <span class="nf-dial__dot nf-dial__dot--1"></span>
+      <span class="nf-dial__dot nf-dial__dot--2"></span>
+      <span class="nf-dial__dot nf-dial__dot--3"></span>
+    </div>
+
+    <p class="nf-code" id="nfCode" data-nf="in" aria-hidden="true">
+      <span><i>4</i></span><span><i>0</i></span><span><i>4</i></span>
+    </p>
+
+    <h1 class="nf-t" data-nf="in">
+      This shelf is <em>empty.</em>
+    </h1>
+
+    <p class="nf-sub" data-nf="in">
+      The page you asked for was moved, renamed, or never made it past
+      quality control. Nothing is broken on your side.
+    </p>
+
+    <div class="nf-cta" data-nf="in">
+      <button class="btn btn--bright nf-btn nf-btn--back" type="button" id="nfBack">
+        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+        <span>Go Back</span>
+      </button>
+      <a class="btn btn--glass nf-btn" href="../index.html" id="nfHome">
+        <i class="fa-solid fa-house" aria-hidden="true"></i>
+        <span>Back to Home</span>
+      </a>
+    </div>
+
+    <p class="nf-foot" data-nf="in">
+      <i class="fa-solid fa-compass" aria-hidden="true"></i>
+      Studio four, unit 04 · Stackly Accessories
+    </p>
+
+  </div>
+</main>
+
+<script src="../JS/404.js"></script>
+</body>
+</html>

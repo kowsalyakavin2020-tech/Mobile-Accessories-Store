@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>About — Stackly</title>
+<meta name="description" content="About Stackly — the repair bench turned mobile accessories studio that tests every cable, charger and earbud before it ships." />
+<link rel="icon" type="image/webp" href="../images/logo-icon-theme.webp" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<style id="boot-paint">
+  /* the whole preloader is inlined so the very first paint IS the loader —
+     nothing dark/blank before it, and no blur/mask layers that can fail
+     to composite on some GPUs. */
+  html,body{background:#0B0D12;color:#F3F0EA;margin:0}
+  .preloader{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;overflow:hidden;background:#0B0D12;transition:opacity .55s ease,visibility .55s}
+  .pre-glow{position:absolute;inset:0;
+    background:
+      radial-gradient(68% 60% at 50% 26%,rgba(91,61,245,.34),transparent 66%),
+      radial-gradient(60% 55% at 50% 112%,rgba(255,90,54,.26),transparent 72%),
+      radial-gradient(circle at 1px 1px,rgba(243,240,234,.10) 1px,transparent 0);
+    background-size:auto,auto,26px 26px}
+  .pre-inner{position:relative;z-index:2;text-align:center;transition:opacity .5s ease,transform .55s cubic-bezier(.22,1,.36,1)}
+  .pre-logo{display:flex;align-items:center;justify-content:center;animation:logoPop 1.1s cubic-bezier(.34,1.56,.64,1) both}
+  .pre-logo-img{display:block;width:auto;height:clamp(1.9rem,5.2vw,2.6rem);object-fit:contain;filter:drop-shadow(0 2px 18px rgba(91,61,245,.45))}
+  .pre-tag{margin-top:16px;font-size:.74rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(243,240,234,.5);min-height:1.2em}
+  .pre-bar{width:min(320px,74vw);height:5px;margin:30px auto 14px;border-radius:20px;background:rgba(243,240,234,.12);overflow:hidden}
+  .pre-bar-fill{display:block;height:100%;width:0;border-radius:20px;background:linear-gradient(90deg,#5B3DF5,#FF5A36);box-shadow:0 0 18px rgba(255,90,54,.7)}
+  .pre-meta{display:flex;align-items:center;justify-content:center;gap:12px;font-family:"Sora",system-ui,sans-serif;font-size:.78rem;letter-spacing:.1em;color:rgba(243,240,234,.5)}
+  .pre-meta #preCount{color:#F3F0EA;font-weight:700;font-size:1rem}
+  .pre-dots{display:inline-flex;gap:4px}
+  .pre-dots i{width:4px;height:4px;border-radius:50%;background:rgba(243,240,234,.5);animation:blink 1.2s infinite}
+  .pre-dots i:nth-child(2){animation-delay:.2s}
+  .pre-dots i:nth-child(3){animation-delay:.4s}
+  .preloader.done{opacity:0;visibility:hidden;pointer-events:none}
+  .preloader.hide{display:none}
+  @keyframes logoPop{from{opacity:0;transform:scale(.8) translateY(12px)}}
+  @keyframes blink{50%{opacity:.25}}
+</style>
+<!-- all stylesheets load after the loader has painted (nothing blocks first paint) -->
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" media="print" onload="this.media='all'" />
+<link rel="stylesheet" href="../CSS/home.css" media="print" onload="this.media='all'" />
+<link rel="stylesheet" href="../CSS/about.css" media="print" onload="this.media='all'" />
+<noscript>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="../CSS/home.css" />
+  <link rel="stylesheet" href="../CSS/about.css" />
+  <style>
+    [data-reveal],[data-aos],[data-sv-r]{opacity:1 !important;transform:none !important;clip-path:none !important;filter:none !important}
+    .preloader{display:none}
+    body{overflow:auto !important}
+  </style>
+</noscript>
+</head>
+<body>
+<!-- ============ SCROLL PROGRESS ============ -->
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- ============ PRELOADER ============ -->
+<div class="preloader" id="preloader">
+  <div class="pre-glow"></div>
+  <div class="pre-inner">
+      <div class="pre-logo">
+        <img class="pre-logo-img" src="../images/logo-full-theme.webp" alt="Stackly" width="600" height="185" />
+      </div>
+    <p class="pre-tag" id="preTag">Calibrating your gear</p>
+
+    <div class="pre-bar"><span class="pre-bar-fill" id="preBar"></span></div>
+    <div class="pre-meta">
+      <span id="preCount">0</span><span>%</span>
+      <span class="pre-dots"><i></i><i></i><i></i></span>
+      <span id="preStep">Booting store</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ S1 · HEADER / NAVBAR ============ -->
+<header class="site-head" id="header">
+  <div class="head-glow" style="background-image:url('../images/nav-surface.webp')"></div>
+
+  <div class="announce">
+    <div class="shell announce-inner">
+      <div class="announce-track" id="announceTrack">
+        <a class="announce-item" href="404.html">
+          <img src="../images/chip-1.webp" width="300" height="300" alt="Studio headphones" />
+          <span>Launch week — <b>25% off</b> audio gear</span>
+          <i class="fa-solid fa-arrow-right-long"></i>
+        </a>
+        <a class="announce-item" href="404.html">
+          <img src="../images/service-repair.webp" width="720" height="520" alt="Doorstep repair service" />
+          <span>Free <b>doorstep</b> battery replacement</span>
+          <i class="fa-solid fa-arrow-right-long"></i>
+        </a>
+        <a class="announce-item" href="404.html">
+          <img src="../images/chip-2.webp" width="300" height="300" alt="Smart watch" />
+          <span>Trade in your watch — <b>up to $60 off</b></span>
+          <i class="fa-solid fa-arrow-right-long"></i>
+        </a>
+      </div>
+      <div class="announce-side">
+        <span><i class="fa-solid fa-truck-fast"></i> Free shipping over $49</span>
+      </div>
+    </div>
+  </div>
+
+  <nav class="nav shell" id="nav">
+    <a class="brand" href="../index.html" aria-label="Stackly home">
+      <img class="brand-logo" src="../images/logo-full-theme.webp" alt="Stackly" width="600" height="185" decoding="async" />
+    </a>
+
+    <ul class="nav-links" id="navLinks">
+      <span class="nav-pill" id="navPill" aria-hidden="true"></span>
+      <li><a class="nav-link" href="../index.html">Home</a></li>
+      <li><a class="nav-link" href="shop.html">Shop</a></li>
+      <li><a class="nav-link" href="service.html">Service</a></li>
+      <li><a class="nav-link is-active" href="about.html">About</a></li>
+      <li><a class="nav-link" href="contact.html">Contact</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <a class="cart-btn" href="cart.html" id="cartBtn" aria-label="Open cart">
+        <span class="cart-btn-ico"><i class="fa-solid fa-bag-shopping"></i></span>
+        <span class="cart-btn-label">Cart</span>
+        <span class="cart-count" id="cartCount">0</span>
+        <span class="cart-btn-sheen"></span>
+      </a>
+       <a class="btn btn--bright btn--sm" href="login.html">
+         <span>Sign In</span>
+       </a>
+      <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- ============ MOBILE FULLSCREEN MENU ============ -->
+<div class="mmenu" id="mmenu">
+  <div class="mmenu-wipe" id="mmenuWipe">
+    <div class="mmenu-bg" style="background-image:url('../images/nav-surface.webp')"></div>
+    <div class="mmenu-inner">
+      <div class="mmenu-head">
+        <span class="mmenu-brand"><img src="../images/logo-full-theme.webp" alt="Stackly" width="600" height="185" /></span>
+        <button class="mmenu-close" id="mmenuClose" aria-label="Close menu"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <ul class="mmenu-links">
+        <li><a href="../index.html"><em>01</em><span>Home</span><i class="fa-solid fa-arrow-right-long"></i></a></li>
+        <li><a href="shop.html"><em>02</em><span>Shop</span><i class="fa-solid fa-arrow-right-long"></i></a></li>
+        <li><a href="service.html"><em>03</em><span>Service</span><i class="fa-solid fa-arrow-right-long"></i></a></li>
+        <li><a href="about.html" class="is-active" aria-current="page"><em>04</em><span>About</span><i class="fa-solid fa-arrow-right-long"></i></a></li>
+        <li><a href="contact.html"><em>05</em><span>Contact</span><i class="fa-solid fa-arrow-right-long"></i></a></li>
+      </ul>
+      <div class="mmenu-foot">
+        <a class="btn btn--solid btn--full" href="login.html"><span>Sign In</span></a>
+        <p class="mmenu-note"><i class="fa-solid fa-truck-fast"></i> Free shipping over $49 · 30-day returns</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main>
+
+<!-- ============ S2 · HERO  (torch reveal — the cursor is a work lamp) ============ -->
+<section class="ab-hero" id="abHero">
+  <div class="ab-hero__base" aria-hidden="true"><img src="../images/hero-phone.webp" alt="" /></div>
+  <div class="ab-hero__dark" id="abDark" aria-hidden="true"></div>
+  <div class="shell ab-hero__in">
+    <span class="eyebrow eyebrow--light ab-h" data-ab-h><i class="fa-solid fa-flask"></i> About Stackly</span>
+    <h1 class="ab-hero__t">
+      <span class="ab-h" data-ab-h>We test</span>
+      <span class="ab-h" data-ab-h>what you <em>carry.</em></span>
+    </h1>
+    <div class="ab-hero__row ab-h" data-ab-h>
+      <p>A six-person repair bench that grew into a storefront. Everything we sell has been bent, heated, dropped and drained first.</p>
+      <div class="ab-hero__cta">
+        <a class="btn btn--bright" href="404.html"><span>Shop tested gear</span><i class="fa-solid fa-bag-shopping"></i></a>
+        <span class="ab-hero__hint"><i class="fa-solid fa-lightbulb"></i> Move your cursor to light the bench</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ S3 · MANIFESTO (words light up as you read) ============ -->
+<section class="ab-mani" id="abMani">
+  <div class="shell">
+    <span class="eyebrow" data-ab-r="cut"><i class="fa-solid fa-quote-left"></i> Our one rule</span>
+    <p class="ab-mani__p" id="abManiText">
+      Stackly began on a repair bench with one rule: if we would not carry it,
+      <img class="ab-inl" src="../images/arrival-2.webp" alt="" />
+      we would not sell it. Every cable is bent ten thousand times,
+      <img class="ab-inl" src="../images/hero-float-2.webp" alt="" />
+      every charger is cooked for a full day, and every earbud is dropped
+      <img class="ab-inl" src="../images/cat-earbuds.webp" alt="" />
+      before it ever reaches your hands.
+    </p>
+  </div>
+</section>
+
+<!-- ============ S4 · TIMELINE (rail draws itself, photos open like an iris) ============ -->
+<section class="ab-tl" id="abTl">
+  <div class="shell">
+    <div class="ab-head">
+      <span class="eyebrow eyebrow--light" data-ab-r="cut"><i class="fa-solid fa-route"></i> Seven years</span>
+      <h2 class="sec-title" data-ab-r="cut">From one bench to <span class="ab-coral">one drop</span></h2>
+    </div>
+    <ol class="ab-tl__list" id="abTlList">
+      <span class="ab-tl__rail" aria-hidden="true"><span class="ab-tl__fill" id="abFill"></span></span>
+      <li class="ab-tl__i">
+        <div class="ab-tl__pic"><img src="../images/service-repair.webp" alt="Repair bench in 2019" loading="lazy" /></div>
+        <div class="ab-tl__tx"><em>2019</em><h3>The bench</h3><p>One desk, one soldering iron and a queue of cracked screens from friends.</p></div>
+      </li>
+      <li class="ab-tl__i">
+        <div class="ab-tl__pic"><img src="../images/product-2.webp" alt="Rugged power bank" loading="lazy" /></div>
+        <div class="ab-tl__tx"><em>2021</em><h3>The lab</h3><p>We built a rig that drains, heats and drops gear so the results stop being opinions.</p></div>
+      </li>
+      <li class="ab-tl__i">
+        <div class="ab-tl__pic"><img src="../images/service-delivery.webp" alt="Doorstep delivery" loading="lazy" /></div>
+        <div class="ab-tl__tx"><em>2024</em><h3>The doorstep</h3><p>Free pickup and drop-off launched, so a repair no longer meant a trip across town.</p></div>
+      </li>
+      <li class="ab-tl__i">
+        <div class="ab-tl__pic"><img src="../images/arrival-1.webp" alt="Earbuds case" loading="lazy" /></div>
+        <div class="ab-tl__tx"><em>2026</em><h3>The drop</h3><p>Over 400 tested accessories, 58 brands and one clean storefront.</p></div>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============ S5 · VALUES (vertical labels unfold into panels) ============ -->
+<section class="ab-vals" id="abVals">
+  <div class="shell">
+    <div class="ab-head">
+      <span class="eyebrow" data-ab-r="cut"><i class="fa-solid fa-compass"></i> What we stand on</span>
+      <h2 class="sec-title" data-ab-r="cut">Four habits, <span class="accent">no exceptions</span></h2>
+    </div>
+    <div class="ab-vals__row" id="abValsRow">
+      <article class="ab-val is-on" tabindex="0" style="--bg:url('../images/cat-earbuds.webp')">
+        <span class="ab-val__v"><b>01</b> Test it</span>
+        <div class="ab-val__o"><i class="fa-solid fa-vial"></i><h3>Test it</h3><p>Nothing is listed until it survives our rig. Failures go in a public log.</p></div>
+      </article>
+      <article class="ab-val" tabindex="0" style="--bg:url('../images/service-repair.webp')">
+        <span class="ab-val__v"><b>02</b> Fix it</span>
+        <div class="ab-val__o"><i class="fa-solid fa-screwdriver-wrench"></i><h3>Fix it</h3><p>If it breaks, our bench repairs it with genuine parts before we suggest a new one.</p></div>
+      </article>
+      <article class="ab-val" tabindex="0" style="--bg:url('../images/service-authenticity.webp')">
+        <span class="ab-val__v"><b>03</b> Say it</span>
+        <div class="ab-val__o"><i class="fa-solid fa-comment-dots"></i><h3>Say it straight</h3><p>Real battery numbers, real charge speeds, and no claims we have not measured.</p></div>
+      </article>
+      <article class="ab-val" tabindex="0" style="--bg:url('../images/service-delivery.webp')">
+        <span class="ab-val__v"><b>04</b> Ship it</span>
+        <div class="ab-val__o"><i class="fa-solid fa-box-open"></i><h3>Ship it right</h3><p>Packed by the same hands that tested it, and delivered in plain recyclable boxes.</p></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ S6 · CREW (polaroid pile drops in, fans on hover) ============ -->
+<section class="ab-crew" id="abCrew">
+  <div class="shell ab-crew__grid">
+    <div class="ab-crew__tx">
+      <span class="eyebrow eyebrow--light" data-ab-r="cut"><i class="fa-solid fa-users"></i> The bench crew</span>
+      <h2 class="sec-title" data-ab-r="cut">Real people <span class="ab-coral">hold the meter</span></h2>
+      <p data-ab-r="cut">Six technicians, two buyers and one very patient courier. Hover the pile to spread it out.</p>
+      <a class="btn btn--glass" href="404.html" data-ab-r="cut"><span>Meet us in person</span><i class="fa-solid fa-arrow-right-long"></i></a>
+    </div>
+    <div class="ab-pile" id="abPile">
+      <figure class="ab-pol" style="--k:-1;--r:-8deg"><div class="ab-pol__c"><img src="../images/avatar-1.webp" alt="Amara, bench lead" loading="lazy" /><figcaption><b>Amara</b><span>Bench lead</span></figcaption></div></figure>
+      <figure class="ab-pol" style="--k:0;--r:3deg"><div class="ab-pol__c"><img src="../images/avatar-2.webp" alt="Mr. Chen, parts buyer" loading="lazy" /><figcaption><b>Mr. Chen</b><span>Parts buyer</span></figcaption></div></figure>
+      <figure class="ab-pol" style="--k:1;--r:9deg"><div class="ab-pol__c"><img src="../images/avatar-3.webp" alt="Lena, customer care" loading="lazy" /><figcaption><b>Lena</b><span>Customer care</span></figcaption></div></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ============ S7 · CURTAIN (pinned photo splits open on scroll) ============ -->
+<section class="ab-curtain" id="abCurtain">
+  <div class="ab-curtain__back">
+    <div class="shell">
+      <span class="eyebrow" ><i class="fa-solid fa-gauge-high"></i> Inside the lab</span>
+      <h2 class="sec-title">The numbers <span class="accent">behind the desk</span></h2>
+      <ul class="ab-curtain__stats">
+        <li><b data-to="10000">0</b><span>Bend cycles per cable</span></li>
+        <li><b data-to="24">0</b><span>Hour charger burn-in</span></li>
+        <li><b data-to="412">0</b><span>Products that passed</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="ab-curtain__h ab-curtain__l" aria-hidden="true"></div>
+  <div class="ab-curtain__h ab-curtain__r" aria-hidden="true"></div>
+  <span class="ab-curtain__cue"><i class="fa-solid fa-arrows-left-right"></i> Keep scrolling</span>
+</section>
+
+<!-- ============ S8 · WALL (three columns drift against each other) ============ -->
+<section class="ab-wall" id="abWall">
+  <div class="shell">
+    <div class="ab-head">
+      <span class="eyebrow" data-ab-r="cut"><i class="fa-solid fa-images"></i> From the bench</span>
+      <h2 class="sec-title" data-ab-r="cut">Snapshots from <span class="accent">a working week</span></h2>
+    </div>
+    <div class="ab-wall__cols">
+      <div class="ab-col" data-dir="-1">
+        <figure data-tag="Bench 01"><img src="../images/arrival-2.webp" alt="Phone camera module" loading="lazy" /></figure>
+        <figure data-tag="Neon rig"><img src="../images/gallery-1.webp" alt="Neon lit hardware" loading="lazy" /></figure>
+        <figure data-tag="Night shift"><img src="../images/blog-2.webp" alt="Phone on a coaster" loading="lazy" /></figure>
+      </div>
+      <div class="ab-col" data-dir="1">
+        <figure data-tag="Cable wall"><img src="../images/arrival-3.webp" alt="Cable on marble" loading="lazy" /></figure>
+        <figure data-tag="Speaker test"><img src="../images/product-3.webp" alt="Portable speakers" loading="lazy" /></figure>
+        <figure data-tag="Charge rig"><img src="../images/deal-main.webp" alt="Charger and cable set" loading="lazy" /></figure>
+      </div>
+      <div class="ab-col" data-dir="-1">
+        <figure data-tag="Wear test"><img src="../images/blog-3.webp" alt="Fitness band" loading="lazy" /></figure>
+        <figure data-tag="Purple bay"><img src="../images/gallery-2.webp" alt="Gimbal under light" loading="lazy" /></figure>
+        <figure data-tag="Car mount"><img src="../images/product-4.webp" alt="Magnetic car mount" loading="lazy" /></figure>
+      </div>
+    </div>
+  </div>
+  <span class="ab-tag" id="abTag" aria-hidden="true"></span>
+</section>
+
+<!-- ============ S9 · HELLO (letters ripple under the cursor) ============ -->
+<section class="ab-hello" id="abHello">
+  <img class="ab-hello__float" src="../images/hero-float-1.webp" alt="" loading="lazy" />
+  <div class="shell">
+    <span class="eyebrow eyebrow--light" data-ab-r="cut"><i class="fa-solid fa-hand"></i> Got a question?</span>
+    <h2 class="ab-hello__t" id="abHelloT" aria-label="Say hello">Say hello</h2>
+    <div class="ab-hello__cta" data-ab-r="cut">
+      <a class="btn btn--bright btn--magnet" href="404.html"><span>Contact the bench</span><i class="fa-solid fa-paper-plane"></i></a>
+      <a class="btn btn--glass" href="404.html"><span>Book a repair</span><i class="fa-solid fa-wrench"></i></a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+
+<!-- ============ FOOTER (identical shell) ============ -->
+<footer class="foot" id="footer">
+  <div class="foot-news" data-parallax style="background-image:url('../images/newsletter-surface.webp')">
+    <div class="fn-veil"></div>
+    <div class="shell fn-inner">
+      <div class="fn-copy">
+        <h2 data-reveal="rise">Get the drop <span class="accent">first</span></h2>
+        <p data-reveal="rise">New arrivals, restocks and one genuinely useful email a week. No noise.</p>
+      </div>
+     <form class="fn-form" id="newsForm" data-reveal="rise" novalidate>
+       <span class="fn-ico"><i class="fa-solid fa-envelope"></i></span>
+       <input type="email" id="newsEmail" name="email" placeholder="you@example.com" aria-label="Email address" aria-describedby="newsMsg" autocomplete="email" />
+       <button class="btn btn--solid" type="submit"><span>Subscribe</span><i class="fa-solid fa-paper-plane"></i></button>
+       <p class="fn-msg" id="newsMsg" role="status" aria-live="polite"></p>
+     </form>
+    </div>
+  </div>
+
+  <div class="foot-main">
+    <div class="shell foot-grid">
+      <div class="fg-brand">
+        <a class="brand brand--foot" href="../index.html" aria-label="Stackly home">
+          <img class="brand-logo" src="../images/logo-full-theme.webp" alt="Stackly" width="600" height="185" decoding="async" />
+        </a>
+        <p>Gear that moves with you. Curated mobile accessories, tested in our own lab and shipped from our own bench.</p>
+        <div class="fg-social">
+          <a href="404.html" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="404.html" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
+          <a href="404.html" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+          <a href="404.html" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+        </div>
+       </div>
+
+       <div class="fg-col" data-aos="fade-up" data-aos-delay="0" data-aos-duration="650">
+         <h4>Company</h4>
+         <ul>
+           <li><a href="../index.html">Home</a></li>
+           <li><a href="shop.html">Shop</a></li>
+           <li><a href="service.html">Service</a></li>
+           <li><a href="about.html">About</a></li>
+           <li><a href="contact.html">Contact</a></li>
+         </ul>
+       </div>
+
+       <div class="fg-col fg-col--touch" data-aos="fade-up" data-aos-delay="110" data-aos-duration="650">
+         <h4>Get in touch</h4>
+         <ul class="fg-contact">
+           <li>
+             <i class="fa-solid fa-location-dot"></i>
+             <span><b>Address</b>MMR Complex, Chinna Thirupathi, near Chinna Muniyappan Kovil, Salem, Tamil Nadu 636008</span>
+           </li>
+           <li>
+             <i class="fa-solid fa-envelope"></i>
+             <span><b>Mail ID</b><a href="404.html">info@stackly.com</a></span>
+           </li>
+           <li>
+             <i class="fa-solid fa-mobile-screen"></i>
+             <span><b>Mobile</b><a href="404.html">+91 9764536787</a></span>
+           </li>
+         </ul>
+       </div>
+
+      <div class="fg-col" data-aos="fade-up" data-aos-delay="220" data-aos-duration="650">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="404.html">Track an order</a></li>
+          <li><a href="404.html">Shipping &amp; returns</a></li>
+          <li><a href="404.html">Warranty claims</a></li>
+          <li><a href="404.html">Privacy policy</a></li>
+          <li><a href="404.html">Terms of service</a></li>
+        </ul>
+        <div class="fg-pay">
+          <i class="fa-brands fa-cc-visa"></i>
+          <i class="fa-brands fa-cc-mastercard"></i>
+          <i class="fa-brands fa-cc-paypal"></i>
+          <i class="fa-brands fa-cc-apple-pay"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="shell foot-marquee">
+      <div class="fm-track">
+        <span>Stackly</span><i class="fa-solid fa-mobile-screen-button"></i>
+        <span>GEAR THAT MOVES WITH YOU</span><i class="fa-solid fa-bolt"></i>
+        <span>Stackly</span><i class="fa-solid fa-mobile-screen-button"></i>
+        <span>GEAR THAT MOVES WITH YOU</span><i class="fa-solid fa-bolt"></i>
+      </div>
+    </div>
+
+    <div class="shell foot-bottom">
+      <p>© 2026 Stackly. All rights reserved.</p>
+      <p class="fb-links">
+        <a href="404.html">Privacy</a><span>·</span>
+        <a href="404.html">Terms</a><span>·</span>
+        <a href="404.html">Cookies</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ FLOATING UI ============ -->
+<button class="totop" id="toTop" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
+<div class="toast" id="toast">
+  <span class="toast-ico"><i class="fa-solid fa-circle-check"></i></span>
+  <div><b id="toastTitle">Added to cart</b><em id="toastText">FluxPad Wireless Charger</em></div>
+</div>
+
+<!-- ============================================================
+     ANIMATION RUNTIME
+     home.js carries the shared shell (preloader, header, fullscreen
+     menu, cart badge, newsletter) and inlines GSAP 3.12.5 +
+     ScrollTrigger 3.12.5 + Lenis, so the hamburger and smooth scroll
+     behave exactly as they do on the home page. service.js adds the
+     Service page's own motion and its AOS usage.
+     Do not load a second GSAP copy: duplicate instances break
+     ScrollTrigger.
+     ============================================================ -->
+<script src="../JS/home.js" data-animation-runtime="gsap@3.12.5 scrolltrigger@3.12.5 lenis@1.x" data-gsap-source="bundled-inline"></script>
+<script src="../JS/about.js"></script>
+</body>
+</html>

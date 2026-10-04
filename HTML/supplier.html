@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" data-dash-role="seller">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Seller Dashboard — Stackly · Mobile Accessories</title>
+<meta name="description" content="Seller desk for Stackly. Manage accessory listings, fulfil orders and track weekly revenue." />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" type="image/webp" href="../images/logo-icon-theme.webp" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+<link rel="stylesheet" href="../CSS/dashboard.css" />
+<style id="db-boot">
+  html, body { margin: 0; background: #0B0D12; color: #F3F0EA; }
+</style>
+</head>
+<body>
+
+<!-- ============ BOOT ============ -->
+<div class="boot" id="dashBoot">
+  <div class="boot__inner">
+    <img class="boot__logo" src="../images/logo-full-theme.webp" alt="" width="600" height="185" />
+    <div class="boot__ring" aria-hidden="true"></div>
+    <p class="boot__note">Opening the seller desk</p>
+  </div>
+</div>
+
+<!-- ============ SCRIM (mobile drawer) ============ -->
+<div class="scrim" id="dashScrim" aria-hidden="true"></div>
+
+<div class="dash">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="dash-side" id="dashSide" aria-label="Seller dashboard navigation">
+    <div class="side-brand">
+      <a href="supplier.html" aria-label="Stackly — reload the seller dashboard">
+        <img src="../images/logo-full-theme.webp" alt="Stackly" />
+      </a>
+      <button class="side-close" id="dashSideClose" type="button" aria-label="Close menu">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <p class="side-role" id="dashRole">Seller</p>
+
+    <nav class="side-nav" id="dashNav"></nav>
+
+    <div class="side-user">
+      <div class="side-user__avatar" id="dashAvatarB">S</div>
+      <div>
+        <strong id="dashNameB">Seller</strong>
+        <span id="dashEmailB">—</span>
+      </div>
+    </div>
+
+    <div class="side-out">
+      <button type="button" id="dashLogout">
+        <i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i> Log out
+      </button>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <div class="dash-main">
+
+    <header class="dash-head">
+      <div class="head-lead">
+        <button class="head-burger" id="dashBurger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="dashSide">
+          <i class="fa-solid fa-bars" aria-hidden="true"></i>
+        </button>
+        <div class="head-title">
+          <h2 id="dashTitle">Overview</h2>
+          <p id="dashWelcome"></p>
+        </div>
+      </div>
+
+      <div class="head-search">
+        <div class="head-search__box" id="dashSearchBox">
+          <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+          <input id="dashSearch" type="search" placeholder="Search listings, orders, buyers…" autocomplete="off" aria-label="Search the seller dashboard" />
+        </div>
+      </div>
+
+      <div class="head-right">
+          <a class="head-bell" id="dashBell" href="404.html" aria-label="Notifications">
+            <i class="fa-solid fa-bell" aria-hidden="true"></i>
+          </a>
+
+          <div class="head-user">
+            <div class="head-user__avatar" id="dashAvatar">S</div>
+            <div>
+              <strong id="dashName">Seller</strong>
+              <span id="dashEmail">—</span>
+            </div>
+          </div>
+        </div>
+    </header>
+
+    <div class="dash-body" id="dashBody"></div>
+
+  </div>
+</div>
+
+<div class="toasts" id="dashToasts" aria-live="polite"></div>
+
+<script src="../JS/dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Shop — Stackly</title>
+<meta name="description" content="Shop the Stackly bench: cases, earbuds, chargers, power banks, speakers and watches. Twelve departments, one considered loadout." />
+<link rel="icon" type="image/webp" href="../images/logo-icon-theme.webp" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<style id="boot-paint">
+  /* the whole preloader is inlined so the very first paint IS the loader —
+     nothing dark/blank before it, and no blur/mask layers that can fail
+     to composite on some GPUs. */
+  html,body{background:#0B0D12;color:#F3F0EA;margin:0}
+  .preloader{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;overflow:hidden;background:#0B0D12;transition:opacity .55s ease,visibility .55s}
+  .pre-glow{position:absolute;inset:0;
+    background:
+      radial-gradient(68% 60% at 50% 26%,rgba(91,61,245,.34),transparent 66%),
+      radial-gradient(60% 55% at 50% 112%,rgba(255,90,54,.26),transparent 72%),
+      radial-gradient(circle at 1px 1px,rgba(243,240,234,.10) 1px,transparent 0);
+    background-size:auto,auto,26px 26px}
+  .pre-inner{position:relative;z-index:2;text-align:center;transition:opacity .5s ease,transform .55s cubic-bezier(.22,1,.36,1)}
+  .pre-logo{display:flex;align-items:center;justify-content:center;animation:logoPop 1.1s cubic-bezier(.34,1.56,.64,1) both}
+  .pre-logo-img{display:block;width:auto;height:clamp(1.9rem,5.2vw,2.6rem);object-fit:contain;filter:drop-shadow(0 2px 18px rgba(91,61,245,.45))}
+  .pre-tag{margin-top:16px;font-size:.74rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(243,240,234,.5);min-height:1.2em}
+  .pre-bar{width:min(320px,74vw);height:5px;margin:30px auto 14px;border-radius:20px;background:rgba(243,240,234,.12);overflow:hidden}
+  .pre-bar-fill{display:block;height:100%;width:0;border-radius:20px;background:linear-gradient(90deg,#5B3DF5,#FF5A36);box-shadow:0 0 18px rgba(255,90,54,.7)}
+  .pre-meta{display:flex;align-items:center;justify-content:center;gap:12px;font-family:"Sora",system-ui,sans-serif;font-size:.78rem;letter-spacing:.1em;color:rgba(243,240,234,.5)}
+  .pre-meta #preCount{color:#F3F0EA;font-weight:700;font-size:1rem}
+  .pre-dots{display:inline-flex;gap:4px}
+  .pre-dots i{width:4px;height:4px;border-radius:50%;background:rgba(243,240,234,.5);animation:blink 1.2s infinite}
+  .pre-dots i:nth-child(2){animation-delay:.2s}
+  .pre-dots i:nth-child(3){animation-delay:.4s}
+  .preloader.done{opacity:0;visibility:hidden;pointer-events:none}
+  .preloader.hide{display:none}
+  @keyframes logoPop{from{opacity:0;transform:scale(.8) translateY(12px)}}
+  @keyframes blink{50%{opacity:.25}}
+</style>
+<!-- all stylesheets load after the loader has painted (nothing blocks first paint) -->
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" media="print" onload="this.media='all'" />
+<link rel="stylesheet" href="../CSS/home.css" media="print" onload="this.media='all'" />
+<link rel="stylesheet" href="../CSS/shop.css" media="print" onload="this.media='all'" />
+<noscript>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="../CSS/home.css" />
+  <link rel="stylesheet" href="../CSS/shop.css" />
+  <style>
+    [data-reveal],[data-sp-r]{opacity:1 !important;transform:none !important;clip-path:none !important}
+    .preloader{display:none}
+    body{overflow:auto !important}
+  </style>
+</noscript>
+</head>
+<body>
+<!-- ============ PRELOADER ============ -->
+<div class="preloader" id="preloader">
+  <div class="pre-glow"></div>
+  <div class="pre-inner">
+      <div class="pre-logo">
+        <img class="pre-logo-img" src="../images/logo-full-theme.webp" alt="Stackly" width="600" height="185" />
+      </div>
+    <p class="pre-tag" id="preTag">Calibrating your gear</p>
+
+    <div class="pre-bar"><span class="pre-bar-fill" id="preBar"></span></div>
+    <div class="pre-meta">
+      <span id="preCount">0</span><span>%</span>
+      <span class="pre-dots"><i></i><i></i><i></i></span>
+      <span id="preStep">Booting store</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ S1 · HEADER / NAVBAR ============ -->
+<header class="site-head" id="header">
+  <div class="head-glow" style="background-image:url('../images/nav-surface.webp')"></div>
+
+  <div class="announce">
+    <div class="shell announce-inner">
+      <div class="announce-track" id="announceTrack">
+        <a class="announce-item" href="404.html">
+          <img src="../images/chip-1.webp" width="300" height="300" alt="Studio headphones" />
+          <span>Launch week — <b>25% off</b> audio gear</span>
+          <i class="fa-solid fa-arrow-right-long"></i>
+        </a>
+        <a class="announce-item" href="404.html">
+          <img src="../images/service-repair.webp" width="720" height="520" alt="Doorstep repair service" />
+          <span>Free <b>doorstep</b> battery replacement</span>
+          <i class="fa-solid fa-arrow-right-long"></i>
+        </a>
+        <a class="announce-item" href="404.html">
+          <img src="../images/chip-2.webp" width="300" height="300" alt="Smart watch" />
+          <span>Trade in your watch — <b>up to $60 off</b></span>
+          <i class="fa-solid fa-arrow-right-long"></i>
+        </a>
+      </div>
+      <div class="announce-side">
+        <span><i class="fa-solid fa-truck-fast"></i> Free shipping over $49</span>
+      </div>
+    </div>
+  </div>
+
+  <nav class="nav shell" id="nav">
+    <a class="brand" href="../index.html" aria-label="Stackly home">
+      <img class="brand-logo" src="../images/logo-full-theme.webp" alt="Stackly" width="600" height="185" decoding="async" />
+    </a>
+
+    <ul class="nav-links" id="navLinks">
+      <span class="nav-pill" id="navPill" aria-hidden="true"></span>
+      <li><a class="nav-link" href="../index.html">Home</a></li>
+      <li><a class="nav-link is-active" href="shop.html">Shop</a></li>
+      <li><a class="nav-link" href="service.html">Service</a></li>
+      <li><a class="nav-link" href="about.html">About</a></li>
+      <li><a class="nav-link" href="contact.html">Contact</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <a class="cart-btn" href="cart.html" id="cartBtn" aria-label="Open cart">
+        <span class="cart-btn-ico"><i class="fa-solid fa-bag-shopping"></i></span>
+        <span class="cart-btn-label">Cart</span>
+        <span class="cart-count" id="cartCount">0</span>
+        <span class="cart-btn-sheen"></span>
+      </a>
+       <a class="btn btn--bright btn--sm" href="login.html">
+         <span>Sign In</span>
+       </a>
+      <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- ============ MOBILE FULLSCREEN MENU ============ -->
+<div class="mmenu" id="mmenu">
+  <div class="mmenu-wipe" id="mmenuWipe">
+    <div class="mmenu-bg" style="background-image:url('../images/nav-surface.webp')"></div>
+    <div class="mmenu-inner">
+      <div class="mmenu-head">
+        <span class="mmenu-brand"><img src="../images/logo-full-theme.webp" alt="Stackly" width="600" height="185" /></span>
+        <button class="mmenu-close" id="mmenuClose" aria-label="Close menu"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <ul class="mmenu-links">
+        <li><a href="../index.html"><em>01</em><span>Home</span><i class="fa-solid fa-arrow-right-long"></i></a></li>
+        <li><a href="shop.html" class="is-active" aria-current="page"><em>02</em><span>Shop</span><i class="fa-solid fa-arrow-right-long"></i></a></li>
+        <li><a href="service.html"><em>03</em><span>Service</span><i class="fa-solid fa-arrow-right-long"></i></a></li>
+        <li><a href="about.html"><em>04</em><span>About</span><i class="fa-solid fa-arrow-right-long"></i></a></li>
+        <li><a href="contact.html"><em>05</em><span>Contact</span><i class="fa-solid fa-arrow-right-long"></i></a></li>
+      </ul>
+      <div class="mmenu-foot">
+        <a class="btn btn--solid btn--full" href="login.html"><span>Sign In</span></a>
+        <p class="mmenu-note"><i class="fa-solid fa-truck-fast"></i> Free shipping over $49 · 30-day returns</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<main>
+<!-- =====================================================================
+     SHOP PAGE — completely original build.
+     Light bone base (body) with ONE dark opening band so the fixed dark
+     header stays legible, plus ONE dark accent band mid-page for rhythm.
+     Ten content sections, none of which reuse a Home layout.
+     ===================================================================== -->
+
+<!-- ============ S2 · THE LOADOUT (dark opening band) ============ -->
+<section class="sp-hero" id="hero" data-sp-hero>
+  <div class="sp-hero__bg" aria-hidden="true">
+    <span class="sp-hero__halo"></span>
+    <span class="sp-hero__grain"></span>
+  </div>
+
+  <div class="shell sp-hero__grid">
+    <div class="sp-hero__copy">
+      <span class="eyebrow eyebrow--light" data-sp-r="dropIn"><i class="fa-solid fa-bolt"></i> 2026 loadout drop</span>
+
+      <h1 class="sp-hero__title">
+        <button type="button" class="sp-line is-active" data-tab="0" data-sp-r="foldUp"><b>Carry</b><em>less</em></button>
+        <button type="button" class="sp-line" data-tab="1" data-sp-r="foldUp"><b>Charge</b><em>once</em></button>
+        <button type="button" class="sp-line" data-tab="2" data-sp-r="foldUp"><b>Play</b><em>longer</em></button>
+      </h1>
+
+      <p class="sp-hero__lede" data-sp-r="ascent">Pick a line. The bench reconfigures itself around it — the piece on the turntable, the numbers on the dock, and what we think pairs with it.</p>
+
+      <div class="sp-hero__cta" data-sp-r="ascent">
+        <a class="btn btn--bright" href="404.html"><span>Open the board</span><i class="fa-solid fa-arrow-right-long"></i></a>
+        <a class="btn btn--glass" href="404.html"><span>Browse the index</span><i class="fa-solid fa-layer-group"></i></a>
+      </div>
+    </div>
+
+    <div class="sp-hero__lens" data-sp-r="iris">
+      <span class="sp-lens__ring" aria-hidden="true"></span>
+      <span class="sp-lens__ring sp-lens__ring--b" aria-hidden="true"></span>
+      <div class="sp-lens__stage" id="spLens">
+        <figure class="sp-lens__fig is-active" data-lens="0">
+          <img src="../images/cat-earbuds.webp" alt="AeroGlass Grip case, studio angle" width="900" height="1150" />
+        </figure>
+        <figure class="sp-lens__fig" data-lens="1">
+          <img src="../images/product-2.webp" alt="SolarFold 20K power bank, studio angle" width="720" height="720" />
+        </figure>
+        <figure class="sp-lens__fig" data-lens="2">
+          <img src="../images/product-3.webp" alt="Pulse Mini speaker, studio angle" width="720" height="720" />
+        </figure>
+      </div>
+      <span class="sp-lens__tag"><i class="fa-solid fa-tag"></i><b id="spLensTag">AeroGlass Grip</b></span>
+    </div>
+  </div>
+
+  <div class="shell">
+    <div class="sp-dock" id="spDock">
+      <div class="sp-dock__c"><b class="sp-dock__v" data-v="24">0</b><span class="sp-dock__k">Pieces in the kit</span></div>
+      <div class="sp-dock__c"><b class="sp-dock__v" data-v="79">0</b><span class="sp-dock__k">Days of backup</span></div>
+      <div class="sp-dock__c"><b class="sp-dock__v" data-v="4">0</b><span class="sp-dock__k">Grams lighter</span></div>
+      <p class="sp-dock__note" id="spDockNote">Three shells, one charger, zero clutter.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ S3 · THE INDEX (staggered plate cascade) ============ -->
+<section class="sp-index" id="index" data-sp-index>
+  <div class="shell">
+    <header class="sec-head">
+      <div>
+        <span class="eyebrow" data-sp-r="ascent"><i class="fa-solid fa-border-all"></i> The index</span>
+        <h2 class="sec-title" data-sp-r="ascent">Six departments,<br />one bench.</h2>
+      </div>
+      <p class="sec-note" data-sp-r="ascent">Hover a plate and the shelf hands you the picture of that corner. Nothing opens, nothing expands — the photo is the whole trick.</p>
+    </header>
+
+    <div class="sp-idx" id="spIdx">
+      <article class="sp-idx__plate" data-sp-r="iris">
+        <span class="sp-idx__win" aria-hidden="true">
+          <img class="sp-idx__shot" src="../images/cat-cases.webp" alt="" width="620" height="620" loading="lazy" />
+        </span>
+        <span class="sp-idx__ghost" aria-hidden="true">01</span>
+        <h3 class="sp-idx__name">Cases &amp; sleeves</h3>
+        <p class="sp-idx__meta">18 pieces &middot; from $24</p>
+      </article>
+
+      <article class="sp-idx__plate" data-sp-r="iris">
+        <span class="sp-idx__win" aria-hidden="true">
+          <img class="sp-idx__shot" src="../images/cat-earbuds.webp" alt="" width="620" height="620" loading="lazy" />
+        </span>
+        <span class="sp-idx__ghost" aria-hidden="true">02</span>
+        <h3 class="sp-idx__name">Earbuds</h3>
+        <p class="sp-idx__meta">24 pieces &middot; from $59</p>
+      </article>
+
+      <article class="sp-idx__plate" data-sp-r="iris">
+        <span class="sp-idx__win" aria-hidden="true">
+          <img class="sp-idx__shot" src="../images/cat-chargers.webp" alt="" width="620" height="620" loading="lazy" />
+        </span>
+        <span class="sp-idx__ghost" aria-hidden="true">03</span>
+        <h3 class="sp-idx__name">Chargers</h3>
+        <p class="sp-idx__meta">15 pieces &middot; from $29</p>
+      </article>
+
+      <article class="sp-idx__plate" data-sp-r="iris">
+        <span class="sp-idx__win" aria-hidden="true">
+          <img class="sp-idx__shot" src="../images/cat-powerbanks.webp" alt="" width="620" height="620" loading="lazy" />
+        </span>
+        <span class="sp-idx__ghost" aria-hidden="true">04</span>
+        <h3 class="sp-idx__name">Power banks</h3>
+        <p class="sp-idx__meta">11 pieces &middot; from $49</p>
+      </article>
+
+      <article class="sp-idx__plate" data-sp-r="iris">
+        <span class="sp-idx__win" aria-hidden="true">
+          <img class="sp-idx__shot" src="../images/cat-speakers.webp" alt="" width="620" height="620" loading="lazy" />
+        </span>
+        <span class="sp-idx__ghost" aria-hidden="true">05</span>
+        <h3 class="sp-idx__name">Speakers</h3>
+        <p class="sp-idx__meta">13 pieces &middot; from $39</p>
+      </article>
+
+      <article class="sp-idx__plate" data-sp-r="iris">
+        <span class="sp-idx__win" aria-hidden="true">
+          <img class="sp-idx__shot" src="../images/cat-watch.webp" alt="" width="620" height="620" loading="lazy" />
+        </span>
+        <span class="sp-idx__ghost" aria-hidden="true">06</span>
+        <h3 class="sp-idx__name">Watches</h3>
+        <p class="sp-idx__meta">9 pieces &middot; from $119</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ S4 · THE BOARD (flip cards) ============ -->
+<section class="sp-board" id="board" data-sp-board>
+  <div class="shell">
+    <header class="sec-head sec-head--center">
+      <span class="eyebrow" data-sp-r="ascent"><i class="fa-solid fa-table-columns"></i> The board</span>
+      <h2 class="sec-title" data-sp-r="ascent">Everything, face up.</h2>
+      <p class="sec-note" data-sp-r="ascent">Six pieces we keep on the bench. Turn one over for the numbers — no hovering required on touch.</p>
+    </header>
+
+    <div class="sp-flip">
+      <article class="sp-flip__c" data-sp-r="ghost">
+        <div class="sp-flip__in">
+          <div class="sp-flip__face sp-flip__face--f">
+            <span class="sp-flip__badge">Bench pick</span>
+            <img src="../images/product-1.webp" alt="AeroGlass Grip case" width="720" height="720" loading="lazy" />
+            <h3>AeroGlass Grip</h3>
+            <p class="sp-flip__price">$24</p>
+          </div>
+          <div class="sp-flip__face sp-flip__face--b">
+            <h4>AeroGlass Grip</h4>
+            <ul>
+              <li><span>Shell</span><b>1.4&nbsp;mm</b></li>
+              <li><span>Grip</span><b>Micro‑dot</b></li>
+              <li><span>Drop</span><b>2&nbsp;m</b></li>
+            </ul>
+            <button type="button" class="add-to-cart add-to-cart--lit" data-id="aeroglass" data-name="AeroGlass Grip" data-price="24" data-img="../images/product-1.webp"><span>Add</span><i class="fa-solid fa-cart-plus"></i></button>
+          </div>
+        </div>
+      </article>
+
+      <article class="sp-flip__c" data-sp-r="ghost">
+        <div class="sp-flip__in">
+          <div class="sp-flip__face sp-flip__face--f">
+            <span class="sp-flip__badge">New</span>
+            <img src="../images/product-2.webp" alt="SolarFold 20K power bank" width="720" height="720" loading="lazy" />
+            <h3>SolarFold 20K</h3>
+            <p class="sp-flip__price">$49</p>
+          </div>
+          <div class="sp-flip__face sp-flip__face--b">
+            <h4>SolarFold 20K</h4>
+            <ul>
+              <li><span>Capacity</span><b>20,000&nbsp;mAh</b></li>
+              <li><span>Out</span><b>65&nbsp;W</b></li>
+              <li><span>Panel</span><b>Fold‑out</b></li>
+            </ul>
+            <button type="button" class="add-to-cart add-to-cart--lit" data-id="solarfold" data-name="SolarFold 20K" data-price="49" data-img="../images/product-2.webp"><span>Add</span><i class="fa-solid fa-cart-plus"></i></button>
+          </div>
+        </div>
+      </article>
+
+      <article class="sp-flip__c" data-sp-r="ghost">
+        <div class="sp-flip__in">
+          <div class="sp-flip__face sp-flip__face--f">
+            <span class="sp-flip__badge">Quiet</span>
+            <img src="../images/product-3.webp" alt="Pulse Mini speaker" width="720" height="720" loading="lazy" />
+            <h3>Pulse Mini</h3>
+            <p class="sp-flip__price">$69</p>
+          </div>
+          <div class="sp-flip__face sp-flip__face--b">
+            <h4>Pulse Mini</h4>
+            <ul>
+              <li><span>Output</span><b>12&nbsp;W</b></li>
+              <li><span>Battery</span><b>18&nbsp;h</b></li>
+              <li><span>Pairing</span><b>Dual</b></li>
+            </ul>
+            <button type="button" class="add-to-cart add-to-cart--lit" data-id="pulse-mini" data-name="Pulse Mini" data-price="69" data-img="../images/product-3.webp"><span>Add</span><i class="fa-solid fa-cart-plus"></i></button>
+          </div>
+        </div>
+      </article>
+
+      <article class="sp-flip__c" data-sp-r="ghost">
+        <div class="sp-flip__in">
+          <div class="sp-flip__face sp-flip__face--f">
+            <span class="sp-flip__badge">Everyday</span>
+            <img src="../images/product-4.webp" alt="Bolt 140W braided cable" width="720" height="720" loading="lazy" />
+            <h3>Bolt 140W</h3>
+            <p class="sp-flip__price">$19</p>
+          </div>
+          <div class="sp-flip__face sp-flip__face--b">
+            <h4>Bolt 140W Braided</h4>
+            <ul>
+              <li><span>Length</span><b>2&nbsp;m</b></li>
+              <li><span>Max</span><b>140&nbsp;W</b></li>
+              <li><span>Tip</span><b>USB‑C</b></li>
+            </ul>
+            <button type="button" class="add-to-cart add-to-cart--lit" data-id="bolt-140" data-name="Bolt 140W Braided" data-price="19" data-img="../images/product-4.webp"><span>Add</span><i class="fa-solid fa-cart-plus"></i></button>
+          </div>
+        </div>
+      </article>
+
+      <article class="sp-flip__c" data-sp-r="ghost">
+        <div class="sp-flip__in">
+          <div class="sp-flip__face sp-flip__face--f">
+            <span class="sp-flip__badge">Studio</span>
+            <img src="../images/gallery-1.webp" alt="Halo ANC earbuds in the studio" width="760" height="980" loading="lazy" />
+            <h3>Halo ANC</h3>
+            <p class="sp-flip__price">$89</p>
+          </div>
+          <div class="sp-flip__face sp-flip__face--b">
+            <h4>Halo ANC Earbuds</h4>
+            <ul>
+              <li><span>ANC</span><b>Hybrid</b></li>
+              <li><span>Battery</span><b>8&nbsp;h</b></li>
+              <li><span>Codec</span><b>LDAC</b></li>
+            </ul>
+            <button type="button" class="add-to-cart add-to-cart--lit" data-id="halo-anc" data-name="Halo ANC Earbuds" data-price="89" data-img="../images/gallery-1.webp"><span>Add</span><i class="fa-solid fa-cart-plus"></i></button>
+          </div>
+        </div>
+      </article>
+
+      <article class="sp-flip__c" data-sp-r="ghost">
+        <div class="sp-flip__in">
+          <div class="sp-flip__face sp-flip__face--f">
+            <span class="sp-flip__badge">Steel</span>
+            <img src="../images/gallery-2.webp" alt="Ceramic Armour case" width="760" height="980" loading="lazy" />
+            <h3>Ceramic Armour</h3>
+            <p class="sp-flip__price">$34</p>
+          </div>
+          <div class="sp-flip__face sp-flip__face--b">
+            <h4>Ceramic Armour</h4>
+            <ul>
+              <li><span>Shell</span><b>Ceramic</b></li>
+              <li><span>Drop</span><b>3&nbsp;m</b></li>
+              <li><span>Mags</span><b>Yes</b></li>
+            </ul>
+            <button type="button" class="add-to-cart add-to-cart--lit" data-id="ceramic" data-name="Ceramic Armour" data-price="34" data-img="../images/gallery-2.webp"><span>Add</span><i class="fa-solid fa-cart-plus"></i></button>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ S5 · COLOURWAYS (cross‑highlight matrix) ============ -->
+<section class="sp-mx-sec" id="matrix" data-sp-mx>
+  <div class="shell">
+    <header class="sec-head">
+      <div>
+        <span class="eyebrow" data-sp-r="ascent"><i class="fa-solid fa-palette"></i> Colourways</span>
+        <h2 class="sec-title" data-sp-r="ascent">Pick a column,<br />read the row.</h2>
+      </div>
+      <p class="sec-note" data-sp-r="ascent">Every finish shifts the price. Select a colourway to isolate it across the whole board.</p>
+    </header>
+
+    <div class="sp-mx" id="spMx" data-active="0">
+      <p class="sp-mx__banner" id="spMxBanner"><i class="fa-solid fa-palette"></i> <b>Obsidian</b> — the finish we finish the most of</p>
+
+      <div class="sp-mx__grid" id="spMxGrid">
+        <div class="sp-mx__corner">Finish</div>
+
+        <button type="button" class="sp-mx__col is-on" data-col="0"><span class="sp-mx__sw" style="--sw:#141822"></span><b>Obsidian</b></button>
+        <button type="button" class="sp-mx__col" data-col="1"><span class="sp-mx__sw" style="--sw:#C9B79C"></span><b>Sandstone</b></button>
+        <button type="button" class="sp-mx__col" data-col="2"><span class="sp-mx__sw" style="--sw:#5B3DF5"></span><b>Volt</b></button>
+        <button type="button" class="sp-mx__col" data-col="3"><span class="sp-mx__sw" style="--sw:#FF5A36"></span><b>Coral</b></button>
+        <button type="button" class="sp-mx__col" data-col="4"><span class="sp-mx__sw" style="--sw:#DCE6E4"></span><b>Frost</b></button>
+
+        <div class="sp-mx__lab"><b>AeroGlass Grip</b><em>Case</em></div>
+        <button type="button" class="sp-mx__cell" data-c="0"><img src="../images/product-1.webp" alt="AeroGlass Grip, Obsidian" width="720" height="720" loading="lazy" /><em>$24</em></button>
+        <button type="button" class="sp-mx__cell" data-c="1"><img src="../images/chip-1.webp" alt="AeroGlass Grip, Sandstone" width="300" height="300" loading="lazy" /><em>$24</em></button>
+        <button type="button" class="sp-mx__cell" data-c="2"><img src="../images/chip-2.webp" alt="AeroGlass Grip, Volt" width="300" height="300" loading="lazy" /><em>$26</em></button>
+        <button type="button" class="sp-mx__cell" data-c="3"><img src="../images/arrival-1.webp" alt="AeroGlass Grip, Coral" width="620" height="780" loading="lazy" /><em>$26</em></button>
+        <button type="button" class="sp-mx__cell" data-c="4"><img src="../images/arrival-2.webp" alt="AeroGlass Grip, Frost" width="620" height="780" loading="lazy" /><em>$28</em></button>
+
+        <div class="sp-mx__lab"><b>Halo ANC Earbuds</b><em>Earbuds</em></div>
+        <button type="button" class="sp-mx__cell" data-c="0"><img src="../images/gallery-1.webp" alt="Halo ANC, Obsidian" width="760" height="980" loading="lazy" /><em>$89</em></button>
+        <button type="button" class="sp-mx__cell" data-c="1"><img src="../images/gallery-1.webp" alt="Halo ANC, Sandstone" width="760" height="980" loading="lazy" /><em>$89</em></button>
+        <button type="button" class="sp-mx__cell" data-c="2"><img src="../images/gallery-2.webp" alt="Halo ANC, Volt" width="760" height="980" loading="lazy" /><em>$94</em></button>
+        <button type="button" class="sp-mx__cell" data-c="3"><img src="../images/gallery-2.webp" alt="Halo ANC, Coral" width="760" height="980" loading="lazy" /><em>$94</em></button>
+        <button type="button" class="sp-mx__cell" data-c="4"><img src="../images/chip-1.webp" alt="Halo ANC, Frost" width="300" height="300" loading="lazy" /><em>$99</em></button>
+
+        <div class="sp-mx__lab"><b>SolarFold 20K</b><em>Power</em></div>
+        <button type="button" class="sp-mx__cell" data-c="0"><img src="../images/product-2.webp" alt="SolarFold 20K, Obsidian" width="720" height="720" loading="lazy" /><em>$49</em></button>
+        <button type="button" class="sp-mx__cell" data-c="1"><img src="../images/product-2.webp" alt="SolarFold 20K, Sandstone" width="720" height="720" loading="lazy" /><em>$49</em></button>
+        <button type="button" class="sp-mx__cell" data-c="2"><img src="../images/chip-2.webp" alt="SolarFold 20K, Volt" width="300" height="300" loading="lazy" /><em>$52</em></button>
+        <button type="button" class="sp-mx__cell" data-c="3"><img src="../images/arrival-1.webp" alt="SolarFold 20K, Coral" width="620" height="780" loading="lazy" /><em>$52</em></button>
+        <button type="button" class="sp-mx__cell" data-c="4"><img src="../images/arrival-3.webp" alt="SolarFold 20K, Frost" width="620" height="780" loading="lazy" /><em>$55</em></button>
+
+        <div class="sp-mx__lab"><b>Pulse Mini</b><em>Audio</em></div>
+        <button type="button" class="sp-mx__cell" data-c="0"><img src="../images/product-3.webp" alt="Pulse Mini, Obsidian" width="720" height="720" loading="lazy" /><em>$69</em></button>
+        <button type="button" class="sp-mx__cell" data-c="1"><img src="../images/product-3.webp" alt="Pulse Mini, Sandstone" width="720" height="720" loading="lazy" /><em>$69</em></button>
+        <button type="button" class="sp-mx__cell" data-c="2"><img src="../images/product-4.webp" alt="Pulse Mini, Volt" width="720" height="720" loading="lazy" /><em>$72</em></button>
+        <button type="button" class="sp-mx__cell" data-c="3"><img src="../images/product-4.webp" alt="Pulse Mini, Coral" width="720" height="720" loading="lazy" /><em>$72</em></button>
+        <button type="button" class="sp-mx__cell" data-c="4"><img src="../images/chip-1.webp" alt="Pulse Mini, Frost" width="300" height="300" loading="lazy" /><em>$75</em></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ S6 · THE CONVEYOR (dark accent band) ============ -->
+<section class="sp-belt" id="conv" data-sp-conv data-state="run">
+  <div class="shell sp-belt__inner">
+
+    <header class="sp-belt__head">
+      <div class="sp-belt__lead">
+        <span class="eyebrow eyebrow--light" data-sp-r="ascent"><i class="fa-solid fa-arrows-left-right"></i> The conveyor</span>
+        <h2 class="sec-title" data-sp-r="ascent">Always<br />moving.</h2>
+      </div>
+
+      <div class="sp-belt__aside">
+        <p class="sec-note sec-note--light" data-sp-r="ascent">Restock runs in a loop, same as the bench. Every card on a belt is live stock — paid for, packed, and already on its way to you.</p>
+        <div class="sp-belt__act" data-sp-r="ascent">
+          <button class="sp-belt__pause" type="button" data-sp-belt-toggle aria-pressed="false">
+            <i class="fa-solid fa-pause"></i><span class="sp-belt__pause-t">Pause the belts</span>
+          </button>
+          <a class="btn btn--glass" href="404.html" data-sp-r="ascent"><span>Pick your shield</span><i class="fa-solid fa-code-compare"></i></a>
+        </div>
+        <span class="sp-belt__badge" data-sp-r="ascent"><i class="fa-solid fa-circle"></i> <b data-sp-belt-count>16</b> in motion</span>
+      </div>
+    </header>
+
+    <div class="sp-belt__rig" data-sp-r="ascent">
+      <div class="sp-belt__lane" data-dir="1">
+        <ul class="sp-belt__track">
+          <li class="sp-cv"><span class="sp-cv__pic"><img src="../images/product-1.webp" alt="" width="720" height="720" loading="lazy" /></span><span class="sp-cv__txt"><b>AeroGlass Grip</b><em>$24</em></span><span class="sp-cv__bar" aria-hidden="true"><i></i></span></li>
+          <li class="sp-cv"><span class="sp-cv__pic"><img src="../images/product-3.webp" alt="" width="720" height="720" loading="lazy" /></span><span class="sp-cv__txt"><b>Pulse Mini</b><em>$69</em></span><span class="sp-cv__bar" aria-hidden="true"><i></i></span></li>
+          <li class="sp-cv"><span class="sp-cv__pic"><img src="../images/arrival-1.webp" alt="" width="620" height="780" loading="lazy" /></span><span class="sp-cv__txt"><b>Halo Watch S</b><em>$119</em></span><span class="sp-cv__bar" aria-hidden="true"><i></i></span></li>
+          <li class="sp-cv"><span class="sp-cv__pic"><img src="../images/arrival-2.webp" alt="" width="620" height="780" loading="lazy" /></span><span class="sp-cv__txt"><b>GripMag Mount</b><em>$39</em></span><span class="sp-cv__bar" aria-hidden="true"><i></i></span></li>
+          <li class="sp-cv" aria-hidden="true"><span class="sp-cv__pic"><img src="../images/product-1.webp" alt="" width="720" height="720" loading="lazy" /></span><span class="sp-cv__txt"><b>AeroGlass Grip</b><em>$24</em></span><span class="sp-cv__bar"><i></i></span></li>
+          <li class="sp-cv" aria-hidden="true"><span class="sp-cv__pic"><img src="../images/product-3.webp" alt="" width="720" height="720" loading="lazy" /></span><span class="sp-cv__txt"><b>Pulse Mini</b><em>$69</em></span><span class="sp-cv__bar"><i></i></span></li>
+          <li class="sp-cv" aria-hidden="true"><span class="sp-cv__pic"><img src="../images/arrival-1.webp" alt="" width="620" height="780" loading="lazy" /></span><span class="sp-cv__txt"><b>Halo Watch S</b><em>$119</em></span><span class="sp-cv__bar"><i></i></span></li>
+          <li class="sp-cv" aria-hidden="true"><span class="sp-cv__pic"><img src="../images/arrival-2.webp" alt="" width="620" height="780" loading="lazy" /></span><span class="sp-cv__txt"><b>GripMag Mount</b><em>$39</em></span><span class="sp-cv__bar"><i></i></span></li>
+        </ul>
+      </div>
+
+      <div class="sp-belt__lane" data-dir="-1">
+        <ul class="sp-belt__track">
+          <li class="sp-cv"><span class="sp-cv__pic"><img src="../images/product-2.webp" alt="" width="720" height="720" loading="lazy" /></span><span class="sp-cv__txt"><b>SolarFold 20K</b><em>$49</em></span><span class="sp-cv__bar" aria-hidden="true"><i></i></span></li>
+          <li class="sp-cv"><span class="sp-cv__pic"><img src="../images/product-4.webp" alt="" width="720" height="720" loading="lazy" /></span><span class="sp-cv__txt"><b>Bolt 140W</b><em>$19</em></span><span class="sp-cv__bar" aria-hidden="true"><i></i></span></li>
+          <li class="sp-cv"><span class="sp-cv__pic"><img src="../images/arrival-3.webp" alt="" width="620" height="780" loading="lazy" /></span><span class="sp-cv__txt"><b>RoomTone 2</b><em>$99</em></span><span class="sp-cv__bar" aria-hidden="true"><i></i></span></li>
+          <li class="sp-cv"><span class="sp-cv__pic"><img src="../images/chip-1.webp" alt="" width="300" height="300" loading="lazy" /></span><span class="sp-cv__txt"><b>Field Cell 5K</b><em>$25</em></span><span class="sp-cv__bar" aria-hidden="true"><i></i></span></li>
+          <li class="sp-cv" aria-hidden="true"><span class="sp-cv__pic"><img src="../images/product-2.webp" alt="" width="720" height="720" loading="lazy" /></span><span class="sp-cv__txt"><b>SolarFold 20K</b><em>$49</em></span><span class="sp-cv__bar"><i></i></span></li>
+          <li class="sp-cv" aria-hidden="true"><span class="sp-cv__pic"><img src="../images/product-4.webp" alt="" width="720" height="720" loading="lazy" /></span><span class="sp-cv__txt"><b>Bolt 140W</b><em>$19</em></span><span class="sp-cv__bar"><i></i></span></li>
+          <li class="sp-cv" aria-hidden="true"><span class="sp-cv__pic"><img src="../images/arrival-3.webp" alt="" width="620" height="780" loading="lazy" /></span><span class="sp-cv__txt"><b>RoomTone 2</b><em>$99</em></span><span class="sp-cv__bar"><i></i></span></li>
+          <li class="sp-cv" aria-hidden="true"><span class="sp-cv__pic"><img src="../images/chip-1.webp" alt="" width="300" height="300" loading="lazy" /></span><span class="sp-cv__txt"><b>Field Cell 5K</b><em>$25</em></span><span class="sp-cv__bar"><i></i></span></li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ S7 · PICK YOUR SHIELD (drag-to-compare split) ============ -->
+<section class="sp-duel" id="duel" data-sp-duel>
+  <div class="shell">
+    <header class="sec-head">
+      <div>
+        <span class="eyebrow" data-sp-r="ascent"><i class="fa-solid fa-code-compare"></i> Pick your shield</span>
+        <h2 class="sec-title" data-sp-r="ascent">Two shells.<br />One bench test.</h2>
+      </div>
+      <p class="sec-note" data-sp-r="ascent">Drag the handle, or tap either half, to slide between the two. Same phone, same drop rig, one afternoon.</p>
+    </header>
+
+    <div class="sp-duel__stage" id="spDuel" data-split="50" data-sp-r="iris" style="--p:50%">
+      <div class="sp-duel__layer sp-duel__layer--a" role="img"
+           aria-label="AeroGlass Grip case, face up on the bench after the drop test">
+        <img src="../images/gallery-1.webp" alt="" width="760" height="980" loading="lazy" />
+      </div>
+
+      <div class="sp-duel__layer sp-duel__layer--b" role="img"
+           aria-label="Ceramic Armour case, face up on the bench after the drop test">
+        <img src="../images/gallery-2.webp" alt="" width="760" height="980" loading="lazy" />
+      </div>
+
+      <span class="sp-duel__handle" id="spDuelHandle" role="slider" tabindex="0"
+            aria-label="Compare AeroGlass Grip with Ceramic Armour"
+            aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" aria-orientation="horizontal">
+        <i class="fa-solid fa-arrows-left-right"></i>
+      </span>
+    </div>
+
+    <div class="sp-duel__caps">
+      <div class="sp-duel__cap" data-sp-r="ascent">
+        <b>AeroGlass Grip</b>
+        <em>0.6&nbsp;mm ion&#8209;exchange glass over a soft lattice</em>
+        <span><i class="fa-solid fa-ruler-vertical"></i> 8.1&nbsp;mm thin</span>
+      </div>
+      <div class="sp-duel__cap sp-duel__cap--b" data-sp-r="ascent">
+        <b>Ceramic Armour</b>
+        <em>Hard ceramic shell over an aluminium spine, no soft edge</em>
+        <span><i class="fa-solid fa-ruler-vertical"></i> 11.4&nbsp;mm thick</span>
+      </div>
+    </div>
+
+    <ul class="sp-duel__tally" data-sp-r="ascent">
+      <li><b>2.1&nbsp;m</b><span>Drop height, both samples</span></li>
+      <li><b>0</b><span>Cracks after 40 cycles</span></li>
+      <li><b>38&nbsp;g</b><span>Weight AeroGlass saves</span></li>
+    </ul>
+  </div>
+</section>
+
+
+<!-- ============ S8 · BUILD THE STACK (sticky tiers) ============ -->
+<section class="sp-stack" id="stack" data-sp-stack>
+  <div class="shell">
+    <header class="sec-head">
+      <div>
+        <span class="eyebrow" data-sp-r="ascent"><i class="fa-solid fa-layer-group"></i> Build the stack</span>
+        <h2 class="sec-title" data-sp-r="ascent">Three ways to<br />over‑buy, politely.</h2>
+      </div>
+      <p class="sec-note" data-sp-r="ascent">Each tier settles on top of the last as you read. The biggest saving is always the one you scroll to last.</p>
+    </header>
+  </div>
+
+  <div class="sp-stack__wrap">
+    <article class="sp-tier" style="--i:0" data-sp-r="foldUp">
+      <div class="sp-tier__in">
+        <div class="sp-tier__img"><img src="../images/promo-main.webp" alt="Essential kit" width="840" height="480" loading="lazy" /></div>
+        <div class="sp-tier__body">
+          <span class="sp-tier__tag">Tier one</span>
+          <h3>Essential</h3>
+          <p>Case, cable, screen cloth. The three things everyone forgets to buy twice.</p>
+          <ul><li>AeroGlass Grip</li><li>Bolt 140W</li><li>Micro cloth</li></ul>
+          <div class="sp-tier__foot"><b>$58</b><s>$72</s><button type="button" class="add-to-cart" data-id="kit-essential" data-name="Essential kit" data-price="58" data-img="../images/promo-main.webp"><span>Add</span><i class="fa-solid fa-cart-plus"></i></button></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="sp-tier" style="--i:1" data-sp-r="foldUp">
+      <div class="sp-tier__in">
+        <div class="sp-tier__img"><img src="../images/deal-main.webp" alt="Commute kit" width="1000" height="1000" loading="lazy" /></div>
+        <div class="sp-tier__body">
+          <span class="sp-tier__tag">Tier two</span>
+          <h3>Commute</h3>
+          <p>Adds real battery. Gets you through a delayed day without hunting a socket.</p>
+          <ul><li>Everything in Essential</li><li>SolarFold 20K</li><li>Halo ANC Earbuds</li></ul>
+          <div class="sp-tier__foot"><b>$186</b><s>$214</s><button type="button" class="add-to-cart" data-id="kit-commute" data-name="Commute kit" data-price="186" data-img="../images/deal-main.webp"><span>Add</span><i class="fa-solid fa-cart-plus"></i></button></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="sp-tier" style="--i:2" data-sp-r="foldUp">
+      <div class="sp-tier__in">
+        <div class="sp-tier__img"><img src="../images/product-3.webp" alt="Everything kit" width="720" height="720" loading="lazy" /></div>
+        <div class="sp-tier__body">
+          <span class="sp-tier__tag">Tier three</span>
+          <h3>Everything</h3>
+          <p>The full bench in one bag. Honestly the reason most people come back twice.</p>
+          <ul><li>Everything in Commute</li><li>Pulse Mini</li><li>Halo Watch S</li><li>RoomTone 2</li></ul>
+          <div class="sp-tier__foot"><b>$402</b><s>$486</s><button type="button" class="add-to-cart" data-id="kit-everything" data-name="Everything kit" data-price="402" data-img="../images/product-3.webp"><span>Add</span><i class="fa-solid fa-cart-plus"></i></button></div>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ============ S9 · INSIDE THE CUT (exploded layer fan) ============ -->
+<section class="sp-unpack" id="unpack" data-sp-unpack>
+  <div class="shell">
+    <header class="sec-head">
+      <div>
+        <span class="eyebrow" data-sp-r="ascent"><i class="fa-solid fa-box-open"></i> Straight off the bench</span>
+        <h2 class="sec-title" data-sp-r="ascent">Three shots,<br />one afternoon.</h2>
+      </div>
+      <p class="sec-note" data-sp-r="ascent">They leave the bench leaning into each other. Scroll and the row stands them up and levels them out, while every frame keeps drifting at its own pace inside the card.</p>
+    </header>
+
+    <div class="sp-unpack__row" id="spUnpackRow">
+      <figure class="sp-unpack__c">
+        <div class="sp-unpack__in">
+          <div class="sp-unpack__win" data-sp-r="curtain">
+            <img class="sp-unpack__img" src="../images/arrival-1.webp"
+                 alt="AeroGlass Grip face up on the bench, backlit" width="620" height="780" loading="lazy" />
+            <span class="sp-unpack__glare" aria-hidden="true"></span>
+          </div>
+          <figcaption class="sp-unpack__cap">
+            <b>AeroGlass Grip</b>
+            <em>0.6&nbsp;mm ion&#8209;exchange face</em>
+          </figcaption>
+        </div>
+      </figure>
+
+      <figure class="sp-unpack__c">
+        <div class="sp-unpack__in">
+          <div class="sp-unpack__win" data-sp-r="curtain">
+            <img class="sp-unpack__img" src="../images/arrival-2.webp"
+                 alt="Ceramic Armour case open beside its mould" width="620" height="780" loading="lazy" />
+            <span class="sp-unpack__glare" aria-hidden="true"></span>
+          </div>
+          <figcaption class="sp-unpack__cap">
+            <b>Ceramic Armour</b>
+            <em>11.4&nbsp;mm hard shell, no soft edge</em>
+          </figcaption>
+        </div>
+      </figure>
+
+      <figure class="sp-unpack__c">
+        <div class="sp-unpack__in">
+          <div class="sp-unpack__win" data-sp-r="curtain">
+            <img class="sp-unpack__img" src="../images/arrival-3.webp"
+                 alt="Tidal Mag charging stand with its magnet ring exposed" width="620" height="780" loading="lazy" />
+            <span class="sp-unpack__glare" aria-hidden="true"></span>
+          </div>
+          <figcaption class="sp-unpack__cap">
+            <b>Tidal Mag</b>
+            <em>Sixteen aligned neodymium pucks</em>
+          </figcaption>
+        </div>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ============ S10 · GRADE THE BUILD (hex certification field) ============ -->
+<section class="sp-verdict" id="verdict" data-sp-verdict>
+  <div class="shell">
+    <header class="sec-head">
+      <div>
+        <span class="eyebrow" data-sp-r="ascent"><i class="fa-solid fa-clipboard-check"></i> Bench verdict</span>
+        <h2 class="sec-title" data-sp-r="ascent">Six stations,<br />graded on camera.</h2>
+      </div>
+      <p class="sec-note" data-sp-r="ascent">Nothing leaves without a grade and a photograph to back it up. Hover a station and the shot comes forward with it.</p>
+    </header>
+
+    <ul class="sp-verdict__grid" id="spVerdictGrid">
+      <li class="sp-vd">
+        <div class="sp-vd__win">
+          <img class="sp-vd__img" src="../images/product-1.webp" alt="AeroGlass Grip clamped in the drop rig" width="720" height="720" loading="lazy" />
+          <span class="sp-vd__grade" aria-hidden="true">A</span>
+        </div>
+        <b class="sp-vd__name">Drop rig</b>
+        <em class="sp-vd__val">Grade A &middot; 2.1&nbsp;m, 40 cycles</em>
+      </li>
+
+      <li class="sp-vd">
+        <div class="sp-vd__win">
+          <img class="sp-vd__img" src="../images/product-2.webp" alt="Ceramic Armour under the 9H scratch point" width="720" height="720" loading="lazy" />
+          <span class="sp-vd__grade" aria-hidden="true">A</span>
+        </div>
+        <b class="sp-vd__name">Scratch</b>
+        <em class="sp-vd__val">Grade A &middot; 9H under a 3&nbsp;kg load</em>
+      </li>
+
+      <li class="sp-vd">
+        <div class="sp-vd__win">
+          <img class="sp-vd__img" src="../images/cat-powerbanks.webp" alt="Tidal Mag power bank passing charge to a phone" width="620" height="620" loading="lazy" />
+          <span class="sp-vd__grade" aria-hidden="true">A+</span>
+        </div>
+        <b class="sp-vd__name">Charge</b>
+        <em class="sp-vd__val">Grade A+ &middot; 140&nbsp;W passthrough</em>
+      </li>
+
+      <li class="sp-vd">
+        <div class="sp-vd__win">
+          <img class="sp-vd__img" src="../images/product-3.webp" alt="Magnet ring face down, pucks visible" width="720" height="720" loading="lazy" />
+          <span class="sp-vd__grade" aria-hidden="true">B+</span>
+        </div>
+        <b class="sp-vd__name">Magnet</b>
+        <em class="sp-vd__val">Grade B+ &middot; 16&#8209;puck lattice</em>
+      </li>
+
+      <li class="sp-vd">
+        <div class="sp-vd__win">
+          <img class="sp-vd__img" src="../images/cat-speakers.webp" alt="Charging hub with the port cutout measured" width="620" height="620" loading="lazy" />
+          <span class="sp-vd__grade" aria-hidden="true">A</span>
+        </div>
+        <b class="sp-vd__name">Port</b>
+        <em class="sp-vd__val">Grade A &middot; 1&nbsp;mm cutout tolerance</em>
+      </li>
+
+      <li class="sp-vd">
+        <div class="sp-vd__win">
+          <img class="sp-vd__img" src="../images/product-4.webp" alt="Case closed after the open and close cycle test" width="720" height="720" loading="lazy" />
+          <span class="sp-vd__grade" aria-hidden="true">A</span>
+        </div>
+        <b class="sp-vd__name">Cycle</b>
+        <em class="sp-vd__val">Grade A &middot; 40&times; open and close</em>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ S11 · THE BENCH (hover‑through stacks) ============ -->
+<section class="sp-bench" id="bench" data-sp-bench>
+  <div class="shell">
+    <header class="sec-head">
+      <div>
+        <span class="eyebrow" data-sp-r="ascent"><i class="fa-solid fa-magnifying-glass-plus"></i> The bench</span>
+        <h2 class="sec-title" data-sp-r="ascent">Where it all<br />gets made.</h2>
+      </div>
+      <p class="sec-note" data-sp-r="ascent">Four corners of the studio. Rest on a panel and it flips through the shots the way we shot them.</p>
+    </header>
+
+    <div class="sp-bench__grid" id="spBench">
+      <div class="sp-bench__p" data-sp-r="skewRelief">
+        <div class="sp-bench__stack">
+          <img src="../images/gallery-1.webp" alt="Assembly bench" width="760" height="980" loading="lazy" />
+          <img src="../images/gallery-2.webp" alt="Assembly bench detail" width="760" height="980" loading="lazy" />
+          <img src="../images/service-repair.webp" alt="Repair bench" width="720" height="520" loading="lazy" />
+        </div>
+        <div class="sp-bench__meta"><b>Assembly</b><em>3 shots</em></div>
+        <span class="sp-bench__bar"><i></i></span>
+      </div>
+
+      <div class="sp-bench__p" data-sp-r="skewRelief">
+        <div class="sp-bench__stack">
+          <img src="../images/service-authenticity.webp" alt="Authenticity check" width="720" height="520" loading="lazy" />
+          <img src="../images/service-delivery.webp" alt="Delivery packing" width="720" height="520" loading="lazy" />
+          <img src="../images/support.webp" alt="Support desk" width="900" height="600" loading="lazy" />
+        </div>
+        <div class="sp-bench__meta"><b>Dispatch</b><em>3 shots</em></div>
+        <span class="sp-bench__bar"><i></i></span>
+      </div>
+
+      <div class="sp-bench__p" data-sp-r="skewRelief">
+        <div class="sp-bench__stack">
+          <img src="../images/blog-1.webp" alt="Design notes" width="720" height="480" loading="lazy" />
+          <img src="../images/blog-2.webp" alt="Material notes" width="720" height="480" loading="lazy" />
+          <img src="../images/blog-3.webp" alt="Field notes" width="720" height="480" loading="lazy" />
+        </div>
+        <div class="sp-bench__meta"><b>Design log</b><em>3 shots</em></div>
+        <span class="sp-bench__bar"><i></i></span>
+      </div>
+
+      <div class="sp-bench__p" data-sp-r="skewRelief">
+        <div class="sp-bench__stack">
+          <img src="../images/footer-showroom.webp" alt="Showroom floor" width="720" height="560" loading="lazy" />
+          <img src="../images/promo-main.webp" alt="Showroom window" width="840" height="480" loading="lazy" />
+          <img src="../images/page-shop.webp" alt="Shop floor" width="1400" height="820" loading="lazy" />
+        </div>
+        <div class="sp-bench__meta"><b>Showroom</b><em>3 shots</em></div>
+        <span class="sp-bench__bar"><i></i></span>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ============ S14 · FOOTER ============ -->
+<footer class="foot" id="footer">
+  <div class="foot-news" data-parallax style="background-image:url('../images/newsletter-surface.webp')">
+    <div class="fn-veil"></div>
+    <div class="shell fn-inner">
+      <div class="fn-copy">
+        <h2 data-reveal="rise">Get the drop <span class="accent">first</span></h2>
+        <p data-reveal="rise">New arrivals, restocks and one genuinely useful email a week. No noise.</p>
+      </div>
+     <form class="fn-form" id="newsForm" data-reveal="rise" novalidate>
+       <span class="fn-ico"><i class="fa-solid fa-envelope"></i></span>
+       <input type="email" id="newsEmail" name="email" placeholder="you@example.com" aria-label="Email address" aria-describedby="newsMsg" autocomplete="email" />
+       <button class="btn btn--solid" type="submit"><span>Subscribe</span><i class="fa-solid fa-paper-plane"></i></button>
+       <p class="fn-msg" id="newsMsg" role="status" aria-live="polite"></p>
+     </form>
+    </div>
+  </div>
+
+  <div class="foot-main">
+    <div class="shell foot-grid">
+      <div class="fg-brand">
+        <a class="brand brand--foot" href="../index.html" aria-label="Stackly home">
+          <img class="brand-logo" src="../images/logo-full-theme.webp" alt="Stackly" width="600" height="185" decoding="async" />
+        </a>
+        <p>Gear that moves with you. Curated mobile accessories, tested in our own lab and shipped from our own bench.</p>
+        <div class="fg-social">
+          <a href="404.html" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="404.html" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
+          <a href="404.html" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+          <a href="404.html" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+        </div>
+       </div>
+
+       <div class="fg-col" data-aos="fade-up" data-aos-delay="0" data-aos-duration="650">
+         <h4>Company</h4>
+         <ul>
+           <li><a href="../index.html">Home</a></li>
+           <li><a href="shop.html">Shop</a></li>
+           <li><a href="service.html">Service</a></li>
+           <li><a href="about.html">About</a></li>
+           <li><a href="contact.html">Contact</a></li>
+         </ul>
+       </div>
+
+       <div class="fg-col fg-col--touch" data-aos="fade-up" data-aos-delay="110" data-aos-duration="650">
+         <h4>Get in touch</h4>
+         <ul class="fg-contact">
+           <li>
+             <i class="fa-solid fa-location-dot"></i>
+             <span><b>Address</b>MMR Complex, Chinna Thirupathi, near Chinna Muniyappan Kovil, Salem, Tamil Nadu 636008</span>
+           </li>
+           <li>
+             <i class="fa-solid fa-envelope"></i>
+             <span><b>Mail ID</b><a href="404.html">info@stackly.com</a></span>
+           </li>
+           <li>
+             <i class="fa-solid fa-mobile-screen"></i>
+             <span><b>Mobile</b><a href="404.html">+91 9764536787</a></span>
+           </li>
+         </ul>
+       </div>
+
+      <div class="fg-col" data-aos="fade-up" data-aos-delay="220" data-aos-duration="650">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="404.html">Track an order</a></li>
+          <li><a href="404.html">Shipping &amp; returns</a></li>
+          <li><a href="404.html">Warranty claims</a></li>
+          <li><a href="404.html">Privacy policy</a></li>
+          <li><a href="404.html">Terms of service</a></li>
+        </ul>
+        <div class="fg-pay">
+          <i class="fa-brands fa-cc-visa"></i>
+          <i class="fa-brands fa-cc-mastercard"></i>
+          <i class="fa-brands fa-cc-paypal"></i>
+          <i class="fa-brands fa-cc-apple-pay"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="shell foot-marquee">
+      <div class="fm-track">
+        <span>Stackly</span><i class="fa-solid fa-mobile-screen-button"></i>
+        <span>GEAR THAT MOVES WITH YOU</span><i class="fa-solid fa-bolt"></i>
+        <span>Stackly</span><i class="fa-solid fa-mobile-screen-button"></i>
+        <span>GEAR THAT MOVES WITH YOU</span><i class="fa-solid fa-bolt"></i>
+      </div>
+    </div>
+
+    <div class="shell foot-bottom">
+      <p>© 2026 Stackly. All rights reserved.</p>
+      <p class="fb-links">
+        <a href="404.html">Privacy</a><span>·</span>
+        <a href="404.html">Terms</a><span>·</span>
+        <a href="404.html">Cookies</a>
+      </p>
+    </div>
+  </div>
+</footer>
+<!-- ============ FLOATING UI ============ -->
+<button class="totop" id="toTop" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
+<div class="toast" id="toast">
+  <span class="toast-ico"><i class="fa-solid fa-circle-check"></i></span>
+  <div><b id="toastTitle">Added to cart</b><em id="toastText">FluxPad Wireless Charger</em></div>
+</div>
+
+
+
+<script src="../JS/home.js" data-animation-runtime="gsap@3.12.5 scrolltrigger@3.12.5 lenis@1.x" data-gsap-source="bundled-inline"></script>
+<script src="../JS/shop.js"></script>
+</body>
+</html>
