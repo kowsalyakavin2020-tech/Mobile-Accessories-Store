@@ -481,6 +481,24 @@ main{overflow-x:clip}
 .ct-map__edge i:nth-child(2){right:0;top:0;width:2px;height:100%;transform:scaleY(0);transform-origin:top}
 .ct-map__edge i:nth-child(3){left:0;bottom:0;width:100%;height:2px;transform:scaleX(0);transform-origin:right}
 .ct-map__edge i:nth-child(4){left:0;top:0;width:2px;height:100%;transform:scaleY(0);transform-origin:bottom}
+/* the address card floating in the map's top corner — the reference theme's
+   .map-info-card: white 97% + blur, 14px radius, 18/22px padding, 260px max,
+   14px title, 12.5px muted address, hairline divider, theme-coral icons and
+   a theme-violet directions link */
+.ct-map__card{
+  position:absolute;top:24px;right:24px;z-index:3;
+  max-width:260px;padding:18px 22px;border-radius:14px;
+  background:rgba(255,255,255,.97);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  box-shadow:0 20px 40px -14px rgba(0,0,0,.3);
+}
+.ct-map__card strong{display:block;font-size:14px;color:#0B1F3A;margin-bottom:4px}
+.ct-map__card>span{font-size:12.5px;color:#5b6b82}
+.ct-map__card-split{margin-top:16px;padding-top:16px;border-top:1px solid rgba(11,31,58,.1)}
+.ct-map__card-split p{font-size:13px;line-height:1.65;color:#5b6b82;margin-bottom:6px}
+.ct-map__card-split p:last-child{margin-bottom:0}
+.ct-map__card-split i{color:var(--coral);margin-right:8px}
+.ct-map__card>a{display:inline-block;margin-top:16px;color:var(--violet);font-size:12.5px;font-weight:700}
 .ct-map__side{display:grid;gap:14px}
 .ct-way{
   display:grid;gap:8px;padding:16px;border-radius:var(--r-l);
@@ -823,6 +841,8 @@ main{overflow-x:clip}
   /* the frame keeps its own shadow, so with the row gap gone the map's
      lower edge and its halo landed on the first card underneath it */
   .ct-map__grid{gap:clamp(14px,4.5vw,20px)}
+  /* the corner card tucks in and never grows past the frame on a narrow screen */
+  .ct-map__card{top:12px;right:12px;max-width:min(260px,calc(100% - 24px))}
   .ct-map__side{grid-template-columns:1fr;gap:12px}
   .ct-map__head{gap:18px}
   .ct-formbox__foot{gap:12px}
